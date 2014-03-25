@@ -1,6 +1,6 @@
 #FROM ubuntu
 FROM debian:wheezy
-MAINTAINER none none@none.com
+MAINTAINER Ricardo Amaro mail@ricardoamaro.com
 
 # Keep upstart from complaining
 RUN dpkg-divert --local --rename --add /sbin/initctl
