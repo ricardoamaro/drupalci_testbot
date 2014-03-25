@@ -1,4 +1,4 @@
 #!/bin/sh
 
-docker build -t drupaltestbot-mysql -rm=true .
+docker build -t drupaltestbot-mysql --rm=true .
 
