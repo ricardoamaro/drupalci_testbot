@@ -22,19 +22,11 @@ echo "Operation [install]..."
 #GET ALL INFO FROM /var/www/test.info:
 source /var/www/test.info
 
-drush si -y --db-url=mysql://root@localhost/${IDENTIFIER} --clean-url=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+cd /var/www/
+drush si -y --db-url=mysql://${DBUSER}:${DBPASS}@${DB_PORT_3606_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
+drush -y en simpletest
 
-# Show the environment variables for debugging.
-echo "##################################################"
-echo ""
-echo "These are environment variables we need to know "
-echo "for debugging."
-echo ""
-echo "CONCURRENCY: $CONCURRENCY"
-echo "GROUPS: $GROUPS"
-echo ""
-echo "##################################################"
 
 # Run the test suite.
 echo "Operation [run tests]..."
-sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && php ./core/scripts/run-tests.sh --php `which php` --url 'http://localhost' --color --concurrency $CONCURRENCY --xml '/var/www/results' '$GROUPS'"
+sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT}"
