@@ -3,7 +3,7 @@
 TMPDIR=$(mktemp -d)
 sudo mount -t tmpfs -o size=16000M tmpfs $TMPDIR || exit
 
-MYSQL_ID=$(docker run -d -p=3306:3606 -name=drupaltestbot-db -v="$TMPDIR":/var/lib/mysql drupaltestbot-mysql)
+MYSQL_ID=$(docker run -d -p=3306:3606 --name=drupaltestbot-db -v="$TMPDIR":/var/lib/mysql drupaltestbot-mysql)
 PORT=$(docker port $MYSQL_ID 3606 | cut -d":" -f2)
 
 TAG="drupaltestbot-mysql"
