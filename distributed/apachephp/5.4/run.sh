@@ -4,11 +4,11 @@
 DRUPALVERSION="7.26" #SHOULD be passed via argument
 DRUPALBRANCH=$(echo $DRUPALVERSION | awk -F. '{print $1}') 
 IDENTIFIER="testid-iteration" #SHOULD be passed via argument
-REPODIR="root"
+REPODIR="/opt" #Change to the volume on the host
 
 
-git clone /${REPODIR}/drupal-${DRUPALBRANCH}/ /${REPODIR}/${IDENTIFIER}/
-cd /${REPODIR}/${IDENTIFIER}/ ; git checkout ${DRUPALVERSION}
+git clone ${REPODIR}/drupal-${DRUPALBRANCH}/ ${REPODIR}/${IDENTIFIER}/
+cd ${REPODIR}/${IDENTIFIER}/ ; git checkout ${DRUPALVERSION}
 
 
 sudo docker run -d=false -i=false -t=false -v=/var/log:/var/host_logs:ro -v=/${REPODIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web
