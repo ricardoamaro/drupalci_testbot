@@ -19,8 +19,10 @@ chmod -R 777 /var/www/sites/default/private
 echo "Operation [install]..."
 #For now we use Drush to install the site but we are going to
 #move to other real browser installer
-#GET ALL INFO FROM /var/www/test.info.yml
-drush si -y --db-url=mysql://root@localhost/drupaltestbotmysql --clean-url=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+#GET ALL INFO FROM /var/www/test.info:
+source /var/www/test.info
+
+drush si -y --db-url=mysql://root@localhost/${IDENTIFIER} --clean-url=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
 
 # Show the environment variables for debugging.
 echo "##################################################"
