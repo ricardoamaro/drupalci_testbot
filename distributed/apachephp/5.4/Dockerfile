@@ -43,6 +43,8 @@ RUN mkdir /var/run/sshd
 RUN rm -rf /var/www/
 RUN chmod 755 /etc/apache2/foreground.sh
 
+EXPOSE 80
+
 # Run test script.
 RUN chmod 755 /start.sh
 CMD ["/bin/bash", "/start.sh"]
