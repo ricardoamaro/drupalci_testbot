@@ -10,8 +10,8 @@ if [[ -z "$DRUPALVERSION" ]]
     DBUSER="drupaltestbot" 
     DBPASS="drupaltestbotpw"
     CONCURRENCY="4" 
-    GROUPS="NonDefaultBlockAdmin" #TESTS TO RUN
-    RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/www/results' ${GROUPS} "
+    TESTGROUPS="NonDefaultBlockAdmin" #TESTS TO RUN
+    RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/www/results' ${TESTGROUPS} "
 fi
 
 git clone ${REPODIR}/drupal-${DRUPALBRANCH}/ ${REPODIR}/${IDENTIFIER}/
@@ -28,6 +28,8 @@ REPODIR=\"${REPODIR}\"
 DBUSER=\"${DBUSER}\"
 DBPASS=\"${DBPASS}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
+CONCURRENCY=\"${CONCURRENCY}\" 
+TESTGROUPS=\"${TESTGROUPS}\"
 " > ${REPODIR}/${IDENTIFIER}/test.info
 
 docker run -d=false -i=true --link=drupaltestbot-db:db -v=/var/log:/var/host_logs:ro -v=${REPODIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web /bin/bash
