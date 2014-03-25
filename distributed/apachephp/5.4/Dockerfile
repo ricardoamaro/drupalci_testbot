@@ -1,25 +1,48 @@
+#FROM ubuntu
 FROM debian:wheezy
+MAINTAINER none none@none.com
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV APACHE_RUN_USER www-data 
-ENV APACHE_RUN_GROUP www-data 
-ENV APACHE_LOG_DIR /var/log/apache2
+# Keep upstart from complaining
+RUN dpkg-divert --local --rename --add /sbin/initctl
+RUN ln -sf /bin/true /sbin/initctl
 
-RUN apt-get update -y && apt-get upgrade -y && apt-get install -y wget git vim locales curl mysql-client openssh-server apache2 supervisor php5 php5-curl libapache2-mod-php5 php5-gd php5-cli php5-xsl php5-imap php5-mcrypt php5-intl php5-xmlrpc php-pear php5-mysql 
+# Packages.
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install apache2 curl drush git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php-apc php-pear pwgen sudo python-setuptools vim-tiny
+RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 
-RUN mkdir -p /var/run/sshd && mkdir -p /var/log/supervisor && mkdir -p /var/run/apache2 && a2enmod rewrite
+# Composer.
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin
+RUN sudo ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
 
-#RUN cd /opt && git clone https://github.com/drush-ops/drush.git drush && cd /opt/drush && git fetch --all && git checkout 25f7940e00 && ln -s /opt/drush/drush /user/bin/drush
+# Apache / PHP.
+ADD ./conf/apache2/vhost.conf /etc/apache2/sites-available/default
+ADD ./conf/php5/apache2.ini /etc/php5/apache2/php.ini
+ADD ./conf/php5/cli.ini /etc/php5/cli/php.ini
+ADD ./conf/php5/apc.ini /etc/php5/conf.d/apc.ini
 
-ADD ./files/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD ./files/php.ini /etc/php5/apache2/php.ini
-ADD ./files/php-cli.ini /etc/php5/cli/php.ini
-ADD ./files/drupalsite /etc/apache2/sites-available/drupalsite
 
-RUN a2ensite drupalsite
+# Retrieve latest drupal 
+#RUN rm -rf /var/www/ ; cd /var ; drush dl drupal ; mv /var/drupal*/ /var/www/
+#RUN chmod a+w /var/www/sites/default ; mkdir /var/www/sites/default/files ; chown -R www-data:www-data /var/www/
 
-RUN echo "root:drupaltestbot" |chpasswd
+# Scripts.
+ADD ./conf/scripts/start.sh /start.sh
+ADD ./conf/scripts/foreground.sh /etc/apache2/foreground.sh
 
-EXPOSE 22 80
+# Supervisord.
+RUN easy_install supervisor
+ADD ./conf/supervisor/supervisord.conf /etc/supervisord.conf
+RUN mkdir /var/log/supervisor/
 
-CMD ["usr/bin/", "/bin/bash"]
+# Sudo.
+RUN echo %sudo	ALL=NOPASSWD: ALL >> /etc/sudoers
+RUN mkdir /var/run/sshd
+
+# Apache.
+RUN rm -rf /var/www/
+RUN chmod 755 /etc/apache2/foreground.sh
+
+# Run test script.
+RUN chmod 755 /start.sh
+CMD ["/bin/bash", "/start.sh"]

@@ -1,3 +1,5 @@
 #!/bin/sh
 
-docker build -t drupaltestbot-apachephp -rm=true .
+sudo docker build -t drupal/testbot-web -rm=true .
+
+exit 0
