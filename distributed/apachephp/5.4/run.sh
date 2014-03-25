@@ -2,7 +2,7 @@
 
 # Implies there is a "git clone --branch 7.x http://git.drupal.org/project/drupal.git" on /somedir/drupal-7/ (or 8)
 DRUPALVERSION="${DRUPALVERSION:-7.26}" #SHOULD be passed via argument or default to 7.26
-DRUPALBRANCH =$(echo $DRUPALVERSION | awk -F. '{print $1}')
+DRUPALBRANCH=$(echo $DRUPALVERSION | awk -F. '{print $1}')
 IDENTIFIER="${IDENTIFIER:-testid-iteration}" #SHOULD be passed via argument
 REPODIR=${REPODIR:-"/opt"} #Change to the volume on the host
 DBUSER=${DBUSER:-"drupaltestbot"} 
