@@ -7,6 +7,7 @@ IDENTIFIER=${IDENTIFIER:-"BUILD-$(date +%Y_%m_%d_%H%M%S)"} #SHOULD be passed via
 REPODIR=${REPODIR:-"$HOME/testbotdata"} #Change to the volume on the host
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
 WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$IDENTIFIER/"}
+DEPENDENCIES=${DEPENDENCIES:-""}
 PATCH=${PATCH:-""} #comma separated for several
 DBUSER=${DBUSER:-"drupaltestbot"} 
 DBPASS=${DBPASS:-"drupaltestbotpw"}
@@ -15,6 +16,9 @@ PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN
 RUNSCRIPT=${RUNSCRIPT:-"php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "}
+
+mkdir -p ${BUILDSDIR}/${IDENTIFIER}/
+mkdir -p ${REPODIR}/${IDENTIFIER}/
 
 #Ensure PHPVERSION is set
 case $PHPVERSION in
@@ -35,10 +39,9 @@ if $(docker images | grep -q testbot-web${PHPVERSION});
   echo "Container: testbot-web${PHPVERSION} available"
   echo "Running with PHP${PHPVERSION} drupal/testbot-web${PHPVERSION}"
   else
-  echo "ERROR. Container testbot-web${PHPVERSION} needs to be built with: sudo ./build ${PHPVERSION}"
+  echo "ERROR. Image testbot-web${PHPVERSION} needs to be built with: sudo ./build ${PHPVERSION}"
   exit 1
 fi
-
 
 #TODO: Check if db is running
 
@@ -53,18 +56,42 @@ if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config | grep -q ${DRUPA
   echo "Making onetime Drupal git clone to: ${REPODIR}/drupal-${DRUPALBRANCH}/"
   echo "Press CTRL+c to Cancel"
   sleep 10 #+INFO: https://drupal.org/project/drupal/git-instructions
-  RESULT=$(mkdir -p ${REPODIR})
   cd ${REPODIR}
   git clone --branch ${DRUPALBRANCH}.x http://git.drupal.org/project/drupal.git drupal-${DRUPALBRANCH}
 fi
 
-# Apply Patch if any
-if [[ -z $PATCH ]]
+#Clone the local repo to the run directory:
+git clone ${REPODIR}/drupal-${DRUPALBRANCH}/ ${REPODIR}/${IDENTIFIER}/
+cd ${REPODIR}/${IDENTIFIER}/ ; git checkout ${DRUPALVERSION}
+
+#TODO: GET the dependecies
+#git clone each module
+
+if [[ $DEPENDENCIES = "" ]]
   then
+    echo "WARNING: \$DEPENDENCIES has no modules declared..."
+  else
+    #TODO: GET the dependecies
+    #git clone each module
+    echo ""
+fi
+
+#PATCH=${PATCH:-"patch_url,apply_dir;patch_url,apply_dir;"} 
+
+#Apply Patch if any
+if [[ $PATCH = "" ]]
+  then
+    echo "WARNING: \$PATCH variable has no patch to apply..."
+  else
     echo "Applying Patch"
     # Apply Patch
-  else
-    echo "\$PATCH variable has no patch to apply"
+    echo "Patch var did not apply to the dir."
+    echo "Please check if:
+    - Patch format is correct.
+    - Module has been checked out.
+    - Patch applies against the version of the module.
+    - You provided the correct apply directory."
+    exit 1
 fi
 
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
@@ -76,6 +103,7 @@ IDENTIFIER=\"${IDENTIFIER}\"
 REPODIR=\"${REPODIR}\"
 BUILDSDIR=\"${BUILDSDIR}\"
 WORKSPACE=\"${WORKSPACE}\"
+DEPENDENCIES=\"${DEPENDENCIES}\"
 PATCH=\"${PATCH}\"
 DBUSER=\"${DBUSER}\"
 DBPASS=\"${DBPASS}\"
@@ -84,7 +112,7 @@ PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\" 
 TESTGROUPS=\"${TESTGROUPS}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
-" > ${REPODIR}/${IDENTIFIER}/test.info
+" > ${BUILDSDIR}/${IDENTIFIER}/test.info
 
 #Let the tests start
 time docker run -d=false -i=true --link=drupaltestbot-db:db -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} 

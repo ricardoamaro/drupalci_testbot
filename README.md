@@ -37,7 +37,12 @@ sudo ./build.sh 5.4
 ```
 ### 6- Eg. To run a web container with all tests using 2 cpu:
 ```
-sudo TESTGROUPS="--all" CONCURRENCY="2" ./run.sh 
+TESTGROUPS="--all" 
+CONCURRENCY="2" 
+DRUPALVERSION="7.26"
+DEPENDENCIES="flag"  
+PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag" 
+sudo ./run.sh 
 ```
 And that's it.
 
@@ -51,7 +56,8 @@ CONCURRENCY="4" #How many cpus to use per run
 TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN
 RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
 PHPVERSION="5.4"
-PATCH=""
+PATCH="" #URL,DIR
+DEPENDENCIES="" #module,module,...
 DBTYPE="mysql"
 ```
 
