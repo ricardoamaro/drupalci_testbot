@@ -8,14 +8,6 @@ apachectl start
 # Setup Drupal mount binded from outside
 # TODO ON RUN
 
-# Directories and permissions.
-rm -fR /var/www/sites/default/files
-rm -fR /var/www/sites/default/private
-mkdir /var/www/sites/default/files
-mkdir /var/www/sites/default/private
-chmod -R 777 /var/www/sites/default/files
-chmod -R 777 /var/www/sites/default/private
-
 echo "Operation [install]..."
 #For now we use Drush to install the site but we are going to
 #move to other real browser installer
