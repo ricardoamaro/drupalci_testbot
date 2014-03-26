@@ -30,7 +30,7 @@ TESTGROUPS=\"${TESTGROUPS}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
 " > ${REPODIR}/${IDENTIFIER}/test.info
 
-docker run -d=false -i=true --link=drupaltestbot-db:db -v=/var/log:/var/host_logs:ro -v=${REPODIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web /bin/bash
+docker run -d=false -i=true --link=drupaltestbot-db:db -v=/var/log:/var/host_logs:ro -v=${REPODIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web
 
 exit 0
 
