@@ -1,1 +1,1 @@
-Dockerfile-PHP54
+Dockerfile-PHP5.4
