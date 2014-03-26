@@ -1,44 +1,46 @@
-Docker Drupal testbots 
-======================
-#on your local box!
+#Docker Drupal testbots on your local box!
 
-This repo contains a recipe for making a [Docker](http://docker.io) container for Drupal, using Linux, Apache and MySQL. 
+###Test your Drupal patches locally with docker.
+
+This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal testing, using Linux, Apache, PHP and MySQL/sqlite. 
 To build, make sure you have Docker [installed](http://www.docker.io/gettingstarted/).
 
-This will try to go in line with [Drupal automated-testing](https://drupal.org/automated-testing).
+This will also in line with [Drupal automated-testing](https://drupal.org/automated-testing).
 
 
-## Install docker:
+## 1- Install docker:
 ```
 curl get.docker.io | sudo sh -x
 ```
 
-## Clone this repo somewhere, 
+## 2- Clone this repo somewhere, 
 ```
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles
 ```
-# build the database container
+## 3- Build the database image 
 ```
 cd distributed/database/mysql
 sudo ./build.sh 
 ```
-##Start the DB container and check its running on port 3306
+## 4- Start the DB container and check it's running on port 3306
 ```
 sudo ./run-server.sh 
 sudo docker ps
 ```
 
-# Build the WEB container
+## 5- Build the WEB image
 ```
 cd ~/modernizing_testbot__dockerfiles
 cd distributed/apachephp
 sudo ./build.sh 5.4
 ```
-## To Run the web container for all tests using 4 cpu
+## 6- Eg. To run a web container with all tests using 2 cpu:
 ```
-sudo TESTGROUPS="--all" CONCURRENCY="4" ./run.sh 
+sudo TESTGROUPS="--all" CONCURRENCY="2" ./run.sh 
 ```
+And that's it.
+
 
 ## Some default environment variables
 
@@ -50,8 +52,8 @@ TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN
 RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
 PHPVERSION="5.4"
 PATCH=""
+DBTYPE="mysql"
 ```
-
 
 If you need to remove the old web image just run this sequence:
 ```
