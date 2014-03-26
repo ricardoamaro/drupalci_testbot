@@ -1,12 +1,11 @@
-Docker Drupal testbot on your local box!
-========================================
+Docker Drupal testbots 
+======================
+#on your local box!
 
 This repo contains a recipe for making a [Docker](http://docker.io) container for Drupal, using Linux, Apache and MySQL. 
 To build, make sure you have Docker [installed](http://www.docker.io/gettingstarted/).
 
 This will try to go in line with [Drupal automated-testing](https://drupal.org/automated-testing).
-
-Requirme
 
 
 ## Install docker:
