@@ -8,7 +8,7 @@ RUN ln -sf /bin/true /sbin/initctl
 
 # Packages.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-client apache2 curl drush git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php-apc php-pear pwgen sudo python-setuptools vim-tiny
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-client apache2 curl drush git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php-apc php-pear pwgen sudo python-setuptools vim-tiny apt-utils
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 
 # Apache / PHP.
@@ -16,6 +16,7 @@ ADD ./conf/apache2/vhost.conf /etc/apache2/sites-available/default
 ADD ./conf/php5/apache2.ini /etc/php5/apache2/php.ini
 ADD ./conf/php5/cli.ini /etc/php5/cli/php.ini
 ADD ./conf/php5/apc.ini /etc/php5/conf.d/apc.ini
+RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin.ini
 
 # Composer.
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin
