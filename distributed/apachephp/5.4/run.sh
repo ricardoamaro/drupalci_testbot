@@ -16,7 +16,7 @@ git clone ${REPODIR}/drupal-${DRUPALBRANCH}/ ${REPODIR}/${IDENTIFIER}/
 cd ${REPODIR}/${IDENTIFIER}/ ; git checkout ${DRUPALVERSION}
 
 #Write all ENV VARIABLES to ${REPODIR}/${IDENTIFIER}/test.info
-#For now format it in a source format
+#For now it's in a source format
 
 echo "
 DRUPALVERSION=\"${DRUPALVERSION}\"
