@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -e
 
 TMPDIR=$(mktemp -d)
 sudo mount -t tmpfs -o size=16000M tmpfs $TMPDIR || exit
@@ -22,4 +22,6 @@ echo "##When done : "
 echo "docker stop $MYSQL_ID"
 echo "docker rm $MYSQL_ID"
 echo "umount $TMPDIR"
+
+docker ps
 
