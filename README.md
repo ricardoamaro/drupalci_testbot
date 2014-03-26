@@ -6,6 +6,8 @@ To build, make sure you have Docker [installed](http://www.docker.io/gettingstar
 
 This will try to go in line with [Drupal automated-testing](https://drupal.org/automated-testing).
 
+Requirme
+
 
 ## Install docker:
 ```
@@ -27,16 +29,29 @@ sudo ./build.sh
 sudo ./run-server.sh 
 ```
 
-# build the WEB container
+# Build the WEB container
 ```
 cd ~/modernizing_testbot__dockerfiles
 cd distributed/apachephp/5.4
 sudo ./build.sh 
 ```
-## Run the web container and make the tests
+## To Run the web container for all tests using 4 cpu
 ```
-sudo ./run.sh 
+sudo TESTGROUPS="--all" CONCURRENCY="4" ./run.sh 
 ```
+
+## Some default environment variables
+
+```
+DRUPALVERSION="7.26"
+DRUPALBRANCH="7"
+CONCURRENCY="4" #How many cpus to use per run
+TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN
+RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
+PHPVERSION="5.4"
+PATCH=""
+```
+
 
 If you need to remove the old web image just run this sequence:
 ```
