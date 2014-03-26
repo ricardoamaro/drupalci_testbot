@@ -22,13 +22,14 @@ cd modernizing_testbot__dockerfiles
 cd distributed/database/mysql
 sudo ./build.sh 
 ```
-##STart the db container and leave it running
+##Start the DB container and leave it running
 ```
 sudo ./run-server.sh 
 ```
 
-# build the web container
+# build the WEB container
 ```
+cd ~/modernizing_testbot__dockerfiles
 cd distributed/apachephp/5.4
 sudo ./build.sh 
 ```
