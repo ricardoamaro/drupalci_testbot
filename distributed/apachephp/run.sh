@@ -16,6 +16,28 @@ CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN
 RUNSCRIPT=${RUNSCRIPT:-"php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "}
 
+case $PHPVERSION in
+  5.3) 
+    PHPVERSION="5.3"
+    ;;
+  5.5) 
+    PHPVERSION="5.5"
+    ;;
+  *) 
+    PHPVERSION="5.4"
+    ;;
+esac
+
+if $(docker images | grep -q testbot-web${PHPVERSION});
+  then
+  echo "Container: testbot-web${PHPVERSION} available"
+  echo "Running with PHP${PHPVERSION} drupal/testbot-web${PHPVERSION}"
+  else
+  echo "ERROR. Container testbot-web${PHPVERSION} needs to be built with: sudo ./build ${PHPVERSION}"
+  exit 1
+fi
+
+
 #TODO: Check if db is running
 
 #TODO: Check for web with PHPVERSION
@@ -67,7 +89,7 @@ TESTGROUPS=\"${TESTGROUPS}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
 " > ${REPODIR}/${IDENTIFIER}/test.info
 
-docker run -d=false -i=true --link=drupaltestbot-db:db -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web
+docker run -d=false -i=true --link=drupaltestbot-db:db -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} 
 
 echo "Test finished run using: ${REPODIR}/${IDENTIFIER}/"
 
