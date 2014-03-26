@@ -24,16 +24,17 @@ cd modernizing_testbot__dockerfiles
 cd distributed/database/mysql
 sudo ./build.sh 
 ```
-##Start the DB container and leave it running
+##Start the DB container and check its running on port 3306
 ```
 sudo ./run-server.sh 
+sudo docker ps
 ```
 
 # Build the WEB container
 ```
 cd ~/modernizing_testbot__dockerfiles
-cd distributed/apachephp/5.4
-sudo ./build.sh 
+cd distributed/apachephp
+sudo ./build.sh 5.4
 ```
 ## To Run the web container for all tests using 4 cpu
 ```
@@ -69,26 +70,24 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 ```
 ├── distributed
 │   ├── apachephp
-│   │   └── 5.4
-│   │       ├── build.sh
-│   │       ├── conf
-│   │       │   ├── apache2
-│   │       │   │   └── vhost.conf
-│   │       │   ├── php5
-│   │       │   │   ├── apache2.ini
-│   │       │   │   ├── apc.ini
-│   │       │   │   └── cli.ini
-│   │       │   ├── scripts
-│   │       │   │   ├── foreground.sh
-│   │       │   │   └── start.sh
-│   │       │   └── supervisor
-│   │       │       └── supervisord.conf
-│   │       ├── Dockerfile
-│   │       ├── files
-│   │       │   ├── php-cli.ini
-│   │       │   ├── php.ini
-│   │       │   └── supervisord.conf
-│   │       └── run.sh
+│   │   ├── build.sh
+│   │   ├── conf
+│   │   │   ├── apache2
+│   │   │   │   └── vhost.conf
+│   │   │   ├── php5
+│   │   │   │   ├── apache2.ini
+│   │   │   │   ├── apc.ini
+│   │   │   │   └── cli.ini
+│   │   │   ├── scripts
+│   │   │   │   ├── foreground.sh
+│   │   │   │   └── start.sh
+│   │   │   └── supervisor
+│   │   │       └── supervisord.conf
+│   │   ├── Dockerfile -> Dockerfile-PHP5.4
+│   │   ├── Dockerfile-PHP5.3
+│   │   ├── Dockerfile-PHP5.4
+│   │   ├── Dockerfile-PHP5.5
+│   │   └── run.sh
 │   └── database
 │       └── mysql
 │           ├── build.sh
