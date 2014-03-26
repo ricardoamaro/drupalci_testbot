@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 PHP=$1
 if [[ $PHP = "" ]]; then {

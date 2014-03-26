@@ -16,6 +16,7 @@ CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN
 RUNSCRIPT=${RUNSCRIPT:-"php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "}
 
+#Ensure PHPVERSION is set
 case $PHPVERSION in
   5.3) 
     PHPVERSION="5.3"
@@ -28,6 +29,7 @@ case $PHPVERSION in
     ;;
 esac
 
+#Check if the web container is built
 if $(docker images | grep -q testbot-web${PHPVERSION});
   then
   echo "Container: testbot-web${PHPVERSION} available"
@@ -40,14 +42,9 @@ fi
 
 #TODO: Check if db is running
 
-#TODO: Check for web with PHPVERSION
-
 #TODO: DEAL with iteration
 
-
 #Clone the local repo to the run directory:
-
-
 if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config | grep -q ${DRUPALBRANCH}) ;
   then 
   echo "Local git repo found on ${REPODIR}/drupal-${DRUPALBRANCH}/"
@@ -72,7 +69,6 @@ fi
 
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
 #For now it's in a source format
-
 echo "
 DRUPALVERSION=\"${DRUPALVERSION}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"
@@ -83,18 +79,16 @@ WORKSPACE=\"${WORKSPACE}\"
 PATCH=\"${PATCH}\"
 DBUSER=\"${DBUSER}\"
 DBPASS=\"${DBPASS}\"
+DBTYPE=\"${DBTYPE}\" 
 PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\" 
 TESTGROUPS=\"${TESTGROUPS}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
 " > ${REPODIR}/${IDENTIFIER}/test.info
 
-docker run -d=false -i=true --link=drupaltestbot-db:db -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} 
+#Let the tests start
+time docker run -d=false -i=true --link=drupaltestbot-db:db -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} 
 
 echo "Test finished run using: ${REPODIR}/${IDENTIFIER}/"
 
 exit 0
-
-
-
-
