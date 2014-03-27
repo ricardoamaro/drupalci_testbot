@@ -37,12 +37,13 @@ sudo ./build.sh 5.4
 ```
 ### 6- Eg. To run a web container with all tests using 2 cpu:
 ```
-TESTGROUPS="--all" 
-CONCURRENCY="2" 
-DRUPALVERSION="7.26"
-DEPENDENCIES="flag"  
-PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag" 
-sudo ./run.sh 
+sudo \
+TESTGROUPS="--all" \
+CONCURRENCY="2" \
+DRUPALVERSION="7.26" \
+DEPENDENCIES="flag,payment"  \
+PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag;https://drupal.org/files/issues/payment_2114785_8.patch,sites/all/modules/payment" \
+./run.sh 
 ```
 And that's it.
 

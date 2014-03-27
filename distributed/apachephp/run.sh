@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 # Implies there is a "git clone --branch 7(8).x http://git.drupal.org/project/drupal.git" on /$REPODIR/drupal-7(8)
 DRUPALVERSION=${DRUPALVERSION:-""}
@@ -88,34 +88,36 @@ fi
 #PATCH=${PATCH:-"patch_url,apply_dir;patch_url,apply_dir;"} 
 
 #Apply Patch if any
-if [[ $PATCH = "" ]] ;
+if [[ $PATCH = "" ]]
   then 
     echo -e "WARNING: \$PATCH variable has no patch to apply...\n"
   else
-    ARRAY=($(echo "$PATCH" | tr ";" "\n"))
+    ARRAY=($(echo "${PATCH}" | tr ";" "\n"))
     for row in ${ARRAY[@]}
       do
-      #read purl dir <<<$(echo ${row});
+      read purl dir <<<$(echo "${row}" | tr "," " ");
       cd ${BUILDSDIR}/${IDENTIFIER}/${dir}/
-      if $(echo "$purl" | egrep -q "^http") 
+      if $(echo "$purl" | egrep -q "^http") ;  
         then 
-          curl $purl > patch
+          curl -s $purl > patch
         else 
           cat  $purl > patch
       fi
-      echo "Applying Patch"
+      echo "Applying Patch: ${purl}"
       git apply --index patch
-      if [ $? -eq 0 ]; then
-        echo "Done!"
+      if [ "$?" == "0" ]; then
+        echo -e "Done!\n"
       else
         echo "Patch var did not apply to the dir."
-        echo "Please check if:
-            - Patch format is correct.
-            - Module has been checked out.
-            - Patch applies against the version of the module.
-            - You provided the correct apply directory."
+        echo "Please check if:"
+        echo "  - Patch format is correct."
+        echo "  - Module has been checked out."
+        echo "  - Patch applies against the version of the module."
+        echo "  - You provided the correct apply directory."
         exit 1
       fi
+    done 
+      
 fi
 
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
