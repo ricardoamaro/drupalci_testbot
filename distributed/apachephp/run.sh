@@ -70,8 +70,10 @@ if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config 2>/dev/null | gre
   cd ${REPODIR}
   git clone --branch ${DRUPALBRANCH}.x http://git.drupal.org/project/drupal.git drupal-${DRUPALBRANCH}
   echo ""
-  echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
-  git clone http://git.drupal.org/project/drush.git drush
+  if [ ! -f ${REPODIR}/drush/drush ]; then
+    echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
+    git clone http://git.drupal.org/project/drush.git drush
+  fi
 fi
 
 #Clone the local repo to the run directory:
