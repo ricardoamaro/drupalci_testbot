@@ -2,8 +2,7 @@
 
 # Start apache
 echo "Operation [start]..."
-a2enmod rewrite
-apachectl start
+apachectl start 2>/dev/null
 
 echo "Operation [install]..."
 #For now we use Drush to install the site but we are going to
@@ -15,6 +14,7 @@ source /var/www/test.info
 cd /var/www/
 mkdir -p sites/default/files/
 chown www-data:www-data sites/default/files/
+echo ""
 
 if [[ $DBTYPE = "sqlite" ]]
   then
@@ -26,5 +26,6 @@ fi
 drush -y en simpletest
 
 # Run the test suite.
+echo ""
 echo "Operation [run tests]..."
 sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT}"
