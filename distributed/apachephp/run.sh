@@ -1,10 +1,10 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 # Implies there is a "git clone --branch 7(8).x http://git.drupal.org/project/drupal.git" on /$REPODIR/drupal-7(8)
-DRUPALVERSION=${DRUPALVERSION:-"7.26"} #SHOULD be passed via argument or default to 7.26
-DRUPALBRANCH=$(echo $DRUPALVERSION | awk -F. '{print $1}')
-IDENTIFIER=${IDENTIFIER:-"BUILD-$(date +%Y_%m_%d_%H%M%S)"} #SHOULD be passed via argument
-REPODIR=${REPODIR:-"$HOME/testbotdata"} #Change to the volume on the host
+DRUPALVERSION=${DRUPALVERSION:-""}
+DRUPALBRANCH=${DRUPALBRANCH:-"7"}
+IDENTIFIER=${IDENTIFIER:-"BUILD-$(date +%Y_%m_%d_%H%M%S)"} 
+REPODIR=${REPODIR:-"$HOME/testbotdata"} 
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
 WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$IDENTIFIER/"}
 DEPENDENCIES=${DEPENDENCIES:-""}
@@ -45,9 +45,7 @@ fi
 
 #TODO: Check if db is running
 
-#TODO: DEAL with iteration
-
-#Clone the local repo to the run directory:
+#Clone the local Drupal and Drush to the run directory:
 if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config | grep -q ${DRUPALBRANCH}) ;
   then 
   echo "Local git repo found on ${REPODIR}/drupal-${DRUPALBRANCH}/"
@@ -55,43 +53,69 @@ if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config | grep -q ${DRUPA
   echo ""
   echo "Making onetime Drupal git clone to: ${REPODIR}/drupal-${DRUPALBRANCH}/"
   echo "Press CTRL+c to Cancel"
-  sleep 10 #+INFO: https://drupal.org/project/drupal/git-instructions
+  sleep 1 #+INFO: https://drupal.org/project/drupal/git-instructions
   cd ${REPODIR}
   git clone --branch ${DRUPALBRANCH}.x http://git.drupal.org/project/drupal.git drupal-${DRUPALBRANCH}
+  echo ""
+  echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
+  git clone http://git.drupal.org/project/drush.git drush
 fi
 
 #Clone the local repo to the run directory:
-git clone ${REPODIR}/drupal-${DRUPALBRANCH}/ ${REPODIR}/${IDENTIFIER}/
-cd ${REPODIR}/${IDENTIFIER}/ ; git checkout ${DRUPALVERSION}
+git clone ${REPODIR}/drupal-${DRUPALBRANCH}/ ${BUILDSDIR}/${IDENTIFIER}/
 
-#TODO: GET the dependecies
-#git clone each module
+#Change to the version we would like to test
+if [[ $DRUPALVERSION != "" ]]
+  then
+    cd ${BUILDSDIR}/${IDENTIFIER}/ 
+    git checkout ${DRUPALVERSION} 2>&1 | grep "checking out"
+    echo ""
+fi
 
+#Get the dependecies
 if [[ $DEPENDENCIES = "" ]]
   then
-    echo "WARNING: \$DEPENDENCIES has no modules declared..."
+    echo -e "WARNING: \$DEPENDENCIES has no modules declared...\n"
   else
-    #TODO: GET the dependecies
-    #git clone each module
+    for DEP in $(echo "$DEPENDENCIES" | tr "," "\n")
+      do 
+      echo "Project: $DEP"
+      ${HOME}/testbotdata/drush/drush -y dl ${DEP}
+    done  
     echo ""
 fi
 
 #PATCH=${PATCH:-"patch_url,apply_dir;patch_url,apply_dir;"} 
 
 #Apply Patch if any
-if [[ $PATCH = "" ]]
-  then
-    echo "WARNING: \$PATCH variable has no patch to apply..."
+if [[ $PATCH = "" ]] ;
+  then 
+    echo -e "WARNING: \$PATCH variable has no patch to apply...\n"
   else
-    echo "Applying Patch"
-    # Apply Patch
-    echo "Patch var did not apply to the dir."
-    echo "Please check if:
-    - Patch format is correct.
-    - Module has been checked out.
-    - Patch applies against the version of the module.
-    - You provided the correct apply directory."
-    exit 1
+    ARRAY=($(echo "$PATCH" | tr ";" "\n"))
+    for row in ${ARRAY[@]}
+      do
+      #read purl dir <<<$(echo ${row});
+      cd ${BUILDSDIR}/${IDENTIFIER}/${dir}/
+      if $(echo "$purl" | egrep -q "^http") 
+        then 
+          curl $purl > patch
+        else 
+          cat  $purl > patch
+      fi
+      echo "Applying Patch"
+      git apply --index patch
+      if [ $? -eq 0 ]; then
+        echo "Done!"
+      else
+        echo "Patch var did not apply to the dir."
+        echo "Please check if:
+            - Patch format is correct.
+            - Module has been checked out.
+            - Patch applies against the version of the module.
+            - You provided the correct apply directory."
+        exit 1
+      fi
 fi
 
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
@@ -112,11 +136,12 @@ PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\" 
 TESTGROUPS=\"${TESTGROUPS}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
-" > ${BUILDSDIR}/${IDENTIFIER}/test.info
+" | tee ${BUILDSDIR}/${IDENTIFIER}/test.info
 
 #Let the tests start
-time docker run -d=false -i=true --link=drupaltestbot-db:db -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} 
+echo "---- STARTING DOCKER CONTAINER ----"
+time docker run -d=false -i=true --link=drupaltestbot-db:db -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION}
 
 echo "Test finished run using: ${REPODIR}/${IDENTIFIER}/"
-
+echo ""
 exit 0
