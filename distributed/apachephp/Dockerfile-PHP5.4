@@ -22,9 +22,8 @@ RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin
 RUN sudo ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
 
-# Retrieve latest drupal 
-#RUN rm -rf /var/www/ ; cd /var ; drush dl drupal ; mv /var/drupal*/ /var/www/
-#RUN chmod a+w /var/www/sites/default ; mkdir /var/www/sites/default/files ; chown -R www-data:www-data /var/www/
+# Enable a2enmod rewrite
+RUN a2enmod rewrite 
 
 # Scripts.
 ADD ./conf/scripts/start.sh /start.sh
