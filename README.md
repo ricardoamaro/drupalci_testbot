@@ -12,10 +12,10 @@ a) Test patches on your local box or http://qa.drupal.org
 b) Test multiple patches and multiple modules at once.      
 c) Test any Drupal version.  
 d) Get realtime output.  
-c) Choose mysql, sqlite (more comming soon)  
-d) Choose PHP5.3/5.4/5.5  
-c) Test offline.   
-e) It's really really easy!
+e) Choose mysql, sqlite (more comming soon)  
+f) Choose PHP5.3/5.4/5.5  
+g) Test offline.   
+h) It's really really easy!
 
 
 ### 1- Install docker:
