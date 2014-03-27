@@ -25,18 +25,19 @@ sudo ./build.sh
 ```
 ### 4- Start the DB container and check it's running on port 3306
 ```
+cd distributed/database/mysql
 sudo ./run-server.sh 
-sudo docker ps
 ```
 
 ### 5- Build the WEB image
 ```
-cd ~/modernizing_testbot__dockerfiles
-cd distributed/apachephp
+cd distributed/apachephp/
 sudo ./build.sh 5.4
 ```
-### 6- Eg. To run a web container with all tests using 2 cpu:
+### 6- Example: Run a web container with all tests, 2 cpu and 2 patches:
 ```
+cd distributed/apachephp/
+
 sudo \
 TESTGROUPS="--all" \
 CONCURRENCY="2" \
@@ -48,18 +49,24 @@ PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,
 And that's it.
 
 
-### Some default environment variables
+### Some default environment variables that you can override
 
 ```
-DRUPALVERSION="7.26"
+DRUPALVERSION=""
 DRUPALBRANCH="7"
-CONCURRENCY="4" #How many cpus to use per run
-TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN
-RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
-PHPVERSION="5.4"
-PATCH="" #URL,DIR
-DEPENDENCIES="" #module,module,...
+IDENTIFIER="BUILD-$(date +%Y_%m_%d_%H%M%S)"
+REPODIR="$HOME/testbotdata"
+BUILDSDIR="$REPODIR"
+WORKSPACE="$BUILDSDIR/$IDENTIFIER/"
+DEPENDENCIES="" # module1,module2,module2...
+PATCH="" # patch_location,apply_dir;patch_location,apply_dir;...
+DBUSER="drupaltestbot" 
+DBPASS="drupaltestbotpw"
 DBTYPE="mysql"
+PHPVERSION="5.4"
+CONCURRENCY="4" #How many cpus to use per run
+TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN eg.--all
+RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
 ```
 
 If you need to remove the old web image just run this sequence:
