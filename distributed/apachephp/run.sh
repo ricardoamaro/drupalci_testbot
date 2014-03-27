@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 # Implies there is a "git clone --branch 7(8).x http://git.drupal.org/project/drupal.git" on /$REPODIR/drupal-7(8)
-DRUPALVERSION=${DRUPALVERSION:-""}
 DRUPALBRANCH=${DRUPALBRANCH:-"7"}
+DRUPALVERSION=${DRUPALVERSION:-""}
 IDENTIFIER=${IDENTIFIER:-"BUILD-$(date +%Y_%m_%d_%H%M%S)"} 
 REPODIR=${REPODIR:-"$HOME/testbotdata"} 
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
@@ -121,8 +121,8 @@ fi
 
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
 echo "
-DRUPALVERSION=\"${DRUPALVERSION}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"
+DRUPALVERSION=\"${DRUPALVERSION}\"
 IDENTIFIER=\"${IDENTIFIER}\"
 REPODIR=\"${REPODIR}\"
 BUILDSDIR=\"${BUILDSDIR}\"
