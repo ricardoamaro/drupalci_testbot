@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
-# Implies there is a "git clone --branch 7(8).x http://git.drupal.org/project/drupal.git" on /$REPODIR/drupal-7(8)
-DRUPALBRANCH=${DRUPALBRANCH:-"7"}
+# Implies there is a "git clone  http://git.drupal.org/project/drupal.git" on /$REPODIR/drupal
+DRUPALBRANCH=${DRUPALBRANCH:-"7.x"}
 DRUPALVERSION=${DRUPALVERSION:-""}
+UPDATEREPO=${UPDATEREPO:-"false"}
 IDENTIFIER=${IDENTIFIER:-"BUILD-$(date +%Y_%m_%d_%H%M%S)"} 
 REPODIR=${REPODIR:-"$HOME/testbotdata"} 
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
@@ -59,16 +60,17 @@ fi
 #TODO: Check if db is running
 
 #Clone the local Drupal and Drush to the run directory:
-if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config 2>/dev/null | grep -q ${DRUPALBRANCH}) ;
+
+if [ ! -f ${REPODIR}/drupal/.git/config ]; then
   then 
-  echo "Local git repo found on ${REPODIR}/drupal-${DRUPALBRANCH}/"
+  echo "Local git repo found on ${REPODIR}/drupal/"
   else
   echo ""
-  echo "Making onetime Drupal git clone to: ${REPODIR}/drupal-${DRUPALBRANCH}/"
+  echo "Making onetime Drupal git clone to: ${REPODIR}/drupal/"
   echo "Press CTRL+c to Cancel"
   sleep 1 #+INFO: https://drupal.org/project/drupal/git-instructions
   cd ${REPODIR}
-  git clone --branch ${DRUPALBRANCH}.x http://git.drupal.org/project/drupal.git drupal-${DRUPALBRANCH}
+  git clone http://git.drupal.org/project/drupal.git drupal
   echo ""
   if [ ! -f ${REPODIR}/drush/drush ]; then
     echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
@@ -76,14 +78,29 @@ if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config 2>/dev/null | gre
   fi
 fi
 
+if [[ $UPDATEREPO = "true" ]]
+  then
+    echo "Updating git"
+    cd ${REPODIR}/drupal
+    git pull
+    cd ${REPODIR}/drush
+    git pull
+    echo ""
+fi
+
 #Clone the local repo to the run directory:
-git clone ${REPODIR}/drupal-${DRUPALBRANCH}/ ${BUILDSDIR}/${IDENTIFIER}/
+if [[ $DRUPALBRANCH != "" ]]
+  then
+    git clone ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
+  else
+    git clone --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
+fi
 
 #Change to the version we would like to test
 if [[ $DRUPALVERSION != "" ]]
   then
     cd ${BUILDSDIR}/${IDENTIFIER}/ 
-    git checkout ${DRUPALVERSION} 2>&1 | grep "checking out"
+    git checkout ${DRUPALVERSION} 2>&1 | head -n10
     echo ""
 fi
 
