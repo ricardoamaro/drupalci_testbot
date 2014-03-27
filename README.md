@@ -75,7 +75,9 @@ DBPASS="drupaltestbotpw"
 DBTYPE="mysql"
 PHPVERSION="5.4"
 CONCURRENCY="4" #How many cpus to use per run
-TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN eg.--all, see: https://api.drupal.org/api/drupal/classes/8
+
+TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN eg.--all, --> https://api.drupal.org/api/drupal/classes/8
+
 RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
 ```
 

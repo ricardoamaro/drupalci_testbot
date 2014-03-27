@@ -21,6 +21,7 @@ case $DRUPALBRANCH in
     ;;
   *) RUNNER="./scripts/run-tests.sh"
     ;;
+esac
     
 RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "}
 
@@ -43,17 +44,22 @@ esac
 #Check if the web container is built
 if $(docker images | grep -q testbot-web${PHPVERSION});
   then
+  echo "------------------------------------------------------"
   echo "Container: testbot-web${PHPVERSION} available"
   echo "Running with PHP${PHPVERSION} drupal/testbot-web${PHPVERSION}"
+  echo "------------------------------------------------------"
   else
-  echo "ERROR. Image testbot-web${PHPVERSION} needs to be built with: sudo ./build ${PHPVERSION}"
+  echo "------------------------------------------------------"
+  echo "ERROR. Image testbot-web${PHPVERSION} needs to be built with:" 
+  echo "sudo ./build ${PHPVERSION}"
+  echo "------------------------------------------------------"
   exit 1
 fi
 
 #TODO: Check if db is running
 
 #Clone the local Drupal and Drush to the run directory:
-if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config | grep -q ${DRUPALBRANCH}) ;
+if $(grep branch ${REPODIR}/drupal-${DRUPALBRANCH}/.git/config 2>/dev/null | grep -q ${DRUPALBRANCH}) ;
   then 
   echo "Local git repo found on ${REPODIR}/drupal-${DRUPALBRANCH}/"
   else
