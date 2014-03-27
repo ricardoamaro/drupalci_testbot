@@ -18,7 +18,7 @@ CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
 case $DRUPALBRANCH in
-  8) RUNNER="./core/scripts/run-tests.sh"
+  8.x) RUNNER="./core/scripts/run-tests.sh"
     ;;
   *) RUNNER="./scripts/run-tests.sh"
     ;;
@@ -27,7 +27,7 @@ esac
 RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "}
 
 mkdir -p ${BUILDSDIR}/${IDENTIFIER}/
-mkdir -p ${REPODIR}/${IDENTIFIER}/
+mkdir -p ${REPODIR}
 
 #Ensure PHPVERSION is set
 case $PHPVERSION in
@@ -61,18 +61,19 @@ fi
 
 #Clone the local Drupal and Drush to the run directory:
 
-if [ ! -f ${REPODIR}/drupal/.git/config ]; then
+if [ -f ${REPODIR}/drupal/.git/config ];
   then 
-  echo "Local git repo found on ${REPODIR}/drupal/"
+    echo "Local git repo found on ${REPODIR}/drupal/"
   else
-  echo ""
-  echo "Making onetime Drupal git clone to: ${REPODIR}/drupal/"
-  echo "Press CTRL+c to Cancel"
-  sleep 1 #+INFO: https://drupal.org/project/drupal/git-instructions
-  cd ${REPODIR}
-  git clone http://git.drupal.org/project/drupal.git drupal
-  echo ""
-  if [ ! -f ${REPODIR}/drush/drush ]; then
+    echo ""
+    echo "Making onetime Drupal git clone to: ${REPODIR}/drupal/"
+    echo "Press CTRL+c to Cancel"
+    sleep 1 #+INFO: https://drupal.org/project/drupal/git-instructions
+    cd ${REPODIR}
+    git clone http://git.drupal.org/project/drupal.git drupal
+    echo ""
+  if [ ! -f ${REPODIR}/drush/drush ]; 
+    then
     echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
     git clone http://git.drupal.org/project/drush.git drush
   fi
