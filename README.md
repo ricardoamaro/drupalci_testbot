@@ -5,7 +5,7 @@
 This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal testing, using Linux, Apache, PHP and MySQL/sqlite. 
 To build, make sure you have Docker [installed](http://www.docker.io/gettingstarted/).
 
-This will also in line with [Drupal automated-testing](https://drupal.org/automated-testing).
+This is part of the core code powering the future version of [Drupal automated-testing](https://drupal.org/automated-testing) infrastructure at http://qa.drupal.org .
 
 #### Why is this awesome?
 a) Test patches on your local box or http://qa.drupal.org  
@@ -75,7 +75,7 @@ DBPASS="drupaltestbotpw"
 DBTYPE="mysql"
 PHPVERSION="5.4"
 CONCURRENCY="4" #How many cpus to use per run
-TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN eg.--all
+TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN eg.--all, see: https://api.drupal.org/api/drupal/classes/8
 RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
 ```
 

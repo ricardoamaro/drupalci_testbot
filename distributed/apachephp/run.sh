@@ -14,8 +14,15 @@ DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} 
 PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
-TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN
-RUNSCRIPT=${RUNSCRIPT:-"php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "}
+TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
+
+case $DRUPALBRANCH in
+  8) RUNNER="./core/scripts/run-tests.sh"
+    ;;
+  *) RUNNER="./scripts/run-tests.sh"
+    ;;
+    
+RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "}
 
 mkdir -p ${BUILDSDIR}/${IDENTIFIER}/
 mkdir -p ${REPODIR}/${IDENTIFIER}/
@@ -140,7 +147,7 @@ RUNSCRIPT=\"${RUNSCRIPT}\"
 
 #Let the tests start
 echo "---- STARTING DOCKER CONTAINER ----"
-time docker run -d=false -i=true --link=drupaltestbot-db:db -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION}
+time docker run -d=false -i=true --link=drupaltestbot-db:db --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION}
 
 echo "Test finished run using: ${REPODIR}/${IDENTIFIER}/"
 echo ""
