@@ -7,14 +7,16 @@ RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -sf /bin/true /sbin/initctl
 
 # Dotdeb
-RUN echo -e "# Dotdeb repository list - created 2013-09-02 13:17 UTC\ndeb http://packages.dotdeb.org wheezy-php55 all\ndeb-src http://packages.dotdeb.org wheezy-php55 all" > /etc/apt/sources.list.d/Dotdeb.php55.list
-RUN curl -s http://www.dotdeb.org/dotdeb.gpg | apt-key add -
+RUN echo "deb http://packages.dotdeb.org wheezy-php55 all" > /etc/apt/sources.list.d/Dotdeb.php55.list
+RUN gpg --keyserver keys.gnupg.net --recv-key 89DF5277
+RUN gpg -a --export 89DF5277 | apt-key add -
 
 # Packages.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-client apache2 curl drush git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php-apc php-pear pwgen sudo python-setuptools vim-tiny apt-utils
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-client apache2 php5 curl drush git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php-pear pwgen sudo python-setuptools vim-tiny apt-utils 
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
+#RUN pecl install apc
 
 # Apache / PHP.
 ADD ./conf/apache2/vhost.conf /etc/apache2/sites-available/default
