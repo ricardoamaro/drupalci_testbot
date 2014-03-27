@@ -117,11 +117,9 @@ if [[ $PATCH = "" ]]
         exit 1
       fi
     done 
-      
 fi
 
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
-#For now it's in a source format
 echo "
 DRUPALVERSION=\"${DRUPALVERSION}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"

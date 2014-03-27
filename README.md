@@ -120,6 +120,12 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
     ├── run.sh
     └── supervisord.conf
 ```
+###CREDITS:
+jthorson
+ricardoamaro
+nickschuch
+beejeebus
+
 
 ## Contributing
 Feel free to fork and contribute to this code. :)
