@@ -25,7 +25,7 @@ esac
 
 mkdir -p /tmp/php${VER}/
 cp -r conf/ /tmp/php${VER}/conf/
-cp Dockerfile-PHP${VER} /tmp/php${VER}/Dockerfile
+cat Dockerfile-PHP${VER} > /tmp/php${VER}/Dockerfile
 time docker build -t drupal/testbot-web${VER} /tmp/php${VER}/.
 rm -rf /tmp/php${VER}/
 

@@ -1,24 +1,27 @@
 #!/bin/bash -e
 
 # Implies there is a "git clone  http://git.drupal.org/project/drupal.git" on /$REPODIR/drupal
-DRUPALBRANCH=${DRUPALBRANCH:-"7.x"}
-DRUPALVERSION=${DRUPALVERSION:-""}
-UPDATEREPO=${UPDATEREPO:-"false"}
 IDENTIFIER=${IDENTIFIER:-"BUILD-$(date +%Y_%m_%d_%H%M%S)"} 
+DRUPALBRANCH=${DRUPALBRANCH:-"7.26"}
+DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
+UPDATEREPO=${UPDATEREPO:-"false"}
 REPODIR=${REPODIR:-"$HOME/testbotdata"} 
+DRUSHCOMMIT=${DRUSHCOMMIT:-"master"}
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
 WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$IDENTIFIER/"}
 DEPENDENCIES=${DEPENDENCIES:-""}
 PATCH=${PATCH:-""} #comma separated for several
 DBUSER=${DBUSER:-"drupaltestbot"} 
 DBPASS=${DBPASS:-"drupaltestbotpw"}
-DBTYPE=${DBTYPE:-"mysql"} 
+DBTYPE=${DBTYPE:-"mysql"} #mysql/sqlite
+DBLINK=${DBLINK:-"--link=drupaltestbot-db:db"}
 PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
-case $DRUPALBRANCH in
-  8.x) RUNNER="./core/scripts/run-tests.sh"
+# run-tests.s place changes on 8.x 
+case $DRUPALVERSION in
+  8) RUNNER="./core/scripts/run-tests.sh"
     ;;
   *) RUNNER="./scripts/run-tests.sh"
     ;;
@@ -47,7 +50,7 @@ if $(docker images | grep -q testbot-web${PHPVERSION});
   then
   echo "------------------------------------------------------"
   echo "Container: testbot-web${PHPVERSION} available"
-  echo "Running with PHP${PHPVERSION} drupal/testbot-web${PHPVERSION}"
+  echo "Running PHP${PHPVERSION}/${DBTYPE} on drupal/testbot-web${PHPVERSION}"
   echo "------------------------------------------------------"
   else
   echo "------------------------------------------------------"
@@ -75,47 +78,39 @@ if [ -f ${REPODIR}/drupal/.git/config ];
   if [ ! -f ${REPODIR}/drush/drush ]; 
     then
     echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
-    git clone http://git.drupal.org/project/drush.git drush
+    cd ${REPODIR}
+    git clone --branch master https://github.com/drush-ops/drush.git drush; 
+    cd drush;  git checkout ${DRUSHCOMMIT} 2>&1 | head -n3
   fi
 fi
 
 if [[ $UPDATEREPO = "true" ]]
   then
-    echo "Updating git"
+    echo "Updating git..."
     cd ${REPODIR}/drupal
-    git pull
+    pwd
+    git pull origin
     cd ${REPODIR}/drush
-    git pull
+    pwd
+    git pull origin master
+    git checkout ${DRUSHCOMMIT} 2>&1 | head -n3
     echo ""
 fi
 
 #Clone the local repo to the run directory:
-if [[ $DRUPALBRANCH != "" ]]
-  then
-    git clone ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
-  else
-    git clone --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
-fi
+git clone ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
 
-#Change to the version we would like to test
-if [[ $DRUPALVERSION != "" ]]
+#Change to the branch we would like to test
+if [[ ${DRUPALBRANCH} != "" ]]
   then
     cd ${BUILDSDIR}/${IDENTIFIER}/ 
-    git checkout ${DRUPALVERSION} 2>&1 | head -n10
+    git checkout ${DRUPALBRANCH} 2>&1 | head -n3
     echo ""
 fi
 
-#Get the dependecies
-if [[ $DEPENDENCIES = "" ]]
+if [[ ${DBTYPE} = "sqlite" ]]
   then
-    echo -e "WARNING: \$DEPENDENCIES has no modules declared...\n"
-  else
-    for DEP in $(echo "$DEPENDENCIES" | tr "," "\n")
-      do 
-      echo "Project: $DEP"
-      ${HOME}/testbotdata/drush/drush -y dl ${DEP}
-    done  
-    echo ""
+    DBLINK=""
 fi
 
 #PATCH=${PATCH:-"patch_url,apply_dir;patch_url,apply_dir;"} 
@@ -154,9 +149,10 @@ fi
 
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
 echo "
+IDENTIFIER=\"${IDENTIFIER}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"
 DRUPALVERSION=\"${DRUPALVERSION}\"
-IDENTIFIER=\"${IDENTIFIER}\"
+UPDATEREPO=${UPDATEREPO:-"false"}
 REPODIR=\"${REPODIR}\"
 BUILDSDIR=\"${BUILDSDIR}\"
 WORKSPACE=\"${WORKSPACE}\"
@@ -172,9 +168,11 @@ RUNSCRIPT=\"${RUNSCRIPT}\"
 " | tee ${BUILDSDIR}/${IDENTIFIER}/test.info
 
 #Let the tests start
-echo "---- STARTING DOCKER CONTAINER ----"
-time docker run -d=false -i=true --link=drupaltestbot-db:db --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION}
+echo "-------------- STARTING DOCKER CONTAINER -------------"
+time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} /bin/bash
 
-echo "Test finished run using: ${REPODIR}/${IDENTIFIER}/"
-echo ""
+echo "------------------------------------------------------"
+echo "Tests finished using: ${BUILDSDIR}/${IDENTIFIER}/"
+echo "Make sure to clean up old Builds on ${BUILDSDIR}"
+echo "------------------------------------------------------"
 exit 0

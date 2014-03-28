@@ -52,7 +52,7 @@ cd distributed/apachephp/
 sudo \
 TESTGROUPS="--all" \
 CONCURRENCY="2" \
-DRUPALVERSION="7.26" \
+DRUPALBRANCH="7.26" \
 DEPENDENCIES="flag,payment"  \
 PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag;https://drupal.org/files/issues/payment_2114785_8.patch,sites/all/modules/payment" \
 ./run.sh 
@@ -62,7 +62,7 @@ Run one test class using 4 CPUs, 1 core patch against D8:
 sudo \
 TESTGROUPS="--class UserAdminTest" \
 CONCURRENCY="4" \
-DRUPALBRANCH="8" \ PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
+DRUPALBRANCH="8.x" \ PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
 ```
 

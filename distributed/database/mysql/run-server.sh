@@ -1,10 +1,10 @@
 #!/bin/bash 
 
-STALLED=$(docker ps -a | grep drupaltestbot-mysql | grep Exit | awk '{print $1}')
-RUNNING=$(docker ps -a | grep drupaltestbot-mysql | grep 3306)
+STALLED=$(docker ps -a | grep drupaltestbot-db | grep Exit | awk '{print $1}')
+RUNNING=$(docker ps -a | grep drupaltestbot-db | grep 3306)
 if [[ $RUNNING != "" ]]
   then 
-    echo "Found container:" 
+    echo "Found database container:" 
     echo "$RUNNING already running..."
     exit 0
   elif [[ $STALLED != "" ]]
