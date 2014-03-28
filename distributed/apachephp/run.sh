@@ -33,6 +33,25 @@ RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost
 mkdir -p ${BUILDSDIR}/${IDENTIFIER}/
 mkdir -p ${REPODIR}
 
+
+# If we are using mysql make sure the conatiner is there
+if [[ $DBTYPE = "mysql" ]]
+  then
+    set +e
+    RUNNING=$(sudo docker ps | grep drupaltestbot-db | grep -s 3306)
+    set -e
+    if [[ $RUNNING = "" ]]
+      then.
+        echo "------------------------------------------------------"
+        echo -e "ERROR: There is no Mysql container running..."
+        echo -e "Please make sure you built the image and started it."
+        echo -e "cd distributed/database/mysql \nsudo ./build.sh \nsudo ./run-server.sh \n"
+        echo -e "Also please make sure port 3606 is not being used \nand mysql is stopped on the host."
+        echo "------------------------------------------------------"
+        exit 1
+    fi
+fi
+
 #Ensure PHPVERSION is set
 case $PHPVERSION in
   5.3) 
@@ -64,7 +83,6 @@ fi
 #TODO: Check if db is running
 
 #Clone the local Drupal and Drush to the run directory:
-
 if [ -f ${REPODIR}/drupal/.git/config ];
   then 
     echo "Local git repo found on ${REPODIR}/drupal/"
@@ -76,13 +94,6 @@ if [ -f ${REPODIR}/drupal/.git/config ];
     cd ${REPODIR}
     git clone http://git.drupal.org/project/drupal.git drupal
     echo ""
-  #if [ ! -f ${REPODIR}/drush/drush ]; 
-  #  then
-  #  echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
-  #  cd ${REPODIR}
-  #  git clone --branch master https://github.com/drush-ops/drush.git drush; 
-  #  cd drush;  git checkout ${DRUSHCOMMIT} 2>&1 | head -n3
-  #fi
 fi
 
 if [[ $UPDATEREPO = "true" ]]
@@ -92,10 +103,6 @@ if [[ $UPDATEREPO = "true" ]]
     pwd
     git fetch --all
     git pull origin HEAD
-    #cd ${REPODIR}/drush
-    #pwd
-    #git pull origin master
-    #git checkout ${DRUSHCOMMIT} 2>&1 | head -n3
     echo ""
 fi
 
@@ -177,4 +184,5 @@ echo "------------------------------------------------------"
 echo "Tests finished using: ${BUILDSDIR}/${IDENTIFIER}/"
 echo "Make sure to clean up old Builds on ${BUILDSDIR}"
 echo "------------------------------------------------------"
+
 exit 0

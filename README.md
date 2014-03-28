@@ -45,22 +45,22 @@ cd distributed/apachephp/
 sudo ./build.sh 5.4
 ```
 ### 6- Examples:   
-Run all tests using 2 CPUs, 2 patches and 2 modules on D7.26:  
+Run all tests using 6 CPUs, 2 patches and 2 modules on D7.26:  
 ```
 cd distributed/apachephp/
 
 sudo \
 TESTGROUPS="--all" \
-CONCURRENCY="2" \
+CONCURRENCY="6" \
 DRUPALBRANCH="7.26" \
 DEPENDENCIES="flag,payment"  \
 PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag;https://drupal.org/files/issues/payment_2114785_8.patch,sites/all/modules/payment" \
 ./run.sh 
 ```
-Run one test class using 4 CPUs, 1 core patch against D8:   
+Run all tests using 4 CPUs, 1 core patch against D8:   
 ```
 sudo \
-TESTGROUPS="--class UserAdminTest" \
+TESTGROUPS="--all" \
 CONCURRENCY="4" \
 DRUPALBRANCH="8.x" \ PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
