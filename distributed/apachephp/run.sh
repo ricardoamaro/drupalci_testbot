@@ -170,7 +170,7 @@ RUNSCRIPT=\"${RUNSCRIPT}\"
 
 #Let the tests start
 echo "-------------- STARTING DOCKER CONTAINER -------------"
-time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} /bin/bash
+time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION}
 
 echo "------------------------------------------------------"
 echo "Tests finished using: ${BUILDSDIR}/${IDENTIFIER}/"
