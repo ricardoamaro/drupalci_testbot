@@ -41,7 +41,7 @@ if [[ $DBTYPE = "mysql" ]]
     RUNNING=$(sudo docker ps | grep drupaltestbot-db | grep -s 3306)
     set -e
     if [[ $RUNNING = "" ]]
-      then.
+      then
         echo "------------------------------------------------------"
         echo -e "ERROR: There is no Mysql container running..."
         echo -e "Please make sure you built the image and started it."

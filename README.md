@@ -93,6 +93,11 @@ TESTGROUPS="--class NonDefaultBlockAdmin" #TESTS TO RUN eg.--all, --> https://ap
 RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
 ```
 
+### What tests can I run?
+```
+drush eval 'var_dump(simpletest_test_get_all());'
+```
+
 If you need to remove the old web image just run this sequence:
 ```
 sudo docker images | grep "drupal/testbot-web"
