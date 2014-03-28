@@ -74,7 +74,7 @@ And that's it.
 ```
 DRUPALVERSION=""
 DRUPALBRANCH="7"
-IDENTIFIER="BUILD-$(date +%Y_%m_%d_%H%M%S)"
+IDENTIFIER="BUILD_$(date +%Y_%m_%d_%H%M%S)"
 REPODIR="$HOME/testbotdata"
 BUILDSDIR="$REPODIR"
 WORKSPACE="$BUILDSDIR/$IDENTIFIER/"
@@ -83,6 +83,8 @@ PATCH="" # patch_location,apply_dir;patch_location,apply_dir;...
 DBUSER="drupaltestbot" 
 DBPASS="drupaltestbotpw"
 DBTYPE="mysql"
+DBLINK="--link=drupaltestbot-db:db"
+CMD=""
 PHPVERSION="5.4"
 CONCURRENCY="4" #How many cpus to use per run
 
