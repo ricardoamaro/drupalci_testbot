@@ -1,9 +1,8 @@
-##Docker Drupal testbots on your local box!
+## Docker Drupal testbots on your local box!
 
-###Test your Drupal patches locally with docker.
+### Test your Drupal patches locally with docker.
 
-This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal testing, using Linux, Apache, PHP and MySQL/sqlite. 
-To build, make sure you have Docker [installed](http://www.docker.io/gettingstarted/).
+This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal patch testing, using Linux, Apache, PHP and MySQL/sqlite. 
 
 This is part of the core code powering the future version of [Drupal automated-testing](https://drupal.org/automated-testing) infrastructure at http://qa.drupal.org .
 
@@ -17,13 +16,14 @@ f) Choose PHP5.3/5.4/5.5
 g) Test offline.   
 h) It's really really easy!
 
+## Instructions:
 
 ### 1- Install docker:
 ```
 curl get.docker.io | sudo sh -x
 ```
 
-### 2- Clone this repo somewhere, 
+### 2- Clone this repo somewhere in your Linux box
 ```
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles

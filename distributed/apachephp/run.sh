@@ -15,6 +15,7 @@ DBUSER=${DBUSER:-"drupaltestbot"}
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/sqlite
 DBLINK=${DBLINK:-"--link=drupaltestbot-db:db"}
+CMD=${CMD:-""}
 PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
@@ -170,7 +171,7 @@ RUNSCRIPT=\"${RUNSCRIPT}\"
 
 #Let the tests start
 echo "-------------- STARTING DOCKER CONTAINER -------------"
-time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION}
+time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} ${CMD}
 
 echo "------------------------------------------------------"
 echo "Tests finished using: ${BUILDSDIR}/${IDENTIFIER}/"
