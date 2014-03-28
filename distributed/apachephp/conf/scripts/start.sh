@@ -16,8 +16,6 @@ echo "Operation [install]..."
 
 #TODO: OTHER http://drush.ws/#site-install
 cd /var/www/
-#mkdir -p sites/default/files/
-#chown www-data:www-data sites/default/files/
 echo ""
 
 #Get the dependecies

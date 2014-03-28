@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 # Implies there is a "git clone  http://git.drupal.org/project/drupal.git" on /$REPODIR/drupal
-IDENTIFIER=${IDENTIFIER:-"BUILD-$(date +%Y_%m_%d_%H%M%S)"} 
+IDENTIFIER=${IDENTIFIER:-"BUILD_$(date +%Y_%m_%d_%H%M%S)"} 
 DRUPALBRANCH=${DRUPALBRANCH:-"7.26"}
 DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
 UPDATEREPO=${UPDATEREPO:-"false"}
@@ -75,13 +75,13 @@ if [ -f ${REPODIR}/drupal/.git/config ];
     cd ${REPODIR}
     git clone http://git.drupal.org/project/drupal.git drupal
     echo ""
-  if [ ! -f ${REPODIR}/drush/drush ]; 
-    then
-    echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
-    cd ${REPODIR}
-    git clone --branch master https://github.com/drush-ops/drush.git drush; 
-    cd drush;  git checkout ${DRUSHCOMMIT} 2>&1 | head -n3
-  fi
+  #if [ ! -f ${REPODIR}/drush/drush ]; 
+  #  then
+  #  echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
+  #  cd ${REPODIR}
+  #  git clone --branch master https://github.com/drush-ops/drush.git drush; 
+  #  cd drush;  git checkout ${DRUSHCOMMIT} 2>&1 | head -n3
+  #fi
 fi
 
 if [[ $UPDATEREPO = "true" ]]
@@ -89,16 +89,17 @@ if [[ $UPDATEREPO = "true" ]]
     echo "Updating git..."
     cd ${REPODIR}/drupal
     pwd
-    git pull origin
-    cd ${REPODIR}/drush
-    pwd
-    git pull origin master
-    git checkout ${DRUSHCOMMIT} 2>&1 | head -n3
+    git fetch --all
+    git pull origin HEAD
+    #cd ${REPODIR}/drush
+    #pwd
+    #git pull origin master
+    #git checkout ${DRUSHCOMMIT} 2>&1 | head -n3
     echo ""
 fi
 
 #Clone the local repo to the run directory:
-git clone ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
+git clone --single-branch --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
 
 #Change to the branch we would like to test
 if [[ ${DRUPALBRANCH} != "" ]]
