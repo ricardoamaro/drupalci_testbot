@@ -119,6 +119,7 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 
 ## Current Structure:
 ```
+.
 ├── distributed
 │   ├── apachephp
 │   │   ├── build.sh
@@ -145,7 +146,8 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 │           ├── Dockerfile
 │           ├── run-client.sh
 │           ├── run-server.sh
-│           └── startup.sh
+│           ├── startup.sh
+│           └── stop-server.sh
 ├── README.md
 └── supervisord
     ├── build.sh
@@ -155,6 +157,7 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
     ├── php.ini
     ├── run.sh
     └── supervisord.conf
+
 ```
 ###CREDITS:
 jthorson
