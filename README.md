@@ -51,6 +51,29 @@ sudo ./build.sh 5.4
 {USERHOME}/testbotdate/BUILD_{DATE}/test.results 
 and at the live running terminal **
 
+Run all tests, 2 LOCAL patches, using 4 CPUs, against D8:
+```
+cd distributed/apachephp/
+
+sudo \
+TESTGROUPS="--all" \
+CONCURRENCY="4" \
+DRUPALBRANCH="8.x" \ 
+PATCH="/home/userme/tmp/1942178-config-schema-user-28.patch,.;/home/userme/tmp/1942178-config-schema-30.patch,." \
+./run.sh
+```
+Run all tests using 4 CPUs, 1 core patch against D8:   
+```
+cd distributed/apachephp/
+
+sudo \
+TESTGROUPS="--all" \
+CONCURRENCY="4" \
+DRUPALBRANCH="8.x" \ 
+PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
+./run.sh
+```
+
 Run all tests using 6 CPUs, 2 patches and 2 modules on D7.26:  
 ```
 cd distributed/apachephp/
@@ -63,21 +86,7 @@ DEPENDENCIES="flag,payment"  \
 PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag;https://drupal.org/files/issues/payment_2114785_8.patch,sites/all/modules/payment" \
 ./run.sh 
 ```
-Run all tests using 4 CPUs, 1 core patch against D8:   
-```
-sudo \
-TESTGROUPS="--all" \
-CONCURRENCY="4" \
-DRUPALBRANCH="8.x" \ PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
-./run.sh
-```
-Get a list of all avaliable tests to run:
-```
-sudo \
-DRUPALBRANCH="8.x" \
-RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" \
-./run.sh
-```
+
 
 And that's it.
 
@@ -108,13 +117,15 @@ RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost
 
 ### What tests can I run?
 ```
-drush eval 'var_dump(simpletest_test_get_all());'
+sudo \
+DRUPALBRANCH="8.x" \
+RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" \
+./run.sh
 ```
 
 If you need to remove the old web image just run this sequence:
 ```
-sudo docker images | grep "drupal/testbot-web"
-sudo docker rmi {imageID}
+sudo docker images | grep "drupal/testbot-web" | awk '{print $3}' | xargs -n1 -I {} sudo docker rm {}
 ```
 
 ### 7 - Clean Up 
