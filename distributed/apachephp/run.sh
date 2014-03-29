@@ -16,7 +16,6 @@
 # 
 # Docs:         README.md for complete information
 
-
 # Bellow there is a list of variables that you can override:
 
 IDENTIFIER=${IDENTIFIER:-"BUILD_$(date +%Y_%m_%d_%H%M%S)"} 
@@ -103,7 +102,7 @@ fi
 #Clone the local Drupal and Drush to the run directory:
 if [ -f ${REPODIR}/drupal/.git/config ];
   then 
-    echo "Local git repo found on ${REPODIR}/drupal/"
+    echo "Local Drupal repo found on ${REPODIR}/drupal/"
   else
     echo ""
     echo "Making onetime Drupal git clone to: ${REPODIR}/drupal/"
@@ -114,14 +113,31 @@ if [ -f ${REPODIR}/drupal/.git/config ];
     echo ""
 fi
 
+#Clone the local Drupal and Drush to the run directory:
+if [ -f ${REPODIR}/drush/.git/config ];
+  then 
+    echo "Local Drush repo found on ${REPODIR}/drush/"
+  else
+    echo ""
+    echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
+    echo "Press CTRL+c to Cancel"
+    sleep 1 
+    cd ${REPODIR}
+    git clone http://git.drupal.org/project/drush.git drush
+    echo ""
+fi
+
 if [[ $UPDATEREPO = "true" ]]
   then
-    echo "Updating git..."
-    cd ${REPODIR}/drupal
-    pwd
-    git fetch --all
-    git pull origin HEAD
-    echo ""
+    for rp in drupal drush
+      do
+      echo "Updating ${rp} git..."
+      cd ${REPODIR}/${rp}
+      pwd
+      git fetch --all
+      git pull origin HEAD
+      echo ""
+    done
 fi
 
 #Clone the local repo to the run directory:
@@ -145,8 +161,22 @@ if [[ ${DBTYPE} = "sqlite" ]]
     DBLINK=""
 fi
 
-#PATCH=${PATCH:-"patch_url,apply_dir;patch_url,apply_dir;"} 
+#DEPENDENCIES="module1,module2,module3" 
+#Get the dependecies
+if [[ $DEPENDENCIES = "" ]]
+  then
+    echo -e "WARNING: \$DEPENDENCIES has no modules declared...\n"
+  else
+      cd ${BUILDSDIR}/${IDENTIFIER}/
+    for DEP in $(echo "$DEPENDENCIES" | tr "," "\n")
+      do 
+      echo "Project: $DEP"
+      ${REPODIR}/drush/drush -y dl ${DEP}
+    done  
+    echo ""
+fi
 
+#PATCH="patch_url,apply_dir;patch_url,apply_dir;" 
 #Apply Patch if any
 if [[ $PATCH = "" ]]
   then 

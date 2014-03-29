@@ -19,17 +19,17 @@ cd /var/www/
 echo ""
 
 #Get the dependecies
-if [[ $DEPENDENCIES = "" ]]
-  then
-    echo -e "\$DEPENDENCIES has no modules declared...\n"
-  else
-    for DEP in $(echo "$DEPENDENCIES" | tr "," "\n")
-      do 
-      echo "Project: $DEP"
-      ${DRUSH} -y dl ${DEP}
-    done  
-    echo ""
-fi
+#if [[ $DEPENDENCIES = "" ]]
+#  then
+#    echo -e "\$DEPENDENCIES has no modules declared...\n"
+#  else
+#    for DEP in $(echo "$DEPENDENCIES" | tr "," "\n")
+#      do 
+#      echo "Project: $DEP"
+#      ${DRUSH} -y dl ${DEP}
+#    done  
+#    echo ""
+#fi
 
 if [[ $DBTYPE = "sqlite" ]]
   then
