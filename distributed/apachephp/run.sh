@@ -1,6 +1,24 @@
 #!/bin/bash -e
+#
+# Name:         run.sh
+#
+# Purpose:      Start the testbot build runs 
+#
+# Comments:          
+#
+# Usage:        sudo {VARIABLES} ./run.sh
+#
+# Author:       Ricardo Amaro (mail@ricardoamaro.com)
+# Contributors: Jeremy Thorson jthorson
+#           
+# Bugs/Issues:  Use the issue queue on drupal.org
+#               IRC #drupal-infrastructure
+# 
+# Docs:         README.md for complete information
 
-# Implies there is a "git clone  http://git.drupal.org/project/drupal.git" on /$REPODIR/drupal
+
+# Bellow there is a list of variables that you can override:
+
 IDENTIFIER=${IDENTIFIER:-"BUILD_$(date +%Y_%m_%d_%H%M%S)"} 
 DRUPALBRANCH=${DRUPALBRANCH:-"7.26"}
 DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
@@ -14,8 +32,10 @@ PATCH=${PATCH:-""} #comma separated for several
 DBUSER=${DBUSER:-"drupaltestbot"} 
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/sqlite
-DBLINK=${DBLINK:-"--link=drupaltestbot-db:db"}
+DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db"}
+DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
 CMD=${CMD:-""}
+VERBOSE=${VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
@@ -28,9 +48,10 @@ case $DRUPALVERSION in
     ;;
 esac
     
-RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "}
+RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --verbose --xml '/var/workspace/results' ${TESTGROUPS} | tee /var/www/test.results "}
 
 mkdir -p ${BUILDSDIR}/${IDENTIFIER}/
+chmod a+w ${BUILDSDIR}/${IDENTIFIER}/
 mkdir -p ${REPODIR}
 
 
@@ -38,7 +59,7 @@ mkdir -p ${REPODIR}
 if [[ $DBTYPE = "mysql" ]]
   then
     set +e
-    RUNNING=$(sudo docker ps | grep drupaltestbot-db | grep -s 3306)
+    RUNNING=$(sudo docker ps | grep ${DBCONTAINER} | grep -s 3306)
     set -e
     if [[ $RUNNING = "" ]]
       then
@@ -181,7 +202,7 @@ echo "-------------- STARTING DOCKER CONTAINER -------------"
 time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} ${CMD}
 
 echo "------------------------------------------------------"
-echo "Tests finished using: ${BUILDSDIR}/${IDENTIFIER}/"
+echo "Tests results: ${BUILDSDIR}/${IDENTIFIER}/test.results"
 echo "Make sure to clean up old Builds on ${BUILDSDIR}"
 echo "------------------------------------------------------"
 
