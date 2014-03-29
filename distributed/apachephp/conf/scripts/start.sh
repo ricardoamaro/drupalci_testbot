@@ -35,7 +35,7 @@ if [[ $DBTYPE = "sqlite" ]]
   then
     ${DRUSH} si -y --db-url=sqlite://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
   else
-    ${DRUSH} si -y --db-url=mysql://${DBUSER}:${DBPASS}@${DB_PORT_3606_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+    ${DRUSH} si -y --db-url=mysql://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
 fi
 
 ${DRUSH} -y en simpletest

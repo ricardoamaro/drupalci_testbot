@@ -1,7 +1,9 @@
 #!/bin/bash 
 
-STALLED=$(docker ps -a | grep drupaltestbot-db | grep Exit | awk '{print $1}')
-RUNNING=$(docker ps -a | grep drupaltestbot-db | grep 3306)
+TAG="drupaltestbot-mysql"
+NAME="drupaltestbot-db"
+STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
+RUNNING=$(docker ps | grep ${TAG} | grep 3306)
 if [[ $RUNNING != "" ]]
   then 
     echo "Found database container:" 
@@ -14,16 +16,17 @@ if [[ $RUNNING != "" ]]
     umount /tmp/tmp.*;
 fi
   
+set -e 
 TMPDIR=$(mktemp -d)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR || exit
 
-MYSQL_ID=$(docker run -d -p=3306:3606 --name=drupaltestbot-db -v="$TMPDIR":/var/lib/mysql drupaltestbot-mysql)
-PORT=$(docker port $MYSQL_ID 3606 | cut -d":" -f2)
-TAG="drupaltestbot-mysql"
-CONTAINER_ID=$(docker ps | grep $TAG | awk '{print $1}')
+MYSQL_ID=$(docker run -d -p=3306 --name=${NAME} -v="$TMPDIR":/var/lib/mysql ${TAG})
+CONTAINER_ID=$(docker ps | grep ${TAG} | awk '{print $1}')
 
-echo ID : $MYSQL_ID
-echo "##When done : "
-echo "umount $TMPDIR"
+#PORT=$(docker port $MYSQL_ID 3606 | cut -d":" -f2)
+#TAG="drupaltestbot-mysql"
+
+echo "CONTAINER STARTED: $CONTAINER_ID"
+
 docker ps | grep drupaltestbot-mysql
 
