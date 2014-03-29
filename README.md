@@ -44,7 +44,13 @@ sudo ./run-server.sh
 cd distributed/apachephp/
 sudo ./build.sh 5.4
 ```
-### 6- Examples:   
+### 6- RUN EXAMPLES:
+
+** Results will be available at 
+{USERHOME}/testbotdate/BUILD_{DATE}/results 
+{USERHOME}/testbotdate/BUILD_{DATE}/test.results 
+and at the live running terminal **
+
 Run all tests using 6 CPUs, 2 patches and 2 modules on D7.26:  
 ```
 cd distributed/apachephp/
@@ -111,7 +117,14 @@ sudo docker images | grep "drupal/testbot-web"
 sudo docker rmi {imageID}
 ```
 
-### Clean up all 
+### 7 - Clean Up 
+
+a) Results will be saved at: 
+{USERHOME}/testbotdata/BUILD_{DATE}/results 
+{USERHOME}/testbotdata/BUILD_{DATE}/test.results 
+so you can delete testbotdata/BUILD_{DATE} after you collect your information
+
+b) Docker generates several runs: 
 While i am developing i use this to rm all old instances
 ```
 sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
