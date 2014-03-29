@@ -65,6 +65,13 @@ CONCURRENCY="4" \
 DRUPALBRANCH="8.x" \ PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
 ```
+Get a list of all avaliable tests to run:
+```
+sudo \
+DRUPALBRANCH="8.x" \
+RUNSCRIPT="/usr/bin/php ./scripts/run-tests.sh --list" \
+./run.sh
+```
 
 And that's it.
 
