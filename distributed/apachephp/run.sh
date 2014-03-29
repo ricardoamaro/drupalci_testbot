@@ -50,10 +50,7 @@ esac
     
 RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --verbose --xml '/var/workspace/results' ${TESTGROUPS} | tee /var/www/test.results "}
 
-mkdir -p ${BUILDSDIR}/${IDENTIFIER}/
-chmod a+w ${BUILDSDIR}/${IDENTIFIER}/
 mkdir -p ${REPODIR}
-
 
 # If we are using mysql make sure the conatiner is there
 if [[ $DBTYPE = "mysql" ]]
@@ -129,6 +126,11 @@ fi
 
 #Clone the local repo to the run directory:
 git clone --single-branch --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
+
+# Make it writable for artifacts
+mkdir -p  ${BUILDSDIR}/${IDENTIFIER}/results
+chmod a+w ${BUILDSDIR}/${IDENTIFIER}/results 
+chmod a+w ${BUILDSDIR}/${IDENTIFIER}/ 
 
 #Change to the branch we would like to test
 if [[ ${DRUPALBRANCH} != "" ]]
