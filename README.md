@@ -51,15 +51,15 @@ sudo ./build.sh 5.4
 {USERHOME}/testbotdate/BUILD_{DATE}/test.results 
 and at the live running terminal **
 
-Run all tests, 2 LOCAL patches, using 4 CPUs, against D8:
+Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 ```
 cd distributed/apachephp/
 
 sudo \
-TESTGROUPS="--all" \
-CONCURRENCY="4" \
+TESTGROUPS="Action,Node" 
+\CURRENCY="4" \
 DRUPALBRANCH="8.x" \ 
-PATCH="/home/userme/tmp/1942178-config-schema-user-28.patch,.;/home/userme/tmp/1942178-config-schema-30.patch,." \
+PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
 ./run.sh
 ```
 Run all tests using 4 CPUs, 1 core patch against D8:   

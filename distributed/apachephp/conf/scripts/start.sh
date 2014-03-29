@@ -44,3 +44,6 @@ ${DRUSH} -y en simpletest
 echo ""
 echo "Operation [run tests]..."
 sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT}"
+
+#No ugly xml please:
+#for i in $(ls results/* ); do sudo tidy -xml -m -i -q "$i"; done

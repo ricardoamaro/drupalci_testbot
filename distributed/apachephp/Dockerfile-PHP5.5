@@ -13,7 +13,7 @@ RUN gpg -a --export 89DF5277 | apt-key add -
 
 # Packages.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sqlite3 mysql-client apache2 php5 curl drush git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php-pear pwgen sudo python-setuptools nano apt-utils 
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sqlite3 mysql-client apache2 php5 curl drush git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php-pear pwgen sudo python-setuptools nano apt-utils tidy
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
 #RUN pecl install apc

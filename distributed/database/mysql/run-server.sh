@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-TAG="drupaltestbot-mysql"
+TAG="drupal/testbot-mysql"
 NAME="drupaltestbot-db"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306)
@@ -24,9 +24,9 @@ MYSQL_ID=$(docker run -d -p=3306 --name=${NAME} -v="$TMPDIR":/var/lib/mysql ${TA
 CONTAINER_ID=$(docker ps | grep ${TAG} | awk '{print $1}')
 
 #PORT=$(docker port $MYSQL_ID 3606 | cut -d":" -f2)
-#TAG="drupaltestbot-mysql"
+#TAG="drupal/testbot-mysql"
 
 echo "CONTAINER STARTED: $CONTAINER_ID"
 
-docker ps | grep drupaltestbot-mysql
+docker ps | grep "drupal/testbot-mysql"
 

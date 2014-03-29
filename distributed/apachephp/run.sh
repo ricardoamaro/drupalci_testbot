@@ -15,7 +15,7 @@
 #               IRC #drupal-infrastructure
 # 
 # Docs:         README.md for complete information
-
+#
 # Bellow there is a list of variables that you can override:
 
 IDENTIFIER=${IDENTIFIER:-"BUILD_$(date +%Y_%m_%d_%H%M%S)"} 
@@ -59,12 +59,12 @@ if [[ $DBTYPE = "mysql" ]]
     set -e
     if [[ $RUNNING = "" ]]
       then
-        echo "------------------------------------------------------"
+        echo "--------------------------------------------------------------------------------"
         echo -e "ERROR: There is no Mysql container running..."
         echo -e "Please make sure you built the image and started it."
         echo -e "cd distributed/database/mysql \nsudo ./build.sh \nsudo ./run-server.sh \n"
         echo -e "Also please make sure port 3606 is not being used \nand mysql is stopped on the host."
-        echo "------------------------------------------------------"
+        echo "--------------------------------------------------------------------------------"
         exit 1
     fi
 fi
@@ -85,15 +85,15 @@ esac
 #Check if the web container is built
 if $(docker images | grep -q testbot-web${PHPVERSION});
   then
-  echo "------------------------------------------------------"
+  echo "--------------------------------------------------------------------------------"
   echo "Container: testbot-web${PHPVERSION} available"
   echo "Running PHP${PHPVERSION}/${DBTYPE} on drupal/testbot-web${PHPVERSION}"
-  echo "------------------------------------------------------"
+  echo "--------------------------------------------------------------------------------"
   else
-  echo "------------------------------------------------------"
+  echo "--------------------------------------------------------------------------------"
   echo "ERROR. Image testbot-web${PHPVERSION} needs to be built with:" 
   echo "sudo ./build ${PHPVERSION}"
-  echo "------------------------------------------------------"
+  echo "--------------------------------------------------------------------------------"
   exit 1
 fi
 
@@ -210,11 +210,10 @@ if [[ $PATCH = "" ]]
 fi
 
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
-echo "
-IDENTIFIER=\"${IDENTIFIER}\"
+echo "IDENTIFIER=\"${IDENTIFIER}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"
 DRUPALVERSION=\"${DRUPALVERSION}\"
-UPDATEREPO=${UPDATEREPO:-"false"}
+UPDATEREPO=${UPDATEREPO:-\"false\"}
 REPODIR=\"${REPODIR}\"
 BUILDSDIR=\"${BUILDSDIR}\"
 WORKSPACE=\"${WORKSPACE}\"
@@ -230,12 +229,12 @@ RUNSCRIPT=\"${RUNSCRIPT}\"
 " | tee ${BUILDSDIR}/${IDENTIFIER}/test.info
 
 #Let the tests start
-echo "-------------- STARTING DOCKER CONTAINER -------------"
+echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
 time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} ${CMD}
 
-echo "------------------------------------------------------"
+echo "--------------------------------------------------------------------------------"
 echo "Tests results: ${BUILDSDIR}/${IDENTIFIER}/test.results"
 echo "Make sure to clean up old Builds on ${BUILDSDIR}"
-echo "------------------------------------------------------"
+echo "--------------------------------------------------------------------------------"
 
 exit 0

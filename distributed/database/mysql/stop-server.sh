@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-TAG="drupaltestbot-mysql"
+TAG="drupal/testbot-mysql"
 NAME="drupaltestbot-db"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306 | awk '{print $1}')
