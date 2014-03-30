@@ -11,7 +11,7 @@ fi
 #add usage help if no arg
 if [ "$1" = "" ]
   then
-  echo -e " Usage:\t\t\e[38;5;148msudo ./rebuild <cleanup>/<update>/<refresh> \e[39m "
+  echo -e " Usage:\t\t\e[38;5;148msudo ./build <cleanup>/<update>/<refresh> \e[39m "
   echo 
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
   echo 
@@ -47,6 +47,6 @@ else
 fi
 
 
-echo "Images rebuilt."
+echo "Images (re)built."
 echo 'Try: sudo TESTGROUPS="User" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
 

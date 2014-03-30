@@ -216,6 +216,8 @@ if [[ $PATCH = "" ]]
     done 
 fi
 
+
+echo "------------------------- ENVIRONMENT VARIABLES IN USE -------------------------"
 #Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
 echo "IDENTIFIER=\"${IDENTIFIER}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"
