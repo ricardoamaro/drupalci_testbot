@@ -8,8 +8,8 @@ if [ `whoami` != root ]; then
     exit 1
 fi
 
-#add usage help if no arg
-if [ "$1" = "" ]
+#print usage help if no arg, -h, --help
+if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   then
   echo -e " Usage:\t\t\e[38;5;148msudo ./build <cleanup>/<update>/<refresh> \e[39m "
   echo 
@@ -20,7 +20,7 @@ if [ "$1" = "" ]
   echo -e "\t\trefresh : Just refresh the containers with any new change. "
   echo 
   echo -e "\t\tNote: if you are offline use 'refresh', in order to keep cached data. "
-  exit 1
+  exit 0
 fi
 
 if [ "$1" = "cleanup" ];

@@ -16,6 +16,53 @@
 # 
 # Docs:         README.md for complete information
 #
+
+#print usage help if -h, --help
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]
+  then
+  echo -e "\n"
+  echo -e "Usage:\t\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
+  echo -e "Purpose:\tRun the testbot containers and do tests."
+  echo 
+  echo "....................... VARIABLES .........................."
+  echo -e "
+PATCH:         Local or remote Patches to be applied. 
+               Format: patch_location,apply_dir;patch_location,apply_dir;...
+DEPENDENCIES:  Contrib projects to be downloaded & patched. 
+               Format: module1,module2,module2...
+DRUPALBRANCH:  Default is '7.26' 
+DRUPALVERSION: Default is '7' 
+TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
+               A list is available at the root of this project.
+VERBOSE:       Default is 'false' 
+DBTYPE:        Default is 'mysql' from either mysql/sqlite
+CMD:           Default is none. Normally use '/bin/bash' to debug the container 
+UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false' 
+IDENTIFIER:    Automated Build Identifier. 
+REPODIR:       Default is 'HOME/testbotdata'  
+DRUPALREPO:    Default is 'http://git.drupal.org/project/drupal.git' 
+DRUSHREPO:     Default is 'https://github.com/drush-ops/drush.git' 
+BUILDSDIR:     Default is  equal to REPODIR 
+WORKSPACE:     Default is 'HOME/testbotdata/IDENTIFIER/' 
+DBUSER:        Default is 'drupaltestbot'  
+DBPASS:        Default is 'drupaltestbotpw' 
+DBCONTAINER:   Default is 'drupaltestbot-db' 
+PHPVERSION:    Default is '5.4' 
+CONCURRENCY:   Default is '4'  #How many cpus to use per run
+RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  CONCURRENCY  --verbose --xml '/var/workspace/results'  TESTGROUPS  | tee /var/www/test.results ' "
+echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
+echo -e "
+Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
+.....................................................................
+sudo TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.x\"  PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
+
+Run all tests using 4 CPUs, 1 core patch against D8:   
+.....................................................................
+sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.x\" PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
+"
+  exit 0
+fi
+
 # Bellow there is a list of variables that you can override:
 
 IDENTIFIER=${IDENTIFIER:-"BUILD_$(date +%Y_%m_%d_%H%M%S)"} 
