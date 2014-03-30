@@ -1,5 +1,11 @@
 #!/bin/bash 
 
+# Check if we have root powers
+if [ `whoami` != root ]; then
+    echo "Please run this script as root or using sudo"
+    exit 1
+fi
+
 TAG="drupal/testbot-mysql"
 NAME="drupaltestbot-db"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')

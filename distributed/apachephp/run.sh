@@ -23,6 +23,8 @@ DRUPALBRANCH=${DRUPALBRANCH:-"7.26"}
 DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
 UPDATEREPO=${UPDATEREPO:-"false"}
 REPODIR=${REPODIR:-"$HOME/testbotdata"} 
+DRUPALREPO=${DRUPALREPO:-"http://git.drupal.org/project/drupal.git"}
+DRUSHREPO=${DRUSHREPO:-"https://github.com/drush-ops/drush.git"}
 DRUSHCOMMIT=${DRUSHCOMMIT:-"master"}
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
 WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$IDENTIFIER/"}
@@ -48,6 +50,12 @@ case $DRUPALVERSION in
 esac
     
 RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --verbose --xml '/var/workspace/results' ${TESTGROUPS} | tee /var/www/test.results "}
+
+# Check if we have root powers
+if [ `whoami` != root ]; then
+    echo "Please run this script as root or using sudo"
+    exit 1
+fi
 
 mkdir -p ${REPODIR}
 
@@ -109,7 +117,7 @@ if [ -f ${REPODIR}/drupal/.git/config ];
     echo "Press CTRL+c to Cancel"
     sleep 1 #+INFO: https://drupal.org/project/drupal/git-instructions
     cd ${REPODIR}
-    git clone http://git.drupal.org/project/drupal.git drupal
+    git clone ${DRUPALREPO} drupal
     echo ""
 fi
 
@@ -123,7 +131,7 @@ if [ -f ${REPODIR}/drush/.git/config ];
     echo "Press CTRL+c to Cancel"
     sleep 1 
     cd ${REPODIR}
-    git clone http://git.drupal.org/project/drush.git drush
+    git clone ${DRUSHREPO} drush
     echo ""
 fi
 
