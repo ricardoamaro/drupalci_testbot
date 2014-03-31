@@ -1,4 +1,21 @@
 #!/bin/bash -e
+#
+# Name:         build_all.sh
+#
+# Purpose:      Quickly build/update/refresh of all docker images 
+#
+# Comments:          
+#
+# Usage:        sudo ./build_all.sh <cleanup>/<update>/<refresh>
+#
+# Author:       Ricardo Amaro (mail@ricardoamaro.com)
+# Contributors: Jeremy Thorson jthorson
+#           
+# Bugs/Issues:  Use the issue queue on drupal.org
+#               IRC #drupal-infrastructure
+# 
+# Docs:         README.md for complete information
+#
 
 REPODIR=${REPODIR:-"$HOME/testbotdata"}
 
@@ -8,12 +25,11 @@ if [ `whoami` != root ]; then
     exit 1
 fi
 
-curl get.docker.io | sudo sh -x
-
 #print usage help if no arg, -h, --help
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   then
-  echo -e " Usage:\t\t\e[38;5;148msudo ./build <cleanup>/<update>/<refresh> \e[39m "
+  echo 
+  echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> \e[39m "
   echo 
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
   echo 
@@ -22,20 +38,37 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   echo -e "\t\trefresh : Just refresh the containers with any new change. "
   echo 
   echo -e "\t\tNote: if you are offline use 'refresh', in order to keep cached data. "
+  echo
   exit 0
 fi
 
+# Install Docker
+echo
+echo "Installing Docker from get.docker.io"
+echo "------------------------------------"
+echo 
+curl get.docker.io | sudo sh -x
+
+# Clean all images per request
 if [ "$1" = "cleanup" ];
   then 
   set +e
+  echo
+  echo "stop and remove testbot containers and images"
+  echo "---------------------------------------------"
+  echo
   docker ps | grep drupal | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
   docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
-  docker images | egrep -v "debian|ubuntu|busybox" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} sudo docker rmi {}
+  docker images | egrep "testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} sudo docker rmi {}
   rm -rf ${REPODIR}
   set -e 
 fi
 
-
+# Build and start containers
+echo
+echo "Build and start web/mysql containers"
+echo "------------------------------------"
+echo
 cd ./distributed/database/mysql
 ./stop-server.sh
 ./build.sh
@@ -44,13 +77,13 @@ cd ./distributed/database/mysql
 cd ../../apachephp/
 ./build.sh
 
+# Do a test run to collect test list and update repos 
 if [ "$1" != "refresh" ];
   then
   UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
 else
   DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
 fi
-
 
 echo "Images (re)built."
 echo 'Try: sudo TESTGROUPS="User" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'

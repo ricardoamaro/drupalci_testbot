@@ -15,8 +15,23 @@ e) Choose mysql, sqlite (more comming soon)
 f) Choose PHP5.3/5.4/5.5  
 g) Test offline.   
 h) It's really really easy!
+    
+    
+    
+## Quick Instructions (for the impatient):
 
-## Instructions:
+### (re)Build all and start containers: 
+```
+git clone {thisrepo}
+cd modernizing_testbot__dockerfiles
+sudo ./build_all.sh cleanup
+sudo TESTGROUPS="User" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh
+```
+See more examples bellow on: "6- RUN EXAMPLES"   
+    
+    
+    
+## Full Instructions:
 
 ### 1- Install docker:
 ```
