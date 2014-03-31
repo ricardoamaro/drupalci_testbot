@@ -25,10 +25,12 @@ fi
 
 if [ "$1" = "cleanup" ];
   then 
-  for IMAGE in drupal/testbot-mysql drupal/testbot-web ; do
-  docker images | grep "${IMAGE}" | awk '{print $3}' | xargs -n1 -I {} sudo docker rm {}
-  done
+  set +e
+  docker ps | grep drupal | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
+  docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
+  docker images | egrep -v "debian|ubuntu|busybox" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} sudo docker rmi {}
   rm -rf ${REPODIR}
+  set -e 
 fi
 
 
