@@ -19,12 +19,6 @@
 
 REPODIR=${REPODIR:-"$HOME/testbotdata"}
 
-# Check if we have root powers
-if [ `whoami` != root ]; then
-    echo "Please run this script as root or using sudo"
-    exit 1
-fi
-
 #print usage help if no arg, -h, --help
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   then
@@ -37,10 +31,19 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   echo -e "\t\tupdate  : Update all repos and containers." 
   echo -e "\t\trefresh : Just refresh the containers with any new change. "
   echo 
-  echo -e "\t\tNote: This needs if you are offline use 'refresh', in order to keep cached data. "
+  echo -e "\t\tNote: If you are offline use 'refresh', in order to keep cached data. "
   echo
   exit 0
 fi
+
+# Check if we have root powers
+if [ `whoami` != root ]; then
+    echo "Please run this script as root or using sudo"
+    exit 1
+fi
+
+# Make sure we pull the lastest version 
+set +e; git pull ; set -e
 
 # Install Docker
 echo
