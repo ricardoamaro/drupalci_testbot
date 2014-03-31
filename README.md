@@ -25,6 +25,7 @@ h) It's really really easy!
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles
 sudo ./build_all.sh cleanup
+```
 
 ### Run tests:
 ```
