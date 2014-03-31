@@ -37,7 +37,7 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   echo -e "\t\tupdate  : Update all repos and containers." 
   echo -e "\t\trefresh : Just refresh the containers with any new change. "
   echo 
-  echo -e "\t\tNote: if you are offline use 'refresh', in order to keep cached data. "
+  echo -e "\t\tNote: This needs if you are offline use 'refresh', in order to keep cached data. "
   echo
   exit 0
 fi
@@ -47,7 +47,7 @@ echo
 echo "Installing Docker from get.docker.io"
 echo "------------------------------------"
 echo 
-curl get.docker.io | sudo sh -x
+curl -s get.docker.io | sudo sh 2>&1 | egrep -i -v "Ctrl|docker installed"
 
 # Clean all images per request
 if [ "$1" = "cleanup" ];
