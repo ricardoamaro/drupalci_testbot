@@ -20,11 +20,14 @@ h) It's really really easy!
     
 ## Quick Instructions (for the impatient):
 
-### (re)Build all and start containers: 
+### (re)Build all and start containers (only once): 
 ```
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles
 sudo ./build_all.sh cleanup
+
+### Run tests:
+```
 sudo TESTGROUPS="User" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh
 ```
 See more examples bellow on: "6- RUN EXAMPLES"   
@@ -61,10 +64,10 @@ sudo ./build.sh 5.4
 ```
 ### 6- RUN EXAMPLES:
 
-** Results will be available at 
-{USERHOME}/testbotdate/BUILD_{DATE}/results 
-{USERHOME}/testbotdate/BUILD_{DATE}/test.results 
-and at the live running terminal **
+**Results will be available at:**  
+**{USERHOME}/testbotdata/BUILD_{DATE}/results**  
+**{USERHOME}/testbotdata/BUILD_{DATE}/test.results**     
+**and at the live running terminal**
 
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 ```
@@ -146,8 +149,8 @@ sudo docker images | grep "drupal/testbot-web" | awk '{print $3}' | xargs -n1 -I
 ### 7 - Clean Up 
 
 a) Results will be saved at: 
-{USERHOME}/testbotdata/BUILD_{DATE}/results 
-{USERHOME}/testbotdata/BUILD_{DATE}/test.results 
+**{USERHOME}/testbotdata/BUILD_{DATE}/results** 
+**{USERHOME}/testbotdata/BUILD_{DATE}/test.results**  
 so you can delete testbotdata/BUILD_{DATE} after you collect your information
 
 b) Docker generates several runs: 
