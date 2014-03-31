@@ -8,6 +8,8 @@ if [ `whoami` != root ]; then
     exit 1
 fi
 
+curl get.docker.io | sudo sh -x
+
 #print usage help if no arg, -h, --help
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   then
@@ -37,6 +39,7 @@ fi
 cd ./distributed/database/mysql
 ./stop-server.sh
 ./build.sh
+./run-server.sh
 
 cd ../../apachephp/
 ./build.sh
