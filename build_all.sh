@@ -18,6 +18,7 @@
 #
 
 REPODIR=${REPODIR:-"$HOME/testbotdata"}
+PWD="$(pwd)"
 
 #print usage help if no arg, -h, --help
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
@@ -42,8 +43,8 @@ if [ `whoami` != root ]; then
     exit 1
 fi
 
-# Make sure we pull the lastest version 
-set +e; git pull ; set -e
+# Make sure we are at the root 
+cd ${PWD}
 
 # Install Docker
 echo
