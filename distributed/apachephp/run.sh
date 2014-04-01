@@ -201,8 +201,13 @@ if [[ $UPDATEREPO = "true" ]]
     done
 fi
 
+#Check our git version and make it compatible with < 1.8
+gitver=$(git --version | awk '{print $3}')
+gitlast=$(echo -e "$gitver\n1.8.0.0" | sort -nr | head -n1)
+[ "$gitlast" = "$gitver" ] && SB="--single-branch" || SB=""
+
 #Clone the local repo to the run directory:
-git clone --single-branch --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
+git clone ${SB} --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
 
 # Make it writable for artifacts
 mkdir -p  ${BUILDSDIR}/${IDENTIFIER}/results
