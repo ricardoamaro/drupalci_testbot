@@ -94,8 +94,15 @@ case $DRUPALVERSION in
   *) RUNNER="./scripts/run-tests.sh"
     ;;
 esac
+
+case $VERBOSE in
+  true) VERBO="--verbose"
+    ;;
+  *) VERBO=""
+    ;;
+esac
     
-RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --verbose --xml '/var/workspace/results' ${TESTGROUPS} | tee /var/www/test.results "}
+RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} ${VERBO} --xml '/var/workspace/results' ${TESTGROUPS} | tee /var/www/test.results "}
 
 # Check if we have root powers
 if [ `whoami` != root ]; then
