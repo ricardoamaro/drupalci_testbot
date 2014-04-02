@@ -25,6 +25,7 @@ if [ -f /home/vagrant/modernizing_testbot__dockerfiles/.git/config ];
 then
 	echo "You seem to have this box installed"
 	echo "I'll just give you a shell..."
+	swapon /var/swapfile
 	cd /home/vagrant
 	cd modernizing_testbot__dockerfiles
 	git pull
@@ -32,8 +33,11 @@ then
 else 
 	echo "Installing and building the all thing..."
 	echo "on: $(hostname) with user: $(whoami) home: $HOME"
+	dd if=/dev/zero of=/var/swapfile bs=1M count=2048
+	mkswap /var/swapfile
+	swapon /var/swapfile
 	apt-get update
-	apt-get install -y git mc ssh gawk grep sudo 
+	apt-get install -y git mc ssh gawk grep sudo htop
 	cd /home/vagrant
 	git clone https://github.com/ricardoamaro/modernizing_testbot__dockerfiles.git
 	cd modernizing_testbot__dockerfiles
