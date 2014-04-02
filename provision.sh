@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 #
 # Name:         provision.sh
 #
@@ -38,7 +38,7 @@ else
 	mkswap /var/swapfile
 	swapon /var/swapfile
 	apt-get update
-	apt-get install -y git mc ssh gawk grep sudo htop
+	apt-get install -y git mc ssh gawk grep sudo htop mysql-client
 	apt-get autoclean
 	cd /home/vagrant
 	git clone https://github.com/ricardoamaro/modernizing_testbot__dockerfiles.git
