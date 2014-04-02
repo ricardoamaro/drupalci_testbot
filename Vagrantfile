@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   config.vm.define "testbot" do |testbot|
       testbot.vm.provider "virtualbox" do |v|
-        v.customize [ "modifyvm", :id, "--cpus", "2" ]
+        v.customize [ "modifyvm", :id, "--cpus", "4" ]
         v.customize [ "modifyvm", :id, "--memory", "640" ]
 	  end
   end
