@@ -27,7 +27,10 @@ cd modernizing_testbot__dockerfiles
 sudo ./build_all.sh cleanup
 ```
 
-## Quick MAC instructions:
+## Quick Vagrant MAC/Windows instructions:
+This will not run natively since it's a Virtualbox VM
+and you need to install Vagrant.
+
 ```
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles
@@ -35,9 +38,9 @@ vagrant up
 
 ```    
 
-### Run tests:
+### Run some group tests:
 ```
-sudo TESTGROUPS="User" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh
+sudo TESTGROUPS="Action,Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh
 ```
 See more examples bellow on: "6- RUN EXAMPLES"   
 

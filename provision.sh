@@ -19,7 +19,7 @@
 
 export HOME="/home/vagrant"
 
-env
+#env
 
 if [ -f /home/vagrant/modernizing_testbot__dockerfiles/.git/config ];
 then
