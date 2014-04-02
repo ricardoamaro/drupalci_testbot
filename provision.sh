@@ -17,6 +17,9 @@
 # Docs:         README.md for complete information
 #
 
+export HOME="/home/vagrant"
+
+env
 
 if [ -f /home/vagrant/modernizing_testbot__dockerfiles/.git/config ];
 then
@@ -28,7 +31,7 @@ then
 	./build_all.sh update
 else 
 	echo "Installing and building the all thing..."
-	echo "on: $(hostname) with user: $(whoami)"
+	echo "on: $(hostname) with user: $(whoami) home: $HOME"
 	apt-get update
 	apt-get install -y git mc ssh gawk grep sudo 
 	cd /home/vagrant
@@ -43,4 +46,4 @@ echo
 echo "To access the box and run tests, do:"
 echo "vagrant ssh"
 echo "cd modernizing_testbot__dockerfiles"
-echo 'Example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/inthebox/to/your.patch,." ./run.sh'
+#echo 'Example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/inthebox/to/your.patch,." ./run.sh'
