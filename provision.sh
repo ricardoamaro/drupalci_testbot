@@ -38,6 +38,7 @@ else
 	swapon /var/swapfile
 	apt-get update
 	apt-get install -y git mc ssh gawk grep sudo htop
+	apt-get autoclean
 	cd /home/vagrant
 	git clone https://github.com/ricardoamaro/modernizing_testbot__dockerfiles.git
 	cd modernizing_testbot__dockerfiles
