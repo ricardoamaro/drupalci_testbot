@@ -56,9 +56,9 @@ Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 cd distributed/apachephp/
 
 sudo \
-TESTGROUPS="Action,Node" 
-\CURRENCY="4" \
-DRUPALBRANCH="8.x" \ 
+TESTGROUPS="Action,Node" \
+CONCURRENCY="4" \
+DRUPALBRANCH="8.x" \
 PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
 ./run.sh
 ```
