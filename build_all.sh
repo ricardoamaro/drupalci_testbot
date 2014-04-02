@@ -51,7 +51,7 @@ echo
 echo "Installing Docker from get.docker.io"
 echo "------------------------------------"
 echo 
-curl -s get.docker.io | sudo sh 2>&1 | egrep -i -v "Ctrl|docker installed"
+curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
 
 # Clean all images per request
 if [ "$1" = "cleanup" ];
@@ -91,5 +91,5 @@ else
 fi
 
 echo "Images (re)built."
-echo 'Try: sudo TESTGROUPS="User" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
+echo 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
 

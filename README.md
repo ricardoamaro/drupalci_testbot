@@ -18,7 +18,7 @@ h) It's really really easy!
     
     
     
-## Quick Instructions (for the impatient):
+## Quick Linux Instructions (for the impatient):
 
 ### (re)Build all and start containers (only once): 
 ```
@@ -27,12 +27,20 @@ cd modernizing_testbot__dockerfiles
 sudo ./build_all.sh cleanup
 ```
 
+## Quick MAC instructions:
+```
+git clone {thisrepo}
+cd modernizing_testbot__dockerfiles
+vagrant up
+
+```    
+
 ### Run tests:
 ```
 sudo TESTGROUPS="User" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh
 ```
 See more examples bellow on: "6- RUN EXAMPLES"   
-    
+
     
     
 ## Full Instructions:
