@@ -306,6 +306,8 @@ RUNSCRIPT=\"${RUNSCRIPT}\"
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
 /usr/bin/time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} ${CMD}
 
+echo $?
+
 echo "--------------------------------------------------------------------------------"
 echo "Tests results: ${BUILDSDIR}/${IDENTIFIER}/test.results"
 echo "Make sure to clean up old Builds on ${BUILDSDIR}"
