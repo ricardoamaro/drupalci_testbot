@@ -71,14 +71,17 @@ fi
 
 # Build and start containers
 echo
-echo "Build and start web/mysql containers"
+echo "Build and start mysql container"
 echo "------------------------------------"
 echo
 cd ./distributed/database/mysql
 ./stop-server.sh
 ./build.sh
 ./run-server.sh
-
+echo 
+echo "Make sure we Build web containers"
+echo "------------------------------------"
+echo
 cd ../../apachephp/
 ./build.sh
 

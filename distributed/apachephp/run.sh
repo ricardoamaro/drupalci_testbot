@@ -122,8 +122,8 @@ if [[ $DBTYPE = "mysql" ]]
       then
         echo "--------------------------------------------------------------------------------"
         echo -e "ERROR: There is no Mysql container running..."
-        echo -e "Please make sure you built the image and started it."
-        echo -e "cd distributed/database/mysql \nsudo ./build.sh \nsudo ./run-server.sh \n"
+        echo -e "Please make sure you built the image and started it:"
+        echo -e "sudo ./build_all.sh refresh \n"
         echo -e "Also please make sure port 3606 is not being used \nand mysql is stopped on the host."
         echo "--------------------------------------------------------------------------------"
         exit 1

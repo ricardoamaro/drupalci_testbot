@@ -6,6 +6,7 @@ if [ `whoami` != root ]; then
     exit 1
 fi
 
+set +e 
 TAG="drupal/testbot-mysql"
 NAME="drupaltestbot-db"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
