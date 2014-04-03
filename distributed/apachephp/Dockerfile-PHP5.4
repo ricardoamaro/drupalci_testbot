@@ -12,11 +12,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sqlite3 mysql-client apach
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
 
-# Apache / PHP.
-ADD ./conf/apache2/vhost.conf /etc/apache2/sites-available/default
-ADD ./conf/php5/apache2.ini /etc/php5/apache2/php.ini
-ADD ./conf/php5/cli.ini /etc/php5/cli/php.ini
-ADD ./conf/php5/apc.ini /etc/php5/conf.d/apc.ini
+# whitelist = phar
 RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin.ini
 
 # Composer.
@@ -30,10 +26,6 @@ RUN /.composer/vendor/drush/drush/drush --version
 # Enable a2enmod rewrite
 RUN a2enmod rewrite 
 
-# Scripts.
-ADD ./conf/scripts/start.sh /start.sh
-ADD ./conf/scripts/foreground.sh /etc/apache2/foreground.sh
-
 # Supervisord.
 RUN easy_install supervisor
 ADD ./conf/supervisor/supervisord.conf /etc/supervisord.conf
@@ -43,9 +35,19 @@ RUN mkdir /var/log/supervisor/
 RUN echo %sudo	ALL=NOPASSWD: ALL >> /etc/sudoers
 RUN mkdir /var/run/sshd
 
+# Scripts.
+ADD ./conf/scripts/start.sh /start.sh
+ADD ./conf/scripts/foreground.sh /etc/apache2/foreground.sh
+
 # Apache.
 RUN rm -rf /var/www/
 RUN chmod 755 /etc/apache2/foreground.sh
+
+# Apache / PHP.
+ADD ./conf/apache2/vhost.conf /etc/apache2/sites-available/default
+ADD ./conf/php5/apache2.ini /etc/php5/apache2/php.ini
+ADD ./conf/php5/cli.ini /etc/php5/cli/php.ini
+ADD ./conf/php5/apc.ini /etc/php5/conf.d/apc.ini
 
 EXPOSE 80
 
