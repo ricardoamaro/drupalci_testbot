@@ -35,10 +35,12 @@ else
 	echo "Installing and building the all thing..."
 	echo "on: $(hostname) with user: $(whoami) home: $HOME"
 	dd if=/dev/zero of=/var/swapfile bs=1M count=2048
+	chmod 600 /var/swapfile
 	mkswap /var/swapfile
 	swapon /var/swapfile
+	/bin/echo "/var/swapfile swap swap defaults 0 0" >>/etc/fstab
 	apt-get update
-	apt-get install -y git mc ssh gawk grep sudo htop mysql-client
+	apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli
 	apt-get autoclean
 	cd /home/vagrant
 	git clone https://github.com/ricardoamaro/modernizing_testbot__dockerfiles.git
@@ -46,7 +48,7 @@ else
 	./build_all.sh cleanup
 fi 
 
-chown -fR vagrant:vagrant /home/vagrant >/dev/null
+chown -fR vagrant:vagrant /home/vagrant 
 echo "Box started, run vagrant halt to stop."
 echo 
 echo "To access the box and run tests, do:"
