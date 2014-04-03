@@ -47,16 +47,24 @@ fi
 cd ${PWD}
 
 # Install Docker
-echo
-echo "Installing Docker from get.docker.io"
-echo "------------------------------------"
-echo 
-curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
+set +e 
+if ( ! docker ps >/dev/null);
+    then 
+    echo
+    echo "Installing Docker from get.docker.io"
+    echo "------------------------------------"
+    echo 
+    curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
+    else 
+    echo
+    echo "Docker found running:"
+    echo "------------------------------------"
+    docker version
+fi
 
 # Clean all images per request
 if [ "$1" = "cleanup" ];
   then 
-  set +e
   echo
   echo "stop and remove testbot containers and images"
   echo "---------------------------------------------"
@@ -65,9 +73,9 @@ if [ "$1" = "cleanup" ];
   docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
   docker images | egrep "testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} sudo docker rmi {}
   rm -rf ${REPODIR}
-  umount /tmp/tmp.*;
-  set -e 
+  umount /tmp/tmp.* || /bin/true
 fi
+set -e
 
 # Build and start containers
 echo
@@ -78,6 +86,7 @@ cd ./distributed/database/mysql
 ./stop-server.sh
 ./build.sh
 ./run-server.sh
+
 echo 
 echo "Make sure we Build web containers"
 echo "------------------------------------"

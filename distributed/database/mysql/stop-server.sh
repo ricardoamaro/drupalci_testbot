@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 # Check if we have root powers
 if [ `whoami` != root ]; then
@@ -20,5 +20,11 @@ if [[ ${RUNNING} != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    umount /tmp/tmp.*;
+
+    if [ -d "/tmp/tmp.*" ]; then
+      rm -fr /tmp/tmp.* || /bin/true
+      umount -f /tmp/tmp.* || /bin/true
+      rm -fr /tmp/tmp.* || /bin/true
+    fi
+
 fi
