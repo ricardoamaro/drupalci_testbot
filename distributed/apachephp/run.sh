@@ -75,6 +75,8 @@ DRUSHREPO=${DRUSHREPO:-"https://github.com/drush-ops/drush.git"}
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
 WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$IDENTIFIER/"}
 DEPENDENCIES=${DEPENDENCIES:-""}
+DEPENDENCIES_GIT=${DEPENDENCIES_GIT:-""}
+DEPENDENCIES_TGZ=${DEPENDENCIES_TGZ:-""}  #TODO
 PATCH=${PATCH:-""} #comma separated for several
 DBUSER=${DBUSER:-"drupaltestbot"} 
 DBPASS=${DBPASS:-"drupaltestbotpw"}
@@ -85,13 +87,15 @@ CMD=${CMD:-""}
 VERBOSE=${VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
-TESTGROUPS=${TESTGROUPS:-"--class NonDefaultBlockAdmin"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
+TESTGROUPS=${TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
 # run-tests.s place changes on 8.x 
 case $DRUPALVERSION in
   8) RUNNER="./core/scripts/run-tests.sh"
+     MODULESPATH="./modules" 
     ;;
   *) RUNNER="./scripts/run-tests.sh"
+     MODULESPATH="./sites/all/modules" 
     ;;
 esac
 
@@ -231,7 +235,7 @@ fi
 #Get the dependecies
 if [[ $DEPENDENCIES = "" ]]
   then
-    echo -e "WARNING: \$DEPENDENCIES has no modules declared...\n"
+    echo -e "NOTICE: \$DEPENDENCIES has no modules declared...\n"
   else
       cd ${BUILDSDIR}/${IDENTIFIER}/
     for DEP in $(echo "$DEPENDENCIES" | tr "," "\n")
@@ -242,11 +246,29 @@ if [[ $DEPENDENCIES = "" ]]
     echo ""
 fi
 
+#DEPENDENCIES_GIT="gitrepo1,branch;gitrepo2,branch" 
+#Get the git dependecies
+if [[ $DEPENDENCIES_GIT = "" ]]
+  then
+    echo -e "NOTICE: \$DEPENDENCIES_GIT has nothing declared...\n"
+  else
+     ARRAY=($(echo "${DEPENDENCIES_GIT}" | tr ";" "\n"))
+     mkdir -p ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
+     cd ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
+     for row in ${ARRAY[@]}
+      do
+      read gurl gbranch <<<$(echo "${row}" | tr "," " ");
+      echo "Git URL: $gurl Branch: $gbranch "
+      git clone --branch $gbranch $gurl
+    done  
+    echo ""
+fi
+
 #PATCH="patch_url,apply_dir;patch_url,apply_dir;" 
 #Apply Patch if any
 if [[ $PATCH = "" ]]
   then 
-    echo -e "WARNING: \$PATCH variable has no patch to apply...\n"
+    echo -e "NOTICE: \$PATCH variable has no patch to apply...\n"
   else
     ARRAY=($(echo "${PATCH}" | tr ";" "\n"))
     for row in ${ARRAY[@]}
@@ -288,6 +310,8 @@ DRUSHREPO=\"${DRUSHREPO}\"
 BUILDSDIR=\"${BUILDSDIR}\"
 WORKSPACE=\"${WORKSPACE}\"
 DEPENDENCIES=\"${DEPENDENCIES}\"
+DEPENDENCIES_GIT=\"${DEPENDENCIES_GIT}\"
+MODULESPATH=\"${MODULESPATH}\"
 PATCH=\"${PATCH}\"
 DBUSER=\"${DBUSER}\"
 DBPASS=\"${DBPASS}\"
@@ -304,7 +328,7 @@ RUNSCRIPT=\"${RUNSCRIPT}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-/usr/bin/time docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} ${CMD}
+/usr/bin/time -p docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -t drupal/testbot-web${PHPVERSION} ${CMD}
 
 echo $?
 
