@@ -178,23 +178,20 @@ if [ -f ${REPODIR}/drupal/.git/config ];
     echo ""
 fi
 
-#Clone the local Drupal and Drush to the run directory:
-if [ -f ${REPODIR}/drush/.git/config ];
+#install drush via composer on ${REPODIR}
+if [ -f ${REPODIR}/vendor/drush/drush/drush ];
   then 
-    echo "Local Drush repo found on ${REPODIR}/drush/"
+    echo "Local Drush found on ${REPODIR}/vendor/drush/drush/drush"
   else
-    echo ""
-    echo "Making onetime Drush git clone to: ${REPODIR}/drush/"
-    echo "Press CTRL+c to Cancel"
-    sleep 1 
-    cd ${REPODIR}
-    git clone ${DRUSHREPO} drush
-    echo ""
-fi
+	cd ${REPODIR}
+	curl -sS https://getcomposer.org/installer | php -- --install-dir=${REPODIR}
+	${REPODIR}/composer.phar -d="${REPODIR}" global require drush/drush:dev-master
+fi 
+
 
 if [[ $UPDATEREPO = "true" ]]
   then
-    for rp in drupal drush
+    for rp in drupal
       do
       echo "Updating ${rp} git..."
       cd ${REPODIR}/${rp}
@@ -241,7 +238,7 @@ if [[ $DEPENDENCIES = "" ]]
     for DEP in $(echo "$DEPENDENCIES" | tr "," "\n")
       do 
       echo "Project: $DEP"
-      ${REPODIR}/drush/drush -y dl ${DEP}
+      ${REPODIR}/vendor/drush/drush/drush -y dl ${DEP}
     done  
     echo ""
 fi
