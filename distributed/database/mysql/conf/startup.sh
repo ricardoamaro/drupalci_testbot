@@ -7,8 +7,8 @@ if [ ! -f /var/lib/mysql/ibdata1 ]; then
     /usr/bin/mysqld_safe &
     sleep 10s
 
-    echo "GRANT ALL ON *.* TO drupaltestbot@'%' IDENTIFIED BY 'drupaltestbotpw' WITH GRANT OPTION; FLUSH PRIVILEGES" | mysql
-
+    echo "GRANT ALL ON *.* TO drupaltestbot@'%' IDENTIFIED BY 'drupaltestbotpw' WITH GRANT OPTION; FLUSH PRIVILEGES;" | mysql
+	
     killall mysqld
     sleep 10s
 fi

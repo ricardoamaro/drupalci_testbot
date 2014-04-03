@@ -10,6 +10,7 @@ TAG="drupal/testbot-mysql"
 NAME="drupaltestbot-db"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306 | awk '{print $1}')
+
 if [[ ${RUNNING} != "" ]]
   then 
     echo "Found database container: ${RUNNING} running..."
@@ -28,3 +29,5 @@ if [[ ${RUNNING} != "" ]]
     fi
 
 fi
+
+docker rm ${NAME} 2>/dev/null || :
