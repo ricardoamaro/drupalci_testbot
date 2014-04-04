@@ -87,6 +87,7 @@ cd ./distributed/database/mysql
 ./build.sh
 ./run-server.sh
 
+
 echo 
 echo "Make sure we Build web containers"
 echo "------------------------------------"
@@ -97,8 +98,10 @@ cd ../../apachephp/
 # Do a test run to collect test list and update repos 
 if [ "$1" != "refresh" ];
   then
+  sleep 5
   UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
 else
+  sleep 5
   DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
 fi
 
