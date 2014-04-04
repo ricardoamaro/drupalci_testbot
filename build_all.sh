@@ -73,7 +73,6 @@ if [ "$1" = "cleanup" ];
   docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
   docker images | egrep "testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} sudo docker rmi {}
   rm -rf ${REPODIR}
-  umount /tmp/tmp.* || /bin/true
 fi
 set -e
 
@@ -84,6 +83,8 @@ echo "------------------------------------"
 echo
 cd ./distributed/database/mysql
 ./stop-server.sh
+umount /tmp/tmp.* >/dev/null || /bin/true
+rm -rf /tmp/tmp.* >/dev/null || /bin/true
 ./build.sh
 ./run-server.sh
 
