@@ -48,7 +48,7 @@ cd ${PWD}
 
 # Install Docker
 set +e 
-if ( ! docker ps >/dev/null);
+if [ ! -f /usr/bin/docker ];
     then 
     echo
     echo "Installing Docker from get.docker.io"
@@ -57,7 +57,7 @@ if ( ! docker ps >/dev/null);
     curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
     else 
     echo
-    echo "Docker found running:"
+    echo "Docker found at /usr/bin/docker:"
     echo "------------------------------------"
     docker version
 fi
