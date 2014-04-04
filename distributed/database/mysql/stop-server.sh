@@ -14,7 +14,7 @@ RUNNING=$(docker ps | grep ${TAG} | grep 3306 | awk '{print $1}')
 if [[ ${RUNNING} != "" ]]
   then 
     echo "Found database container: ${RUNNING} running..."
-    echo "Stoping..."
+    echo "Stopping..."
     docker stop ${RUNNING}
     exit 0
   elif [[ $STALLED != "" ]]
