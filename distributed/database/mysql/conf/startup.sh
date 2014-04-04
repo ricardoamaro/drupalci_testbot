@@ -1,21 +1,18 @@
-#/bin/bash
+#!/bin/bash
 
-if [ ! -f /var/lib/mysql/ibdata1 ]; then
-
+if [ ! -f /var/lib/mysql/ibdata1 ]; 
+    then
+    echo "rebuilding /var/lib/mysql/ibdata1"
     mysql_install_db
-
     /usr/bin/mysqld_safe &
+    PID="${!}"
     sleep 10s
-
-    echo "GRANT ALL ON *.* TO drupaltestbot@'%' IDENTIFIED BY 'drupaltestbotpw' WITH GRANT OPTION; FLUSH PRIVILEGES;" | mysql
-	
+    echo "GRANT ALL ON *.* TO drupaltestbot@'%' IDENTIFIED BY 'drupaltestbotpw' WITH GRANT OPTION; SELECT User FROM mysql.user; FLUSH PRIVILEGES;" | mysql
+    echo "Grants added"
     killall mysqld
-    sleep 10s
+    wait ${PID}
 fi
 
-while true; 
-  do /usr/bin/mysqld_safe; 
-    echo "mysql died at $(date)";
-    sleep 1; 
-  done
+/usr/bin/mysqld_safe; 
+echo "mysql died at $(date)";
 
