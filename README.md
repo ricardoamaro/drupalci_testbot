@@ -81,6 +81,15 @@ sudo ./build.sh 5.4
 **{USERHOME}/testbotdata/BUILD_{DATE}/test.results**     
 **and at the live running terminal**
 
+Run 'search_api' module tests, with one patch against D8 and git sandbox:
+```
+sudo TESTGROUPS="--module 'search_api'" \
+DEPENDENCIES_GIT="http://git.drupal.org/sandbox/daeron/2091893.git,master" \
+PATCH="https://drupal.org/files/issues/2232253-3.patch,modules/2091893" \
+DRUPALBRANCH="8.x" \
+./run.sh
+```
+
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 ```
 cd distributed/apachephp/
