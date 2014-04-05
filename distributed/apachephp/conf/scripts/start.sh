@@ -8,7 +8,15 @@ export DRUSH="/.composer/vendor/drush/drush/drush"
 
 # Start apache
 echo "Operation [start]..."
-apachectl start 2>/dev/null
+SERVICE='apache2'
+
+if ps ax | grep -v grep | grep $SERVICE > /dev/null
+then
+  echo "$SERVICE service already running"
+else
+  echo "Starting $SERVICE service"
+  apachectl start 2>/dev/null
+fi
 
 echo "Operation [install]..."
 #For now we use Drush to install the site but we are going to
