@@ -49,7 +49,7 @@ fi
 ${DRUSH} -y en simpletest
 
 # We are going to write into files:
-chmod -vfR a+w /var/www/sites/default/files/
+chown -fR www-data /var/www/sites/default/files/
 
 # Run the test suite.
 echo ""
