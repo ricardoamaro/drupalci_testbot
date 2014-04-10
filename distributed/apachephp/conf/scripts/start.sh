@@ -48,6 +48,9 @@ fi
 
 ${DRUSH} -y en simpletest
 
+# We are going to write into files:
+chmod -vfR a+w /var/www/sites/default/files/
+
 # Run the test suite.
 echo ""
 echo "Operation [run tests]..."
