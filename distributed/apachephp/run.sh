@@ -330,7 +330,7 @@ echo "------------------------- STARTING DOCKER CONTAINER ----------------------
 echo $?
 
 echo "--------------------------------------------------------------------------------"
-echo "Tests results: ${BUILDSDIR}/${IDENTIFIER}/test.results"
+echo "Results directory: ${BUILDSDIR}/${IDENTIFIER}/results/"
 echo "Make sure to clean up old Builds on ${BUILDSDIR} to save disk space"
 echo "--------------------------------------------------------------------------------"
 
