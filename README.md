@@ -183,6 +183,9 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 ## Current Structure:
 ```
 .
+├── build_all.sh
+├── D7TestGroupsClasses.txt
+├── D8TestGroupsClasses.txt
 ├── distributed
 │   ├── apachephp
 │   │   ├── build.sh
@@ -206,20 +209,25 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 │   └── database
 │       └── mysql
 │           ├── build.sh
+│           ├── conf
+│           │   └── startup.sh
 │           ├── Dockerfile
 │           ├── run-client.sh
 │           ├── run-server.sh
-│           ├── startup.sh
 │           └── stop-server.sh
+├── patch.p1
+├── provision.sh
 ├── README.md
-└── supervisord
-    ├── build.sh
-    ├── default
-    ├── Dockerfile
-    ├── php-cli.ini
-    ├── php.ini
-    ├── run.sh
-    └── supervisord.conf
+├── run.sh -> ./distributed/apachephp/run.sh
+├── supervisord
+│   ├── build.sh
+│   ├── default
+│   ├── Dockerfile
+│   ├── php-cli.ini
+│   ├── php.ini
+│   ├── run.sh
+│   └── supervisord.conf
+└── Vagrantfile
 
 ```
 ###CREDITS:
@@ -227,6 +235,7 @@ jthorson
 ricardoamaro
 nickschuch
 beejeebus
+dasrecht
 
 
 ## Contributing
