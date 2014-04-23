@@ -28,7 +28,7 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   echo 
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
   echo 
-  echo -e "\t\tcleanup : Delete every docker conatiner, repos, builds and start a fresh build."
+  echo -e "\t\tcleanup : Delete every docker container, repos, builds and start a fresh build."
   echo -e "\t\tupdate  : Update all repos and containers." 
   echo -e "\t\trefresh : Just refresh the containers with any new change. "
   echo 
