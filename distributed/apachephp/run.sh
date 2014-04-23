@@ -331,7 +331,7 @@ echo $?
 
 echo "--------------------------------------------------------------------------------"
 echo "Tests results: ${BUILDSDIR}/${IDENTIFIER}/test.results"
-echo "Make sure to clean up old Builds on ${BUILDSDIR}"
+echo "Make sure to clean up old Builds on ${BUILDSDIR} to save disk space"
 echo "--------------------------------------------------------------------------------"
 
 exit 0
