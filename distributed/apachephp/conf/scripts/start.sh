@@ -51,7 +51,7 @@ chown -fR www-data /var/www/sites/default/files/
 echo ""
 echo "Operation [run tests]..."
 echo "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.results"
-sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.results" 
+sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.stdout" 
 
 #No ugly xml please:
 #for i in $(ls results/* ); do tidy -xml -m -i -q "$i"; done
