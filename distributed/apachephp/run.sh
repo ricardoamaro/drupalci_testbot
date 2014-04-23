@@ -327,7 +327,7 @@ TESTGROUPS=\"${TESTGROUPS}\"
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
 /usr/bin/time -p docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
 
-echo $?
+echo "exited $?"
 
 echo "--------------------------------------------------------------------------------"
 echo "Results directory: ${BUILDSDIR}/${IDENTIFIER}/results/"
