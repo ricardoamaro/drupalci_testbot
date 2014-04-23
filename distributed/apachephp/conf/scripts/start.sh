@@ -29,7 +29,7 @@ if (( $DRUPALVERSION >= 8 ))
   then
   echo "DRUPALVERSION is $DRUPALVERSION"
   echo "Skipping install"
-  EXTRA="--sqlite /var/www/test.sqlite --dburl mysql://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --keep-results"
+  EXTRA="--sqlite /var/www/test.sqlite --dburl mysql://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER}" # add --keep-results when it's not red
   #Create drupal database manually
   /usr/bin/mysql -u${DBUSER} -p${DBPASS} -h${DB_PORT_3306_TCP_ADDR} -e "CREATE DATABASE IF NOT EXISTS ${IDENTIFIER} ;"
   else

@@ -78,7 +78,7 @@ sudo ./build.sh 5.4
 
 **Results will be available at:**  
 **{USERHOME}/testbotdata/BUILD_{DATE}/results**  
-**{USERHOME}/testbotdata/BUILD_{DATE}/test.results**     
+**{USERHOME}/testbotdata/BUILD_{DATE}/test.stdout**     
 **and at the live running terminal**
 
 Run 'search_api' module tests, with one patch against D8 and git sandbox:
