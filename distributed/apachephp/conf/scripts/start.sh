@@ -18,10 +18,6 @@ else
   apachectl start 2>/dev/null
 fi
 
-echo "Operation [install]..."
-#For now we use Drush to install the site but we are going to
-#move to other real browser installer
-
 cd /var/www/
 echo ""
 
@@ -37,6 +33,7 @@ if (( $DRUPALVERSION >= 8 ))
   #Create drupal database manually
   /usr/bin/mysql -u${DBUSER} -p${DBPASS} -h${DB_PORT_3306_TCP_ADDR} -e "CREATE DATABASE IF NOT EXISTS ${IDENTIFIER} ;"
   else
+    echo "Operation [install]..."
     if [[ $DBTYPE = "sqlite" ]]
       then
         ${DRUSH} si -y --db-url=sqlite://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com

@@ -134,7 +134,7 @@ And that's it.
 
 ```
 DRUPALVERSION=""
-DRUPALBRANCH="7"
+DRUPALBRANCH="8.x"
 IDENTIFIER="BUILD_$(date +%Y_%m_%d_%H%M%S)"
 REPODIR="$HOME/testbotdata"
 BUILDSDIR="$REPODIR"
