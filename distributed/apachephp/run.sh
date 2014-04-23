@@ -66,7 +66,7 @@ fi
 # Bellow there is a list of variables that you can override:
 
 IDENTIFIER=${IDENTIFIER:-"BUILD_$(date +%Y_%m_%d_%H%M%S)"} 
-DRUPALBRANCH=${DRUPALBRANCH:-"7.26"}
+DRUPALBRANCH=${DRUPALBRANCH:-"8.x"}
 DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
 UPDATEREPO=${UPDATEREPO:-"false"}
 REPODIR=${REPODIR:-"$HOME/testbotdata"} 
@@ -89,7 +89,7 @@ PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
-# run-tests.s place changes on 8.x 
+# run-tests.sh place changes on 8.x 
 case $DRUPALVERSION in
   8) RUNNER="./core/scripts/run-tests.sh"
      MODULESPATH="./modules" 
@@ -106,7 +106,7 @@ case $VERBOSE in
     ;;
 esac
     
-RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} ${VERBO} --xml '/var/workspace/results' ${TESTGROUPS} | tee /var/www/test.results "}
+RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
 
 # Check if we have root powers
 if [ `whoami` != root ]; then
@@ -319,8 +319,8 @@ CMD=\"${CMD}\"
 VERBOSE=\"${VERBOSE}\"
 PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\" 
-TESTGROUPS=\"${TESTGROUPS}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
+TESTGROUPS=\"${TESTGROUPS}\"
 " | tee ${BUILDSDIR}/${IDENTIFIER}/test.info
 
 #Let the tests start
