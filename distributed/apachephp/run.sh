@@ -31,7 +31,7 @@ PATCH:         Local or remote Patches to be applied.
 DEPENDENCIES:  Contrib projects to be downloaded & patched. 
                Format: module1,module2,module2...
 DEPENDENCIES_GIT  Format: gitrepo1,branch;gitrepo2,branch;...
-DEPENDENCIES_TGZ  TODO
+DEPENDENCIES_TGZ  Format: module1_url.tgz,module1_url.tgz,...
 DRUPALBRANCH:  Default is '7.26' 
 DRUPALVERSION: Default is '7' 
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
@@ -273,6 +273,23 @@ if [[ $DEPENDENCIES_GIT = "" ]]
       read gurl gbranch <<<$(echo "${row}" | tr "," " ");
       echo "Git URL: $gurl Branch: $gbranch "
       git clone --branch $gbranch $gurl
+    done  
+    echo ""
+fi
+
+#DEPENDENCIES_TGZ="module1_url.tgz,module1_url.tgz,module1_url.tgz" 
+#Get the tgz dependecies
+if [[ $DEPENDENCIES_TGZ = "" ]]
+  then
+    echo -e "NOTICE: \$DEPENDENCIES_TGZ has nothing declared...\n"
+  else
+     ARRAY=($(echo "${DEPENDENCIES_TGZ}" | tr "," "\n"))
+     mkdir -p ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
+     cd ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
+     for row in ${ARRAY[@]}
+      do
+      echo "TGZ URL: ${row}  "
+      curl -s ${row} | tar xzf -
     done  
     echo ""
 fi

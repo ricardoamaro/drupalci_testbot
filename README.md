@@ -100,7 +100,7 @@ DRUPALBRANCH="8.x" \
 PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
 ./run.sh
 ```
-Run all tests using 4 CPUs, 1 core patch against D8:   
+Run all tests using 4 CPUs, 1 core patch, 1 tgz module, against D8:   
 ```
 cd distributed/apachephp/
 
@@ -108,6 +108,7 @@ sudo \
 TESTGROUPS="--all" \
 CONCURRENCY="4" \
 DRUPALBRANCH="8.x" \ 
+DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.x-3.x-dev.tar.gz"
 PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
 ```
@@ -141,7 +142,7 @@ BUILDSDIR="$REPODIR"
 WORKSPACE="$BUILDSDIR/$IDENTIFIER/"
 DEPENDENCIES=""     # module1,module2,module2...
 DEPENDENCIES_GIT="" # gitrepo1,branch;gitrepo2,branch;...
-DEPENDENCIES_TGZ="" # TODO
+DEPENDENCIES_TGZ="" # module1_url.tgz,module1_url.tgz,...
 PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
 DBUSER="drupaltestbot" 
 DBPASS="drupaltestbotpw"
