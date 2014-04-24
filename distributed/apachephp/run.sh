@@ -116,6 +116,20 @@ fi
 
 mkdir -p ${REPODIR}
 
+# Check if we have free disk space
+FREEDISK=$(df -m ${BUILDSDIR} | tail -n1 | awk '{print $4}')
+if (( $FREEDISK <= 100 )); 
+  then 
+    echo ""
+    echo "ERROR! Low disk space!"; 
+    echo ""
+    df -hT ${BUILDSDIR}
+    echo ""
+    echo "Try to clean up some disk space from ${BUILDSDIR}"
+    echo "A minimum of 100MB is required..."
+    exit 1; 
+fi
+
 # If we are using mysql make sure the conatiner is there
 if [[ $DBTYPE = "mysql" ]]
   then
