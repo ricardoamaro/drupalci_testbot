@@ -78,7 +78,6 @@ sudo ./build.sh 5.4
 
 **Results will be available at:**  
 **{USERHOME}/testbotdata/BUILD_{DATE}/results**  
-**{USERHOME}/testbotdata/BUILD_{DATE}/test.stdout**     
 **and at the live running terminal**
 
 Run 'search_api' module tests, with one patch against D8 and git sandbox:
@@ -133,24 +132,26 @@ And that's it.
 ### Some default environment variables that you can override
 
 ```
-DRUPALVERSION=""
 DRUPALBRANCH="8.x"
+DRUPALVERSION=""
 IDENTIFIER="BUILD_$(date +%Y_%m_%d_%H%M%S)"
 REPODIR="$HOME/testbotdata"
+UPDATEREPO="false" # true to force repos update
 BUILDSDIR="$REPODIR"
 WORKSPACE="$BUILDSDIR/$IDENTIFIER/"
 DEPENDENCIES="" # module1,module2,module2...
+DEPENDENCIES_GIT="" # module1,module2,module2
+DEPENDENCIES_TGZ=${DEPENDENCIES_TGZ:-""}  #TODO
 PATCH="" # patch_location,apply_dir;patch_location,apply_dir;...
 DBUSER="drupaltestbot" 
 DBPASS="drupaltestbotpw"
 DBTYPE="mysql"
 DBLINK="--link=drupaltestbot-db:db"
-CMD=""
+CMD="" # you can enter the container shell with CMD="/bin/bash"
+VERBOSE="false" # true will give verbose
 PHPVERSION="5.4"
 CONCURRENCY="4" #How many cpus to use per run
-
-TESTGROUPS="--class 'Drupal\block\Tests\NonDefaultBlockAdminTest'" #TESTS TO RUN eg.--all, --> https://api.drupal.org/api/drupal/classes/8
-
+TESTGROUPS="--class 'Drupal\block\Tests\NonDefaultBlockAdminTest'" #TESTS TO RUN eg.--all
 RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
 ```
 
@@ -170,8 +171,7 @@ sudo docker images | grep "drupal/testbot-web" | awk '{print $3}' | xargs -n1 -I
 ### 7 - Clean Up 
 
 a) Results will be saved at: 
-**{USERHOME}/testbotdata/BUILD_{DATE}/results** 
-**{USERHOME}/testbotdata/BUILD_{DATE}/test.results**  
+**{USERHOME}/testbotdata/BUILD_{DATE}/results/** 
 so you can delete testbotdata/BUILD_{DATE} after you collect your information
 
 b) Docker generates several runs: 
