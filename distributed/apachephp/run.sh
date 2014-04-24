@@ -30,6 +30,8 @@ PATCH:         Local or remote Patches to be applied.
                Format: patch_location,apply_dir;patch_location,apply_dir;...
 DEPENDENCIES:  Contrib projects to be downloaded & patched. 
                Format: module1,module2,module2...
+DEPENDENCIES_GIT  Format: gitrepo1,branch;gitrepo2,branch;...
+DEPENDENCIES_TGZ  TODO
 DRUPALBRANCH:  Default is '7.26' 
 DRUPALVERSION: Default is '7' 
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
@@ -77,7 +79,7 @@ WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$IDENTIFIER/"}
 DEPENDENCIES=${DEPENDENCIES:-""}
 DEPENDENCIES_GIT=${DEPENDENCIES_GIT:-""}
 DEPENDENCIES_TGZ=${DEPENDENCIES_TGZ:-""}  #TODO
-PATCH=${PATCH:-""} #comma separated for several
+PATCH=${PATCH:-""} 
 DBUSER=${DBUSER:-"drupaltestbot"} 
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/sqlite
