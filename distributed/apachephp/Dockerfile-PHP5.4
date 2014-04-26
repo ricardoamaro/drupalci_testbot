@@ -8,7 +8,7 @@ RUN ln -sf /bin/true /sbin/initctl
 
 # Packages.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sqlite3 mysql-client apache2 curl git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php-apc php-pear pwgen sudo python-setuptools nano apt-utils tidy
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sqlite3 mysql-client apache2 curl git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php-apc php-pear pwgen sudo python-setuptools nano apt-utils tidy aufs-tools
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
 
@@ -40,7 +40,7 @@ ADD ./conf/scripts/start.sh /start.sh
 ADD ./conf/scripts/foreground.sh /etc/apache2/foreground.sh
 
 # Apache.
-RUN rm -rf /var/www/
+RUN rm -rf /var/www/*
 RUN chmod 755 /etc/apache2/foreground.sh
 
 # Apache / PHP.

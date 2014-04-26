@@ -359,15 +359,15 @@ TESTGROUPS=\"${TESTGROUPS}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-/usr/bin/time -p docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
+/usr/bin/time -p docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/external:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
 
-echo "exited $?"
-
-echo "Saving image ${IDENTIFIER}"
+echo -e "Container exited $? \n"
+echo -e "Saving docker image drupal/${IDENTIFIER} "
 docker commit ${IDENTIFIER} drupal/${IDENTIFIER}
 # echo "If you need to debug this container run:"
-# echo "docker run -d=false -i=true drupal/${IDENTIFIER} /bin/bash"
+# echo "sudo docker run -d=false -i=true --link=drupaltestbot-db:db -t drupal/${IDENTIFIER} /bin/bash"
 
+echo ""
 echo "--------------------------------------------------------------------------------"
 echo "Results directory: ${BUILDSDIR}/${IDENTIFIER}/results/"
 echo "Make sure to clean up old Builds on ${BUILDSDIR} to save disk space"

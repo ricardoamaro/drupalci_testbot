@@ -1,5 +1,14 @@
 #!/bin/bash -e
 
+# Make double mount on /var/www
+mkdir -p /var/www
+chmod a+w /var/www
+# sync /var/www with /mnt
+# mount -t aufs -o dirs=/mnt/:/var/www none /var/www
+# aubrsync copy /var/www /var/www /mnt/
+echo "Operation [Copy Drupal files]..."
+time rsync -ar /var/external/ /var/www/
+
 #GET ALL INFO FROM /var/www/test.info:
 source /var/www/test.info
 
@@ -51,7 +60,9 @@ chown -fR www-data /var/www/sites/default/files/ /var/www/sites/simpletest
 echo ""
 echo "Operation [run tests]..."
 echo "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.stdout" 
-sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.stdout" 
+sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.stdout | tee /var/external/test.stdout" 
 
 #No ugly xml please:
 #for i in $(ls results/* ); do tidy -xml -m -i -q "$i"; done
+time rsync -ar /var/www/ /var/external/
+
