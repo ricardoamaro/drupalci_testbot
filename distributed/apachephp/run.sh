@@ -40,7 +40,7 @@ VERBOSE:       Default is 'false'
 DBTYPE:        Default is 'mysql' from either mysql/sqlite
 CMD:           Default is none. Normally use '/bin/bash' to debug the container 
 UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false' 
-IDENTIFIER:    Automated Build Identifier. 
+IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
 REPODIR:       Default is 'HOME/testbotdata'  
 DRUPALREPO:    Default is 'http://git.drupal.org/project/drupal.git' 
 DRUSHREPO:     Default is 'https://github.com/drush-ops/drush.git' 
@@ -67,7 +67,7 @@ fi
 
 # Bellow there is a list of variables that you can override:
 
-IDENTIFIER=${IDENTIFIER:-"BUILD_$(date +%Y_%m_%d_%H%M%S)"} 
+IDENTIFIER=${IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"} 
 DRUPALBRANCH=${DRUPALBRANCH:-"8.x"}
 DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
 UPDATEREPO=${UPDATEREPO:-"false"}
@@ -362,6 +362,11 @@ echo "------------------------- STARTING DOCKER CONTAINER ----------------------
 /usr/bin/time -p docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
 
 echo "exited $?"
+
+echo "Saving image ${IDENTIFIER}"
+docker commit ${IDENTIFIER} drupal/${IDENTIFIER}
+# echo "If you need to debug this container run:"
+# echo "docker run -d=false -i=true drupal/${IDENTIFIER} /bin/bash"
 
 echo "--------------------------------------------------------------------------------"
 echo "Results directory: ${BUILDSDIR}/${IDENTIFIER}/results/"
