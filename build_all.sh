@@ -106,6 +106,6 @@ else
   DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
 fi
 
-echo "Images (re)built."
-echo 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
+echo -e "Images (re)built.\n"
+echo -e 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
 
