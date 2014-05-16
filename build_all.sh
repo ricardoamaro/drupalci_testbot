@@ -8,7 +8,7 @@
 #
 # Usage:        sudo ./build_all.sh <cleanup>/<update>/<refresh>
 #
-# Author:       Ricardo Amaro (mail@ricardoamaro.com)
+# Author:       Ricardo Amaro (mail_at_ricardoamaro.com)
 # Contributors: Jeremy Thorson jthorson
 #           
 # Bugs/Issues:  Use the issue queue on drupal.org
@@ -69,9 +69,9 @@ if [ "$1" = "cleanup" ];
   echo "stop and remove testbot containers and images"
   echo "---------------------------------------------"
   echo
-  docker ps | grep drupal | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
-  docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
-  docker images | egrep "testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} sudo docker rmi {}
+  docker ps | egrep "drupal|test" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker stop {}
+  docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker rm {}
+  docker images | egrep "drupal|testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} docker rmi {}
   rm -rf ${REPODIR}
 fi
 set -e
@@ -106,6 +106,6 @@ else
   DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
 fi
 
-echo "Images (re)built."
-echo 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
+echo -e "Images (re)built.\n"
+echo -e 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
 

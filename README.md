@@ -135,7 +135,7 @@ And that's it.
 ```
 DRUPALBRANCH="8.x"
 DRUPALVERSION=""
-IDENTIFIER="BUILD_$(date +%Y_%m_%d_%H%M%S)"
+IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
 REPODIR="$HOME/testbotdata"
 UPDATEREPO="false"  # true to force repos update
 BUILDSDIR="$REPODIR"
