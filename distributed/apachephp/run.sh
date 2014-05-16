@@ -32,8 +32,8 @@ DEPENDENCIES:  Contrib projects to be downloaded & patched.
                Format: module1,module2,module2...
 DEPENDENCIES_GIT  Format: gitrepo1,branch;gitrepo2,branch;...
 DEPENDENCIES_TGZ  Format: module1_url.tgz,module1_url.tgz,...
-DRUPALBRANCH:  Default is '7.26' 
-DRUPALVERSION: Default is '7' 
+DRUPALBRANCH:  Default is '8.x' 
+DRUPALVERSION: Default is '8' 
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
 VERBOSE:       Default is 'false' 
