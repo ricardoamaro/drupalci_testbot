@@ -20,7 +20,7 @@ if [[ $RUNNING != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if [ -d "/tmp/tmp.*mysql" ]; then
+    if ( ls -d /tmp/tmp.*mysql/ ); then
       rm -fr /tmp/tmp.*mysql || /bin/true
       umount -f /tmp/tmp.*mysql || /bin/true
       rm -fr /tmp/tmp.*mysql || /bin/true
