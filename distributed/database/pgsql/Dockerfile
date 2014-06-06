@@ -15,7 +15,8 @@ RUN echo "listen_addresses='*'" >> /etc/postgresql/9.1/main/postgresql.conf
 ADD ./conf/startup.sh /opt/startup.sh
 
 
-USER root
 # Expose the PostgreSQL port
 EXPOSE 5432
+
+USER postgres
 CMD ["bin/bash", "/opt/startup.sh"]
