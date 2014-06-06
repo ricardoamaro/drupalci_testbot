@@ -83,8 +83,8 @@ echo "------------------------------------"
 echo
 cd ./distributed/database/mysql
 ./stop-server.sh
-umount /tmp/tmp.* >/dev/null || /bin/true
-rm -rf /tmp/tmp.* >/dev/null || /bin/true
+umount /tmp/tmp.*mysql >/dev/null || /bin/true
+rm -rf /tmp/tmp.*mysql >/dev/null || /bin/true
 ./build.sh
 ./run-server.sh
 
