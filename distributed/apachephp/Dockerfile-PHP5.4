@@ -24,7 +24,7 @@ RUN /usr/local/bin/composer global require drush/drush:dev-master
 RUN /.composer/vendor/drush/drush/drush --version
 
 # Enable a2enmod rewrite
-RUN a2enmod rewrite 
+RUN a2enmod rewrite
 
 # Supervisord.
 RUN easy_install supervisor
