@@ -2,9 +2,9 @@
 
 ### Test your Drupal patches locally with docker.
 
-This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal patch testing, using Linux, Apache, PHP and MySQL/sqlite.
+This repo contains a recipe for making a [Docker][docker] containers for Drupal patch testing, using Linux, Apache, PHP and MySQL/sqlite.
 
-This is part of the core code powering the future version of [Drupal automated-testing](https://drupal.org/automated-testing) infrastructure at http://qa.drupal.org .
+This is part of the core code powering the future version of [Drupal automated-testing][drupalautomatedtesting] infrastructure at http://qa.drupal.org .
 
 #### Why is this awesome?
 1. Test patches on your local box or http://qa.drupal.org
@@ -22,18 +22,49 @@ This is part of the core code powering the future version of [Drupal automated-t
 ```
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles
-sudo ./build_all.sh cleanup
+
+# MySQL
+sudo ./build_all.sh cleanup mysql
+
+# PostgresSQL
+sudo ./build_all.sh cleanup postgresql
+
+# PostgresSQL and MySQL
+sudo ./build_all.sh cleanup all
+
 ```
 
 ## Quick Vagrant MAC/Windows instructions:
 This will not run natively since it's a Virtualbox VM
 and you need to install Vagrant.
 
+Note for Windows : You'll need to install [msysgit][msysgit], [MinGW][mingw] or [Cygwin][cygwin] all provide you with rsync.
+
 ```
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles
 vagrant up
 
+```
+
+### Build MySQL or PostgreSQL Containers
+```
+# MySQL
+DATABASE=mysql vagrant up
+
+# PostgresSQL
+DATABASE=postgresql vagrant up
+
+# PostgresSQL and MySQL
+DATABASE=all vagrant up
+```
+
+## Developing with Vagrant
+The Files within the GIT Repo are synched by rsync upon vagrant up
+If you change files which should be synched to the vagrant box run following command
+
+```
+vagrant rsync-auto
 ```
 
 ### Run some group tests:
@@ -242,3 +273,8 @@ Feel free to fork and contribute to this code. :)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+[mingw]: http://www.mingw.org/
+[msysgit]: https://code.google.com/p/msysgit/
+[cygwin]:http://www.cygwin.org/
+[drupalautomatedtesting]: https://drupal.org/automated-testing
+[docker]: http://docker.io
