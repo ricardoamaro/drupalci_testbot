@@ -14,8 +14,8 @@ echo jsmith Stalled $STALLED
 RUNNING=$(docker ps | grep ${TAG} | grep 5432)
 echo jsmith Running $RUNNING
 if [[ $RUNNING != "" ]]
-  then 
-    echo "Found database container:" 
+  then
+    echo "Found database container:"
     echo "$RUNNING already running..."
     exit 0
   elif [[ $STALLED != "" ]]
@@ -28,12 +28,12 @@ if [[ $RUNNING != "" ]]
       rm -fr /tmp/tmp.* || /bin/true
     fi
 fi
-  
+
 TMPDIR=$(mktemp -d)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 
-# TODO: Make this work with /var/lib/postgresql (and perhaps /etc/postgresql?) 
-# mounted on tmpfs.  
+# TODO: Make this work with /var/lib/postgresql (and perhaps /etc/postgresql?)
+# mounted on tmpfs.
 
 #docker run -d -p=5432 --name=${NAME} -v="$TMPDIR":/var/lib/postgresql ${TAG}
 docker run -d -p=5432 --name=${NAME} ${TAG}

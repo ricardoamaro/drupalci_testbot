@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -z $(pg_lsclusters | grep -c ' main ') ]; 
+if [ ! -z $(pg_lsclusters | grep -c ' main ') ];
     then
     echo "rebuilding PostgreSQL database cluster"
     # stop and drop the cluster
