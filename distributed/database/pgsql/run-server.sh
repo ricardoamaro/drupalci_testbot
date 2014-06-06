@@ -32,11 +32,7 @@ fi
 TMPDIR=$(mktemp -d --suffix=pgsql)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 
-# TODO: Make this work with /var/lib/postgresql (and perhaps /etc/postgresql?) 
-# mounted on tmpfs.  
-
-#docker run -d -p=5432 --name=${NAME} -v="$TMPDIR":/var/lib/postgresql ${TAG}
-docker run -d -p=5432 --name=${NAME} ${TAG}
+docker run -d -p=5432 --name=${NAME} -v="$TMPDIR":/var/lib/postgresql ${TAG}
 CONTAINER_ID=$(docker ps | grep ${TAG} | awk '{print $1}')
 
 #PORT=$(docker port $MYSQL_ID 5432 | cut -d":" -f2)
