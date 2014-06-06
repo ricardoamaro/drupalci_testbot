@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -f /var/lib/mysql/ibdata1 ]; 
+if [ ! -z $(pg_lsclusters | grep -c ' main ') ]; 
     then
     echo "rebuilding PostgreSQL database cluster"
     # stop and drop the cluster
