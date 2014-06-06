@@ -22,10 +22,10 @@ if [[ ${RUNNING} != "" ]]
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
 
-    if [ -d "/tmp/tmp.*" ]; then
-      rm -fr /tmp/tmp.* || /bin/true
-      umount -f /tmp/tmp.* || /bin/true
-      rm -fr /tmp/tmp.* || /bin/true
+    if [ -d "/tmp/tmp.*pgsql" ]; then
+      rm -fr /tmp/tmp.*pgsql || /bin/true
+      umount -f /tmp/tmp.*pgsql || /bin/true
+      rm -fr /tmp/tmp.*pgsql || /bin/true
     fi
 
 fi

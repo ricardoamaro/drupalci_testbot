@@ -22,14 +22,14 @@ if [[ $RUNNING != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if [ -d "/tmp/tmp.*" ]; then
-      rm -fr /tmp/tmp.* || /bin/true
-      umount -f /tmp/tmp.* || /bin/true
-      rm -fr /tmp/tmp.* || /bin/true
+    if [ -d "/tmp/tmp.*pgsql" ]; then
+      rm -fr /tmp/tmp.*pgsql || /bin/true
+      umount -f /tmp/tmp.*pgsql || /bin/true
+      rm -fr /tmp/tmp.*pgsql || /bin/true
     fi
 fi
   
-TMPDIR=$(mktemp -d)
+TMPDIR=$(mktemp -d --suffix=pgsql)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 
 # TODO: Make this work with /var/lib/postgresql (and perhaps /etc/postgresql?) 
