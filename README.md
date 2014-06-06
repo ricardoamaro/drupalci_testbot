@@ -31,7 +31,6 @@ sudo ./build_all.sh cleanup postgresql
 
 # PostgresSQL and MySQL
 sudo ./build_all.sh cleanup all
-
 ```
 
 ## Quick Vagrant MAC/Windows instructions:
@@ -44,7 +43,6 @@ Note for Windows : You'll need to install [msysgit][msysgit], [MinGW][mingw] or 
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles
 vagrant up
-
 ```
 
 ### Build MySQL or PostgreSQL Containers
