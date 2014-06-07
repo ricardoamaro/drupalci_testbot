@@ -48,7 +48,7 @@ BUILDSDIR:     Default is  equal to REPODIR
 WORKSPACE:     Default is 'HOME/testbotdata/IDENTIFIER/' 
 DBUSER:        Default is 'drupaltestbot'  
 DBPASS:        Default is 'drupaltestbotpw' 
-DBCONTAINER:   Default is 'drupaltestbot-db' 
+DBCONTAINER:   Default is 'drupaltestbot-db-mysql' 
 PHPVERSION:    Default is '5.4' 
 CONCURRENCY:   Default is '4'  #How many cpus to use per run
 RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  CONCURRENCY  --verbose --xml '/var/workspace/results'  TESTGROUPS  | tee /var/www/test.stdout ' "
@@ -83,8 +83,7 @@ PATCH=${PATCH:-""}
 DBUSER=${DBUSER:-"drupaltestbot"} 
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
-DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db"}
-DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
+
 CMD=${CMD:-""}
 VERBOSE=${VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
@@ -99,6 +98,17 @@ case $DRUPALVERSION in
   *) RUNNER="./scripts/run-tests.sh"
      MODULESPATH="./sites/all/modules" 
     ;;
+esac
+
+case $DBTYPE in
+  pgsql) DBPORT="5432"
+         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql"}
+         DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
+  ;;
+      *) DBPORT="3306"
+         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mysql"}
+         DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
+  ;;
 esac
 
 case $VERBOSE in
@@ -133,18 +143,18 @@ if (( $FREEDISK <= 100 ));
 fi
 
 # If we are using mysql make sure the container is there
-if [[ $DBTYPE = "mysql" ]]
+if [[ $DBTYPE != "sqlite" ]]
   then
     set +e
-    RUNNING=$(sudo docker ps | grep ${DBCONTAINER} | grep -s 3306)
+    RUNNING=$(sudo docker ps | grep ${DBCONTAINER} | grep -s ${DBPORT})
     set -e
     if [[ $RUNNING = "" ]]
       then
         echo "--------------------------------------------------------------------------------"
-        echo -e "ERROR: There is no Mysql container running..."
+        echo -e "ERROR: There is no ${$DBTYPE} container running..."
         echo -e "Please make sure you built the image and started it:"
         echo -e "sudo ./build_all.sh refresh \n"
-        echo -e "Also please make sure port 3606 is not being used \nand mysql is stopped on the host."
+        echo -e "Also please make sure port ${DBPORT} is not being used \nand ${$DBTYPE} is stopped on the host."
         echo "--------------------------------------------------------------------------------"
         exit 1
     fi

@@ -8,7 +8,7 @@ fi
 
 
 TAG="drupal/testbot-mysql"
-NAME="drupaltestbot-db"
+NAME="drupaltestbot-db-mysql"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306)
 if [[ $RUNNING != "" ]]
