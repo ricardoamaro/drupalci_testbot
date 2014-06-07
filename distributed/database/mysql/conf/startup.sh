@@ -8,7 +8,8 @@ if [ ! -f /var/lib/mysql/ibdata1 ];
     PID="${!}"
     sleep 5s
     while ! netcat -vz localhost 3306; do sleep 1; done
-    echo "GRANT ALL ON *.* TO drupaltestbot@'%' IDENTIFIED BY 'drupaltestbotpw' WITH GRANT OPTION; SELECT User FROM mysql.user; FLUSH PRIVILEGES;" | mysql
+    mysql -e "CREATE USER 'drupaltestbot'@'%' IDENTIFIED BY 'drupaltestbotpw';" 
+    mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'drupaltestbot'@'%' WITH GRANT OPTION; SELECT User FROM mysql.user; FLUSH PRIVILEGES;" 
     echo "Grants added"
     killall mysqld
     wait ${PID}
