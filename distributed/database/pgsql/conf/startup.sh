@@ -11,7 +11,7 @@ if [ ! -z $(pg_lsclusters | grep -c ' main ') ];
     # create a new user
     psql -c "CREATE USER drupaltestbot WITH PASSWORD 'drupaltestbotpw';"
     # create a new default database for the user
-    psql -c "CREATE DATABASE drupaltestbot OWNER drupaltestbot TEMPLATE DEFAULT;"
+    psql -c "CREATE DATABASE drupaltestbot1 OWNER drupaltestbot TEMPLATE template0 ENCODING='utf8' LC_CTYPE='en_US.utf8' LC_COLLATE='en_US.utf8';"
     # stop the cluster
     pg_ctlcluster 9.1 main stop
     # allow md5-based password auth for IPv4 connections
