@@ -18,7 +18,7 @@
 #
 
 REPODIR=${REPODIR:-"$HOME/testbotdata"}
-PWD="$(pwd)"
+BASEDIR="$(pwd)"
 
 #print usage help if no arg, -h, --help
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
@@ -43,8 +43,11 @@ if [ `whoami` != root ]; then
     exit 1
 fi
 
+# Check if curl is installed
+command -v curl >/dev/null 2>&1 || { echo >&2 "Command 'curl' is required. Please install it and run again. Aborting."; exit 1; }
+
 # Make sure we are at the root 
-cd ${PWD}
+cd "${BASEDIR}"
 
 # Install Docker
 set +e 
@@ -76,25 +79,29 @@ if [ "$1" = "cleanup" ];
 fi
 set -e
 
-# Build and start containers
-echo
-echo "Build and start mysql container"
-echo "------------------------------------"
-echo
-cd ./distributed/database/mysql
-./stop-server.sh
-umount /tmp/tmp.*mysql >/dev/null || /bin/true
-rm -rf /tmp/tmp.*mysql >/dev/null || /bin/true
-./build.sh
-./run-server.sh
-
+# Build and start DB containers
+for DBTYPE in mysql pgsql;
+  do 
+  echo
+  echo "Build and restart ${DBTYPE} container"
+  echo "------------------------------------"
+  echo
+  cd ./distributed/database/${DBTYPE}
+  ./stop-server.sh
+  umount /tmp/tmp.*${DBTYPE} >/dev/null || /bin/true
+  rm -rf /tmp/tmp.*${DBTYPE} >/dev/null || /bin/true
+  ./build.sh
+  ./run-server.sh
+  cd "${BASEDIR}"
+done
 
 echo 
 echo "Make sure we Build web containers"
 echo "------------------------------------"
 echo
-cd ../../apachephp/
+cd ./distributed/apachephp/
 ./build.sh
+cd "${BASEDIR}"
 
 # Do a test run to collect test list and update repos 
 if [ "$1" != "refresh" ];
@@ -106,6 +113,6 @@ else
   DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
 fi
 
-echo -e "Images (re)built.\n"
+echo -e "Container Images: Mysql, PgSql and web5.4 (re)built.\n"
 echo -e 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
 
