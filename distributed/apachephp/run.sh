@@ -82,7 +82,7 @@ DEPENDENCIES_TGZ=${DEPENDENCIES_TGZ:-""}  #TODO
 PATCH=${PATCH:-""} 
 DBUSER=${DBUSER:-"drupaltestbot"} 
 DBPASS=${DBPASS:-"drupaltestbotpw"}
-DBTYPE=${DBTYPE:-"mysql"} #mysql/sqlite
+DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
 DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db"}
 DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
 CMD=${CMD:-""}
@@ -132,7 +132,7 @@ if (( $FREEDISK <= 100 ));
     exit 1; 
 fi
 
-# If we are using mysql make sure the conatiner is there
+# If we are using mysql make sure the container is there
 if [[ $DBTYPE = "mysql" ]]
   then
     set +e
