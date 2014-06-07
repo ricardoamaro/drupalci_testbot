@@ -1,9 +1,9 @@
 #!/bin/bash
 
 PGVERSION=$(/usr/bin/psql --version | awk '{print $3}' | head -n1 | cut  -c 1-3)
-echo "PGSQL VERSION: ${PGVERSION}" 
+echo "PGSQL VERSION: ${PGVERSION}"
 
-if [ ! -z $(pg_lsclusters | grep -c ' main ') ]; 
+if [ ! -z $(pg_lsclusters | grep -c ' main ') ];
     then
     echo "rebuilding PostgreSQL database cluster"
     # stop and drop the cluster

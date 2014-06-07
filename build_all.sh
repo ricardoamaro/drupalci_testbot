@@ -2,18 +2,18 @@
 #
 # Name:         build_all.sh
 #
-# Purpose:      Quickly build/update/refresh of all docker images 
+# Purpose:      Quickly build/update/refresh of all docker images
 #
-# Comments:          
+# Comments:
 #
 # Usage:        sudo ./build_all.sh <cleanup>/<update>/<refresh>
 #
 # Author:       Ricardo Amaro (mail_at_ricardoamaro.com)
 # Contributors: Jeremy Thorson jthorson
-#           
+#
 # Bugs/Issues:  Use the issue queue on drupal.org
 #               IRC #drupal-infrastructure
-# 
+#
 # Docs:         README.md for complete information
 #
 
@@ -23,15 +23,15 @@ BASEDIR="$(pwd)"
 #print usage help if no arg, -h, --help
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   then
-  echo 
+  echo
   echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> \e[39m "
-  echo 
+  echo
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
-  echo 
+  echo
   echo -e "\t\tcleanup : Delete every docker container, repos, builds and start a fresh build."
-  echo -e "\t\tupdate  : Update all repos and containers." 
+  echo -e "\t\tupdate  : Update all repos and containers."
   echo -e "\t\trefresh : Just refresh the containers with any new change. "
-  echo 
+  echo
   echo -e "\t\tNote: If you are offline use 'refresh', in order to keep cached data. "
   echo
   exit 0
@@ -46,19 +46,19 @@ fi
 # Check if curl is installed
 command -v curl >/dev/null 2>&1 || { echo >&2 "Command 'curl' is required. Please install it and run again. Aborting."; exit 1; }
 
-# Make sure we are at the root 
+# Make sure we are at the root
 cd "${BASEDIR}"
 
 # Install Docker
-set +e 
+set +e
 if [ ! -f /usr/bin/docker ];
-    then 
+    then
     echo
     echo "Installing Docker from get.docker.io"
     echo "------------------------------------"
-    echo 
+    echo
     curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
-    else 
+    else
     echo
     echo "Docker found at /usr/bin/docker:"
     echo "------------------------------------"
@@ -67,7 +67,7 @@ fi
 
 # Clean all images per request
 if [ "$1" = "cleanup" ];
-  then 
+  then
   echo
   echo "stop and remove testbot containers and images"
   echo "---------------------------------------------"
@@ -81,7 +81,7 @@ set -e
 
 # Build and start DB containers
 for DBTYPE in mysql pgsql;
-  do 
+  do
   echo
   echo "Build and restart ${DBTYPE} container"
   echo "------------------------------------"
@@ -95,7 +95,7 @@ for DBTYPE in mysql pgsql;
   cd "${BASEDIR}"
 done
 
-echo 
+echo
 echo "Make sure we Build web containers"
 echo "------------------------------------"
 echo
@@ -103,7 +103,7 @@ cd ./distributed/apachephp/
 ./build.sh
 cd "${BASEDIR}"
 
-# Do a test run to collect test list and update repos 
+# Do a test run to collect test list and update repos
 if [ "$1" != "refresh" ];
   then
   sleep 5
