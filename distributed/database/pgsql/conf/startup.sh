@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export LANG=en_US.UTF-8
+export LANG_ALL=en_US.UTF-8
+
 if [ ! -z $(pg_lsclusters | grep -c ' main ') ]; 
     then
     echo "rebuilding PostgreSQL database cluster"
