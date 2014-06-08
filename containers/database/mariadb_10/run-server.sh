@@ -32,7 +32,7 @@ if [[ $RUNNING != "" ]]
     fi
 fi
 
-TMPDIR=$(mktemp -d --suffix=mariadb)
+TMPDIR=$(mktemp -d --suffix=mariadb_10_0)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 
 docker run -d -p=3306 --name=${NAME} -v="$TMPDIR":/var/lib/mysql ${TAG}
