@@ -7,7 +7,7 @@ if [ `whoami` != root ]; then
 fi
 
 TAG="drupal/testbot-mariadb"
-NAME="drupaltestbot-db"
+NAME="drupaltestbot-db-mariadb"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306 | awk '{print $1}')
 
@@ -21,13 +21,11 @@ if [[ ${RUNNING} != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-
-    if [ -d "/tmp/tmp.*" ]; then
-      rm -fr /tmp/tmp.* || /bin/true
-      umount -f /tmp/tmp.* || /bin/true
-      rm -fr /tmp/tmp.* || /bin/true
+    if ( ls -d /tmp/tmp.*mariadb/ ); then
+      rm -fr /tmp/tmp.*mariadb || /bin/true
+      umount -f /tmp/tmp.*mariadb || /bin/true
+      rm -fr /tmp/tmp.*mariadb || /bin/true
     fi
-
 fi
 
 docker rm ${NAME} 2>/dev/null || :
