@@ -1,17 +1,13 @@
 #!/bin/bash
 
-<<<<<<< HEAD
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-if [ ! -z $(pg_lsclusters | grep -c ' main ') ]; 
-=======
 PGVERSION=$(/usr/bin/psql --version | awk '{print $3}' | head -n1 | cut  -c 1-3)
 echo "PGSQL VERSION: ${PGVERSION}"
 
 if [ ! -z $(pg_lsclusters | grep -c ' main ') ];
->>>>>>> upstream/master
     then
     echo "rebuilding PostgreSQL database cluster"
     # stop and drop the cluster
