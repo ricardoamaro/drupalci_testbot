@@ -1,9 +1,17 @@
 #!/bin/bash
 
+<<<<<<< HEAD
+export LANGUAGE=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+if [ ! -z $(pg_lsclusters | grep -c ' main ') ]; 
+=======
 PGVERSION=$(/usr/bin/psql --version | awk '{print $3}' | head -n1 | cut  -c 1-3)
 echo "PGSQL VERSION: ${PGVERSION}"
 
 if [ ! -z $(pg_lsclusters | grep -c ' main ') ];
+>>>>>>> upstream/master
     then
     echo "rebuilding PostgreSQL database cluster"
     # stop and drop the cluster
@@ -11,12 +19,10 @@ if [ ! -z $(pg_lsclusters | grep -c ' main ') ];
     # create a fresh new cluster
     pg_createcluster ${PGVERSION} main --start
 
-    # create a new user
-    psql -c "CREATE USER drupaltestbot WITH PASSWORD 'drupaltestbotpw';"
+    # create a new user with CREATEDB permissions
+    psql -c "CREATE USER drupaltestbot WITH PASSWORD 'drupaltestbotpw' CREATEDB;"
     # create a new default database for the user
-    psql -c "CREATE DATABASE drupaltestbot OWNER drupaltestbot TEMPLATE DEFAULT;"
-    # give createdb perms to the user
-    psql -c "ALTER USER drupaltestbot CREATEDB;"
+    psql -c "CREATE DATABASE drupaltestbot OWNER drupaltestbot TEMPLATE DEFAULT ENCODING='utf8' LC_CTYPE='en_US.UTF-8' LC_COLLATE='en_US.UTF-8';"
     # stop the cluster
     pg_ctlcluster ${PGVERSION} main stop
     # allow md5-based password auth for IPv4 connections

@@ -11,13 +11,13 @@ then
   fi
 fi
 
-TAG="drupal/testbot-mysql"
-NAME="drupaltestbot-db-mysql"
+TAG="drupal/testbot-mariadb"
+NAME="drupaltestbot-db-mariadb"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306 | awk '{print $1}')
 
 if [[ ${RUNNING} != "" ]]
-  then 
+  then
     echo "Found database container: ${RUNNING} running..."
     echo "Stopping..."
     docker stop ${RUNNING}
@@ -26,10 +26,10 @@ if [[ ${RUNNING} != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if ( ls -d /tmp/tmp.*mysql/ ); then
-      rm -fr /tmp/tmp.*mysql || /bin/true
-      umount -f /tmp/tmp.*mysql || /bin/true
-      rm -fr /tmp/tmp.*mysql || /bin/true
+    if ( ls -d /tmp/tmp.*mariadb/ ); then
+      rm -fr /tmp/tmp.*mariadb || /bin/true
+      umount -f /tmp/tmp.*mariadb || /bin/true
+      rm -fr /tmp/tmp.*mariadb || /bin/true
     fi
 fi
 
