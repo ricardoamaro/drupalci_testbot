@@ -6,8 +6,8 @@ if [ `whoami` != root ]; then
     exit 1
 fi
 
-docker ps | grep "drupal/testbot-mysql" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
-docker ps -a | grep "drupal/testbot-mysql" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
+docker ps | grep "drupal/testbot-mariadb" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
+docker ps -a | grep "drupal/testbot-mariadb" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
 
-docker build -t drupal/testbot-mysql --rm=true .
+docker build -t drupal/testbot-mariadb --rm=true .
 
