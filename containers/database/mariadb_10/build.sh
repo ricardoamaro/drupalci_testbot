@@ -11,8 +11,7 @@ then
   fi
 fi
 
-docker ps | grep "drupal/testbot-mariadb" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
-docker ps -a | grep "drupal/testbot-mariadb" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
+docker ps | grep "drupal/testbot-mariadb_10_0" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
+docker ps -a | grep "drupal/testbot-mariadb_10_0" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
 
-docker build -t drupal/testbot-mariadb --rm=true .
-
+docker build -t drupal/testbot-mariadb_10_0 --rm=true .

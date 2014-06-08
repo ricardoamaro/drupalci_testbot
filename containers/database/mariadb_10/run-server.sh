@@ -12,8 +12,8 @@ then
 fi
 
 
-TAG="drupal/testbot-mariadb"
-NAME="drupaltestbot-db-mariadb"
+TAG="drupal/testbot-mariadb_10_0"
+NAME="drupaltestbot-db-mariadb_10_0"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306)
 if [[ $RUNNING != "" ]]
@@ -25,10 +25,10 @@ if [[ $RUNNING != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if ( ls -d /tmp/tmp.*mariadb/ ); then
-      rm -fr /tmp/tmp.*mariadb || /bin/true
-      umount -f /tmp/tmp.*mariadb || /bin/true
-      rm -fr /tmp/tmp.*mariadb || /bin/true
+    if ( ls -d /tmp/tmp.*mariadb_10_0/ ); then
+      rm -fr /tmp/tmp.*mariadb_10_0 || /bin/true
+      umount -f /tmp/tmp.*mariadb_10_0 || /bin/true
+      rm -fr /tmp/tmp.*mariadb_10_0 || /bin/true
     fi
 fi
 
@@ -43,5 +43,5 @@ CONTAINER_ID=$(docker ps | grep ${TAG} | awk '{print $1}')
 
 echo "CONTAINER STARTED: $CONTAINER_ID"
 
-docker ps | grep "drupal/testbot-mariadb"
+docker ps | grep "drupal/testbot-mariadb_10_0"
 
