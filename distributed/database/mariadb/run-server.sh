@@ -12,8 +12,8 @@ NAME="drupaltestbot-db-mariadb"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306)
 if [[ $RUNNING != "" ]]
-  then 
-    echo "Found database container:" 
+  then
+    echo "Found database container:"
     echo "$RUNNING already running..."
     exit 0
   elif [[ $STALLED != "" ]]
@@ -26,7 +26,7 @@ if [[ $RUNNING != "" ]]
       rm -fr /tmp/tmp.*mariadb || /bin/true
     fi
 fi
-  
+
 TMPDIR=$(mktemp -d --suffix=mariadb)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 

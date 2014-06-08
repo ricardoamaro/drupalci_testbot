@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -f /var/lib/mysql/ibdata1 ]; 
+if [ ! -f /var/lib/mysql/ibdata1 ];
     then
     echo "rebuilding /var/lib/mysql/ibdata1"
     mysql_install_db
@@ -14,6 +14,6 @@ if [ ! -f /var/lib/mysql/ibdata1 ];
     wait ${PID}
 fi
 
-/usr/bin/mysqld_safe; 
+/usr/bin/mysqld_safe;
 echo "mysql died at $(date)";
 
