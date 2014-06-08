@@ -8,7 +8,7 @@ RUN ln -sf /bin/true /sbin/initctl
 
 # Packages.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sqlite3 mysql-client apache2 curl git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php-apc php-pear pwgen sudo python-setuptools nano apt-utils tidy
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sqlite3 mysql-client apache2 curl git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php5-pgsql php-apc php-pear php-codesniffer pwgen sudo python-setuptools nano apt-utils tidy
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
 

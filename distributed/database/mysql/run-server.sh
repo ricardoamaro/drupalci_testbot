@@ -8,7 +8,7 @@ fi
 
 
 TAG="drupal/testbot-mysql"
-NAME="drupaltestbot-db"
+NAME="drupaltestbot-db-mysql"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306)
 if [[ $RUNNING != "" ]]
@@ -20,14 +20,14 @@ if [[ $RUNNING != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if [ -d "/tmp/tmp.*" ]; then
-      rm -fr /tmp/tmp.* || /bin/true
-      umount -f /tmp/tmp.* || /bin/true
-      rm -fr /tmp/tmp.* || /bin/true
+    if ( ls -d /tmp/tmp.*mysql/ ); then
+      rm -fr /tmp/tmp.*mysql || /bin/true
+      umount -f /tmp/tmp.*mysql || /bin/true
+      rm -fr /tmp/tmp.*mysql || /bin/true
     fi
 fi
   
-TMPDIR=$(mktemp -d)
+TMPDIR=$(mktemp -d --suffix=mysql)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 
 docker run -d -p=3306 --name=${NAME} -v="$TMPDIR":/var/lib/mysql ${TAG}
