@@ -11,9 +11,6 @@
             "": "scripts/src"
         }
     },
-    "config": {
-        "vendor-dir": "scripts/vendor"
-    },
     "description": "Central Script to control drupalci_testbot",
     "name": "drupalci/drupalci_testbot",
     "require": {
