@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__.'/scripts/vendor/autoload.php';
+
+$app = new Silex\Application();
+
+#TODO : we can parse env vars here...
+
+$console = require __DIR__.'/scripts/src/drupalci.php';
+$console->run();
