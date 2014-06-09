@@ -80,7 +80,7 @@ fi
 set -e
 
 # Build and start DB containers
-for DBTYPE in mysql pgsql;
+for DBTYPE in mysql_5_5 postgres_9_1;
   do
   echo
   echo "Build and restart ${DBTYPE} container"
@@ -107,12 +107,12 @@ cd "${BASEDIR}"
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
+  UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./scripts/run.sh
 else
   sleep 5
-  DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./run.sh
+  DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./scripts/run.sh
 fi
 
 echo -e "Container Images: Mysql, PgSql and web5.4 (re)built.\n"
-echo -e 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh'
+echo -e 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./scripts/run.sh'
 

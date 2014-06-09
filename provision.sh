@@ -19,12 +19,12 @@
 
 export HOME="/home/vagrant"
 
-if [ -f /home/vagrant/modernizing_testbot__dockerfiles/PROVISIONED ];
+if [ -f /home/vagrant/drupalci_testbot/PROVISIONED ];
 then
 	echo "You seem to have this box installed"
 	echo "I'll just give you a shell..."
 	swapon /var/swapfile
-	cd /home/vagrant/modernizing_testbot__dockerfiles
+	cd /home/vagrant/drupalci_testbot
 	./build_all.sh update
 else
 	echo 'Defaults        env_keep +="HOME"' >> /etc/sudoers
@@ -39,7 +39,7 @@ else
 	apt-get update
 	apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli
 	apt-get autoclean
-	cd /home/vagrant/modernizing_testbot__dockerfiles
+	cd /home/vagrant/drupalci_testbot
 	./scripts/build_all.sh cleanup $database
 	touch PROVISIONED
 fi
@@ -49,5 +49,5 @@ echo "Box started, run vagrant halt to stop."
 echo
 echo "To access the box and run tests, do:"
 echo "vagrant ssh"
-echo "cd modernizing_testbot__dockerfiles"
+echo "cd drupalci_testbot"
 #echo 'Example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/inthebox/to/your.patch,." ./run.sh'
