@@ -9,7 +9,8 @@
     "autoload": {
         "psr-0": {
             "": "scripts/src"
-        }
+        },
+        "files": ["scripts/src/helpers.php"]
     },
     "description": "Central Script to control drupalci_testbot",
     "name": "drupalci/drupalci_testbot",
