@@ -58,18 +58,18 @@ cd modernizing_testbot__dockerfiles
 ```
 ### 3- Build the database image
 ```
-cd distributed/database/mysql
+cd containers/database/mysql
 sudo ./build.sh
 ```
 ### 4- Start the DB container and check it's running on port 3306
 ```
-cd distributed/database/mysql
+cd containers/database/mysql
 sudo ./run-server.sh
 ```
 
 ### 5- Build the WEB image
 ```
-cd distributed/apachephp/
+cd containers/web/
 sudo ./build.sh 5.4
 ```
 ### 6- RUN EXAMPLES:
@@ -89,7 +89,7 @@ DRUPALBRANCH="8.x" \
 
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 ```
-cd distributed/apachephp/
+cd containers/web/
 
 sudo \
 TESTGROUPS="Action,Node" \
@@ -101,7 +101,7 @@ PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.
 
 Run all tests using 4 CPUs, 1 core patch, 1 tgz module, against D8:
 ```
-cd distributed/apachephp/
+cd containers/web/
 
 sudo \
 TESTGROUPS="--all" \
@@ -114,7 +114,7 @@ PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 
 Run all tests using 6 CPUs, 2 patches and 2 modules on D7.26:
 ```
-cd distributed/apachephp/
+cd containers/web/
 
 sudo \
 TESTGROUPS="--all" \
@@ -186,8 +186,8 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 ├── build_all.sh
 ├── D7TestGroupsClasses.txt
 ├── D8TestGroupsClasses.txt
-├── distributed
-│   ├── apachephp
+├── containers
+│   ├── web
 │   │   ├── build.sh
 │   │   ├── conf
 │   │   │   ├── apache2
@@ -218,7 +218,7 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 ├── patch.p1
 ├── provision.sh
 ├── README.md
-├── run.sh -> ./distributed/apachephp/run.sh
+├── run.sh -> ./containers/web/run.sh
 ├── supervisord
 │   ├── build.sh
 │   ├── default
