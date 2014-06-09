@@ -25,6 +25,8 @@ $console
         #$output->writeln('<info>INFO</info>');
         #$output->writeln('<error>ERROR</error>');
         $output->writeln("<info>INFO</info>: Running on $distro");
+        $output->writeln("<info>INFO</info>: Installing Docker");
+        installDocker();
     });
 
 $console

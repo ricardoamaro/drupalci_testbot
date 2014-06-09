@@ -41,9 +41,18 @@ function getLinuxDistro()
    }
 }
 
-function installDocker()
-{
-	// to be done later
+
+
+function installDependencies() {
+   // apt-get update
+   // apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli
+   // apt-get autoclean
 }
 
-?>
+
+function installDocker()
+{
+      shell_exec('curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"');
+}
+
+
