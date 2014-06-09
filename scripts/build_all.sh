@@ -86,7 +86,7 @@ for DBTYPE in mysql pgsql;
   echo "Build and restart ${DBTYPE} container"
   echo "------------------------------------"
   echo
-  cd ./distributed/database/${DBTYPE}
+  cd ./containers/database/${DBTYPE}
   ./stop-server.sh
   umount /tmp/tmp.*${DBTYPE} >/dev/null || /bin/true
   rm -rf /tmp/tmp.*${DBTYPE} >/dev/null || /bin/true
@@ -99,7 +99,7 @@ echo
 echo "Make sure we Build web containers"
 echo "------------------------------------"
 echo
-cd ./distributed/apachephp/
+cd ./containers/web/
 ./build.sh
 cd "${BASEDIR}"
 
