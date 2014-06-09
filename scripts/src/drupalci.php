@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 include_once('setup.inc.php');
+include_once('build.inc.php');
 
 $console = new Application('DrupalCI - CommandLine', '0.1');
 
@@ -31,8 +32,15 @@ $console
 
 $console
     ->register('build')
-    ->setDescription('Build Containers');
+    ->setDescription('Build Containers')
+    ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
+        $container['base'] = getContainers('base');
+        $container['database'] = getContainers('database');
+        $container['web'] = getContainers('web');
 
+        var_dump($container);
+
+    });
 
 $console
     ->register('test')
