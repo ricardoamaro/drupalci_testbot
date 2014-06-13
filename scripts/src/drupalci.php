@@ -14,13 +14,11 @@ $app->boot();
 
 
 /*
- * SETUP Command
+ * INIT Command
  *
  * Initializes the drupalci environment, checking for required dependencies,
  * establishing default base environment variables, and generating the default
  * ~/.drupalci directory.
- *
- * TODO: Should this be 'drupalci init'?
  *
  * Usage: drupalci setup [OPTIONS]
  *
@@ -37,7 +35,7 @@ $app->boot();
  */
 
 $console
-    ->register('setup')
+    ->register('init')
     ->setDescription('Setups the Docker Enviroment with sane defaults for testing')
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
         if (!$distro = getLinuxDistro())
