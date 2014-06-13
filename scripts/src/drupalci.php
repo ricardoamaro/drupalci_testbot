@@ -146,17 +146,54 @@ $console
     });
 
 /*
- * TEST Command
+ * CLEAN Command
  *
- * Used to execute a given test run.
+ * Wrapper command used to manage docker images and containers.
  *
- * Usage: drupalci test [OPTIONS]
+ * Usage: drupalci clean [OPTIONS] <type>
+ *
+ * Type:
+ *   images            Attempts to remove all untagged images.
+ *                       docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
+ *   containers        Attempts to remove all stopped containers.
+ *                       docker rm $(docker ps -a -q)
+ *   db                Attempts to remove all 'database' containers.
+ *   web               Attempts to remove all 'web' containers.
+ *   environment       Same as if passed both 'images' and 'containers'
+ *                     arguments.
  *
  * Options:
- *   TBD
+ *   --hard            Modifies the provided command to attempt to remove all
+ *                       containers or images, uncluding tagged images and
+ *                       running containers (which it will need to stop first).
+ *
  */
 $console
-    ->register('test')
-    ->setDescription('Running Tests');
+    ->register('clean')
+    ->setDescription('Cleaning Environment');
+
+/*
+ * RUN Command
+ *
+ * Used to execute a given job run.
+ *
+ * Usage: drupalci run <job> [OPTIONS]
+ *
+ * Job:
+ *   One of the predefined job definitions from the /jobs directory, which
+ *   defines the desired testbot behaviour for that particular job type.
+ *
+ * Options:
+ *   Will probably be a combination of things taken from environment variables
+ *   and job specific options.
+ *   TODO: Sort out how to define job-specific options, and be able to import
+ *   them into the drupalci command. (Imported from a specially named file in
+ *   the job directory, perhaps?) Will need syntax to define required versus
+ *   optional options, and their defaults if not specified.
+ *
+ */
+$console
+    ->register('run')
+    ->setDescription('Running Job');
 
 return $console;
