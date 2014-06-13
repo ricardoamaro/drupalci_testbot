@@ -2,7 +2,7 @@
 function getLinuxDistro()
 {
    # declare Linux distros (extensible list)
-   $distros = array 
+   $distros = array
    (
       "Arch" => "arch-release",
       "Debian" => "debian_version",
@@ -29,7 +29,7 @@ function getLinuxDistro()
       {
          $flag = $name;
 	 break;
-      } 
+      }
    }
    if (empty($flag))
    {
@@ -47,6 +47,11 @@ function installDependencies() {
    // apt-get update
    // apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli
    // apt-get autoclean
+}
+
+
+function locateDocker() {
+  return locate_binary("docker");
 }
 
 
