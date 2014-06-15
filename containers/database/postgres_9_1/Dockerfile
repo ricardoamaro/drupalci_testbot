@@ -20,7 +20,6 @@ RUN echo "listen_addresses='*'" >> /etc/postgresql/9.1/main/postgresql.conf
 # Expose the PostgreSQL port
 EXPOSE 5432
 
-USER postgres
 
 ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -32,6 +31,8 @@ RUN locale-gen en_US.UTF-8
 RUN dpkg-reconfigure locales
 #RUN locale-gen --no-purge en_US.UTF-8 && \
 #    /usr/sbin/update-locale LANG=en_US.UTF-8
+
+USER postgres
 
 ADD ./conf/startup.sh /opt/startup.sh
 
