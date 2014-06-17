@@ -22,7 +22,7 @@ h) It's really really easy!
 
 ### (re)Build all and start containers (only once): 
 ```
-git clone {thisrepo}
+git clone https://github.com/ricardoamaro/drupalci_testbot.git
 cd drupalci_testbot
 sudo ./build_all.sh cleanup
 ```
@@ -32,7 +32,7 @@ This will not run natively since it's a Virtualbox VM
 and you need to install Vagrant.
 
 ```
-git clone {thisrepo}
+git clone https://github.com/ricardoamaro/drupalci_testbot.git
 cd drupalci_testbot
 vagrant up
 
@@ -55,7 +55,7 @@ curl get.docker.io | sudo sh -x
 
 ### 2- Clone this repo somewhere in your Linux box
 ```
-git clone {thisrepo}
+git clone https://github.com/ricardoamaro/drupalci_testbot.git
 cd drupalci_testbot
 ```
 ### 3- Build the database image 
