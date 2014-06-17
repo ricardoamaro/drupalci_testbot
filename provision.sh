@@ -21,13 +21,13 @@ export HOME="/home/vagrant"
 
 #env
 
-if [ -f /home/vagrant/modernizing_testbot__dockerfiles/.git/config ];
+if [ -f /home/vagrant/drupalci_testbot/.git/config ];
 then
 	echo "You seem to have this box installed"
 	echo "I'll just give you a shell..."
 	swapon /var/swapfile
 	cd /home/vagrant
-	cd modernizing_testbot__dockerfiles
+	cd drupalci_testbot
 	git pull
 	./build_all.sh update
 else 
@@ -43,8 +43,8 @@ else
 	apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli
 	apt-get autoclean
 	cd /home/vagrant
-	git clone https://github.com/ricardoamaro/modernizing_testbot__dockerfiles.git
-	cd modernizing_testbot__dockerfiles
+	git clone https://github.com/ricardoamaro/drupalci_testbot.git
+	cd drupalci_testbot
 	./build_all.sh cleanup
 fi 
 
@@ -53,5 +53,5 @@ echo "Box started, run vagrant halt to stop."
 echo 
 echo "To access the box and run tests, do:"
 echo "vagrant ssh"
-echo "cd modernizing_testbot__dockerfiles"
+echo "cd drupalci_testbot"
 #echo 'Example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/inthebox/to/your.patch,." ./run.sh'

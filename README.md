@@ -23,7 +23,7 @@ h) It's really really easy!
 ### (re)Build all and start containers (only once): 
 ```
 git clone {thisrepo}
-cd modernizing_testbot__dockerfiles
+cd drupalci_testbot
 sudo ./build_all.sh cleanup
 ```
 
@@ -33,7 +33,7 @@ and you need to install Vagrant.
 
 ```
 git clone {thisrepo}
-cd modernizing_testbot__dockerfiles
+cd drupalci_testbot
 vagrant up
 
 ```    
@@ -56,7 +56,7 @@ curl get.docker.io | sudo sh -x
 ### 2- Clone this repo somewhere in your Linux box
 ```
 git clone {thisrepo}
-cd modernizing_testbot__dockerfiles
+cd drupalci_testbot
 ```
 ### 3- Build the database image 
 ```
