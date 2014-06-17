@@ -20,11 +20,17 @@
 REPODIR=${REPODIR:-"$HOME/testbotdata"}
 BASEDIR="$(pwd)"
 
+declare -A firstarg
+for constant in cleanup update refresh
+do
+  firstarg[$constant]=1
+done
+
 #print usage help if no arg, -h, --help
-if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
+if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1]} ]];
   then
   echo
-  echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> \e[39m "
+  echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_9_1>/<all>\e[39m "
   echo
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
   echo
@@ -32,15 +38,46 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]
   echo -e "\t\tupdate  : Update all repos and containers."
   echo -e "\t\trefresh : Just refresh the containers with any new change. "
   echo
+  echo -e "\t\tmysql/postgres/mariadb/all : Defines the database type(s) to build. "
   echo -e "\t\tNote: If you are offline use 'refresh', in order to keep cached data. "
   echo
   exit 0
 fi
 
+# Check for database argument
+declare -A secondarg
+declare -A dbtypes
+for constant in mysql_5_5 mariadb_5_5 mariadb_10 postgres_9_1
+do
+  secondarg[$constant]=1
+  if [ "$2" = $constant ] || [ "$2" = "all" ];
+  then
+    echo "Match"
+    dbtypes[$constant]="$constant"
+  fi
+done
+if [ "$2" != "" ] && [ ${secondarg[$2]} ] || [ "$2" = "all" ];
+  then
+    # Database argument found
+    echo -e " Received database type $2. "
+    echo
+    else
+    echo
+    echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_9_1>/<all>\e[39m "
+    echo
+    echo -e " Invalid Database type.  Please choose from mysql_5_5, mariadb_5_5, mariadb_10, postgres_9_1, or all."
+    echo
+    echo -e " Example:\t\e[38;5;148msudo ./build_all.sh refresh mysql\e[39m "
+    echo
+    echo -e " Usage help:\t\e[38;5;148msudo ./build_all.sh --help\e[39m "
+    echo
+    exit 0
+fi
+
 # Check if we have root powers
 if [ `whoami` != root ]; then
-    echo "Please run this script as root or using sudo"
-    exit 1
+  echo "Please run this script as root or using sudo"
+  exit 1
 fi
 
 # Check if curl is installed
@@ -52,17 +89,17 @@ cd "${BASEDIR}"
 # Install Docker
 set +e
 if [ ! -f /usr/bin/docker ];
-    then
-    echo
-    echo "Installing Docker from get.docker.io"
-    echo "------------------------------------"
-    echo
-    curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
-    else
-    echo
-    echo "Docker found at /usr/bin/docker:"
-    echo "------------------------------------"
-    docker version
+  then
+  echo
+  echo "Installing Docker from get.docker.io"
+  echo "------------------------------------"
+  echo
+  curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
+  else
+  echo
+  echo "Docker found at /usr/bin/docker:"
+  echo "------------------------------------"
+  docker version
 fi
 
 # Clean all images per request
@@ -80,12 +117,14 @@ fi
 set -e
 
 # Build and start DB containers
-for DBTYPE in mysql_5_5 postgres_9_1;
+
+for DBTYPE in "${dbtypes[@]}";
   do
   echo
   echo "Build and restart ${DBTYPE} container"
   echo "------------------------------------"
   echo
+  echo ${DBTYPE}
   cd ./containers/database/${DBTYPE}
   ./stop-server.sh
   umount /tmp/tmp.*${DBTYPE} >/dev/null || /bin/true
