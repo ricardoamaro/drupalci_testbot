@@ -37,6 +37,12 @@ $app->boot();
 $console
     ->register('init')
     ->setDescription('Setups the Docker Enviroment with sane defaults for testing')
+    ->setDefinition( array(
+      // Create Optional parameters
+      new InputOption('dbtype', '', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Database types to support', array( 'mysql' )),
+      new InputOption('php_version', '', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'PHP Versions to support', array( '5.4' )),
+      new InputOption('force', 'f', InputOption::VALUE_NONE, 'Override a previous setup'),
+    ))
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
         if (!$distro = getLinuxDistro())
         {
@@ -136,6 +142,13 @@ $console
 $console
     ->register('build')
     ->setDescription('Build Containers')
+    ->setDefinition( array(
+      // Create Optional parameters
+      new InputOption('dbtype', '', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Database types to build', array( 'mysql' )),
+      new InputOption('php_version', '', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'PHP Versions to build', array( '5.4' )),
+      new InputOption('container_type', '', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Type of container image (db/web) to build.', array( 'web' )),
+      new InputOption('container_name', '', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Name of a specific container image to build.')
+    ))
     ->setCode(function (InputInterface $input, OutputInterface $output) use ($app) {
         $container['base'] = getContainers('base');
         $container['database'] = getContainers('database');
