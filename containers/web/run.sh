@@ -183,7 +183,7 @@ if $(docker images | grep -q testbot-web${PHPVERSION});
   else
   echo "--------------------------------------------------------------------------------"
   echo "ERROR. Image testbot-web${PHPVERSION} needs to be built with:"
-  echo "sudo ./build ${PHPVERSION}"
+  echo "sudo ./build.sh ${PHPVERSION}"
   echo "--------------------------------------------------------------------------------"
   exit 1
 fi
