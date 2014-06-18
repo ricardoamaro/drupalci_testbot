@@ -10,5 +10,5 @@ $app = new Silex\Application();
 $env = get_defined_vars();
 $env = preg_grep_keys('/DRUPALCI/', $env['_SERVER']);
 
-$console = require __DIR__ . '/scripts/src/drupalci.php';
+$console = require __DIR__ . '/src/drupalci.php';
 $console->run();
