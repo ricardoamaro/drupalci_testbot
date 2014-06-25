@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 #GET ALL INFO FROM /var/www/test.info:
 source /var/www/test.info
@@ -30,17 +30,32 @@ if (( $DRUPALVERSION >= 8 ))
   then
     echo "DRUPALVERSION is $DRUPALVERSION"
     echo "Skipping install"
-    EXTRA="--sqlite /var/www/test.sqlite --dburl mysql://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --keep-results"
-    #Create drupal database manually
-    /usr/bin/mysql -u${DBUSER} -p${DBPASS} -h${DB_PORT_3306_TCP_ADDR} -e "CREATE DATABASE IF NOT EXISTS ${IDENTIFIER} ;"
+    #Create drupal database manually because Drupal>=8
+    case $DBTYPE in
+      pgsql) 
+         export PGPASSWORD="${DBPASS}"; 
+		 export PGUSER="${DBUSER}"; 
+         /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "CREATE DATABASE ${IDENTIFIER} OWNER ${DBUSER} TEMPLATE DEFAULT ENCODING='utf8' LC_CTYPE='en_US.UTF-8' LC_COLLATE='en_US.UTF-8';"
+         EXTRA="--sqlite /var/www/test.sqlite --dburl ${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --keep-results"
+      ;;
+      mysql) 
+         /usr/bin/mysql -u${DBUSER} -p${DBPASS} -h${DB_PORT_3306_TCP_ADDR} -e "CREATE DATABASE IF NOT EXISTS ${IDENTIFIER} ;"
+         EXTRA="--sqlite /var/www/test.sqlite --dburl ${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --keep-results"
+      ;;
+    esac
   else
-    echo "Operation [install]..."
-    if [[ $DBTYPE = "sqlite" ]]
-      then
-        ${DRUSH} si -y --db-url=sqlite://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
-      else
-        ${DRUSH} si -y --db-url=mysql://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
-    fi
+    echo "Operation $DRUPALVERSION [install]... "
+    case $DBTYPE in
+      sqlite)
+        ${DRUSH} si -y --db-url=sqlite://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
+      ;;
+      mysql) 
+        ${DRUSH} si -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+      ;;
+      pgsql)
+        ${DRUSH} si -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+      ;;
+    esac
     ${DRUSH} -y en simpletest
     EXTRA=""
 fi
