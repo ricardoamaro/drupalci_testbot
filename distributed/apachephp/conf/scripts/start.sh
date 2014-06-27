@@ -26,7 +26,7 @@ echo ""
 #Example: php ./core/scripts/run-tests.sh --sqlite /tmpfs/drupal/test.sqlite --dburl mysql://username:password@localhost/database --url http://example.com/ --all
 #TODO: ${DRUSH} si -y --db-url=pgsql://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com -vd
 
-if (( $DRUPALVERSION >= 8 ))
+if (( $DRUPALVERSION >= 8 )) && [[ $DRUSHINSTALL = "false" ]];
   then
     echo "DRUPALVERSION is $DRUPALVERSION"
     echo "Skipping install"
@@ -47,13 +47,13 @@ if (( $DRUPALVERSION >= 8 ))
     echo "Operation $DRUPALVERSION [install]... "
     case $DBTYPE in
       sqlite)
-        ${DRUSH} si -y --db-url=sqlite://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
+        ${DRUSH} si -vd -y --db-url=${DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
       ;;
       mysql) 
-        ${DRUSH} si -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        ${DRUSH} si -vd -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
       pgsql)
-        ${DRUSH} si -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        ${DRUSH} si -vd -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
     esac
     ${DRUSH} -y en simpletest
