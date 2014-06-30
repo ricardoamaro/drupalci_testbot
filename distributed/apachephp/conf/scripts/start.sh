@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 #GET ALL INFO FROM /var/www/test.info:
 source /var/www/test.info
@@ -26,7 +26,7 @@ echo ""
 #Example: php ./core/scripts/run-tests.sh --sqlite /tmpfs/drupal/test.sqlite --dburl mysql://username:password@localhost/database --url http://example.com/ --all
 #TODO: ${DRUSH} si -y --db-url=pgsql://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com -vd
 
-if (( $DRUPALVERSION >= 8 )) && [[ $DRUSHINSTALL = "false" ]];
+if (( $DRUPALVERSION >= 8 )) && [[ $INSTALLER = "none" ]];
   then
     echo "DRUPALVERSION is $DRUPALVERSION"
     echo "Skipping install"
@@ -47,13 +47,13 @@ if (( $DRUPALVERSION >= 8 )) && [[ $DRUSHINSTALL = "false" ]];
     echo "Operation $DRUPALVERSION [install]... "
     case $DBTYPE in
       sqlite)
-        ${DRUSH} si -vd -y --db-url=${DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
+        ${DRUSH} si -v -y --db-url=${DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
       ;;
       mysql) 
-        ${DRUSH} si -vd -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        ${DRUSH} si -v -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
       pgsql)
-        ${DRUSH} si -vd -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        ${DRUSH} si -v -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
     esac
     ${DRUSH} -y en simpletest
