@@ -37,7 +37,7 @@ DRUPALVERSION: Default is '8'
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
 VERBOSE:       Default is 'false'
-DBTYPE:        Default is 'mysql' from either mysql/sqlite
+DBTYPE:        Default is 'mysql' from either mysql/sqlite/pgsql
 CMD:           Default is none. Normally use '/bin/bash' to debug the container
 UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
 IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
@@ -103,6 +103,10 @@ esac
 case $DBTYPE in
   pgsql) DBPORT="5432"
          DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql"}
+         DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
+  ;;
+  pgsql_8_3) DBPORT="5432"
+         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql_8_3"}
          DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
   ;;
       *) DBPORT="3306"

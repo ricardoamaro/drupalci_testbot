@@ -30,7 +30,7 @@ done
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1]} ]];
   then
   echo
-  echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_9_1>/<all>\e[39m "
+  echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_8_3>/<postgres_9_1>/<all>\e[39m "
   echo
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
   echo
@@ -47,7 +47,7 @@ fi
 # Check for database argument
 declare -A secondarg
 declare -A dbtypes
-for constant in mysql_5_5 mariadb_5_5 mariadb_10 postgres_9_1
+for constant in mysql_5_5 mariadb_5_5 mariadb_10 postgres_8_3 postgres_9_1
 do
   secondarg[$constant]=1
   if [ "$2" = $constant ] || [ "$2" = "all" ];
@@ -65,7 +65,7 @@ if [ "$2" != "" ] && [ ${secondarg[$2]} ] || [ "$2" = "all" ];
     echo
     echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_9_1>/<all>\e[39m "
     echo
-    echo -e " Invalid Database type.  Please choose from mysql_5_5, mariadb_5_5, mariadb_10, postgres_9_1, or all."
+    echo -e " Invalid Database type.  Please choose from mysql_5_5, mariadb_5_5, mariadb_10, postgres_8_3, postgres_9_1, or all."
     echo
     echo -e " Example:\t\e[38;5;148msudo ./build_all.sh refresh mysql\e[39m "
     echo
