@@ -39,7 +39,7 @@ TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
 VERBOSE:       Default is 'false' 
 DBTYPE:        Default is 'mysql' from either mysql/sqlite
 CMD:           Default is none. Normally use '/bin/bash' to debug the container 
-DRUSHINSTALL:  Default is false. Try not to use site-install.
+INSTALLER:     Default is none. Try to use core non install tests.
 UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false' 
 IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
 REPODIR:       Default is 'HOME/testbotdata'  
@@ -85,7 +85,7 @@ DBUSER=${DBUSER:-"drupaltestbot"}
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
 CMD=${CMD:-""}
-DRUSHINSTALL=${DRUSHINSTALL:-"false"} #force drush install
+INSTALLER=${INSTALLER:-"none"} 
 VERBOSE=${VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
@@ -361,7 +361,7 @@ DBTYPE=\"${DBTYPE}\"
 DBCONTAINER=\"${DBCONTAINER}\"
 DBLINK=\"${DBLINK}\"
 CMD=\"${CMD}\"
-DRUSHINSTALL=\"${DRUSHINSTALL}\"
+INSTALLER=\"${INSTALLER}\"
 VERBOSE=\"${VERBOSE}\"
 PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\" 
@@ -371,7 +371,7 @@ TESTGROUPS=\"${TESTGROUPS}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-/usr/bin/time -p docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
+/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
 
 echo "exited $?"
 
