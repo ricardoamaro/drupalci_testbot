@@ -64,7 +64,6 @@ chown -fR www-data /var/www/sites/default/files/ /var/www/sites/simpletest
 # Run the test suite.
 echo ""
 echo "Operation [run tests]..."
-echo ${EXTRA}
 
 echo "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.stdout"
 sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.stdout"
