@@ -37,7 +37,8 @@ DRUPALVERSION: Default is '8'
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
 VERBOSE:       Default is 'false'
-DBTYPE:        Default is 'mysql' from either mysql/sqlite/pgsql
+DBTYPE:        Default is 'mysql' from mysql/sqlite/pgsql
+DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
 CMD:           Default is none. Normally use '/bin/bash' to debug the container
 UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
 IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
@@ -65,7 +66,7 @@ sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.x\" PATCH=\"https:/
   exit 0
 fi
 
-# Bellow there is a list of variables that you can override:
+# Below there is a list of variables that you can override:
 
 IDENTIFIER=${IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"}
 DRUPALBRANCH=${DRUPALBRANCH:-"8.x"}
@@ -83,7 +84,7 @@ PATCH=${PATCH:-""}
 DBUSER=${DBUSER:-"drupaltestbot"}
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
-
+#DBVER=${DBVER:-"5.5"} #Optional, only used to override the default for a given database type
 CMD=${CMD:-""}
 VERBOSE=${VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
@@ -101,19 +102,40 @@ case $DRUPALVERSION in
 esac
 
 case $DBTYPE in
-  pgsql) DBPORT="5432"
-         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql"}
-         DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
+  pgsql)
+     if [ -z ${DBVER+x} ];
+       then
+         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql_9_1"}
+       else
+         case $DBVER in
+           8.3)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql_8_3"}
+           ;;
+           9.1)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql_9_1"}
+           ;;
+         esac
+     fi
+     DBPORT="5432"
   ;;
-  pgsql_8_3) DBPORT="5432"
-         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql_8_3"}
-         DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
+  mariadb)
+    if [ -z ${DBVER+x} ];
+      then
+        DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb_5_5"}
+      else
+        case $DBVER in
+          5.5)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb_5_5"}
+          ;;
+          10)   DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb_10"}
+          ;;
+        esac
+    fi
+    DBPORT="3306"
   ;;
-      *) DBPORT="3306"
-         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mysql"}
-         DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
+  mysql | *)
+    DBPORT="3306"
+    DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mysql_5_5"}
   ;;
 esac
+DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
 
 case $VERBOSE in
   true) VERBO="--verbose"
@@ -146,7 +168,7 @@ if (( $FREEDISK <= 100 ));
     exit 1;
 fi
 
-# If we are using mysql make sure the container is there
+# If we are using a non-sqlite database, make sure the container is there
 if [[ $DBTYPE != "sqlite" ]]
   then
     set +e
@@ -155,7 +177,7 @@ if [[ $DBTYPE != "sqlite" ]]
     if [[ $RUNNING = "" ]]
       then
         echo "--------------------------------------------------------------------------------"
-        echo -e "ERROR: There is no ${DBTYPE} container running..."
+        echo -e "ERROR: There is no ${DBCONTAINER} container running..."
         echo -e "Please make sure you built the image and started it:"
         echo -e "sudo ./build_all.sh refresh \n"
         echo -e "Also please make sure port ${DBPORT} is not being used \nand ${DBTYPE} is stopped on the host."
@@ -181,7 +203,7 @@ esac
 if $(docker images | grep -q testbot-web${PHPVERSION});
   then
   echo "--------------------------------------------------------------------------------"
-  echo "Container: testbot-web${PHPVERSION} available"
+  echo "Containers: testbot-web${PHPVERSION} and ${DBCONTAINER} available"
   echo "Running PHP${PHPVERSION}/${DBTYPE} on drupal/testbot-web${PHPVERSION}"
   echo "--------------------------------------------------------------------------------"
   else
@@ -361,6 +383,7 @@ PATCH=\"${PATCH}\"
 DBUSER=\"${DBUSER}\"
 DBPASS=\"${DBPASS}\"
 DBTYPE=\"${DBTYPE}\"
+DBVER=\"${DBVER}\"
 DBCONTAINER=\"${DBCONTAINER}\"
 DBLINK=\"${DBLINK}\"
 CMD=\"${CMD}\"

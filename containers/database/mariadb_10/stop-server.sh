@@ -11,8 +11,8 @@ then
   fi
 fi
 
-TAG="drupal/testbot-mariadb_10_0"
-NAME="drupaltestbot-db-mariadb_10_0"
+TAG="drupal/testbot-mariadb_10"
+NAME="drupaltestbot-db-mariadb_10"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306 | awk '{print $1}')
 

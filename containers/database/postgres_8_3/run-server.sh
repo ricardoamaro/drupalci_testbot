@@ -15,9 +15,7 @@ fi
 TAG="drupal/testbot-pgsql_8_3"
 NAME="drupaltestbot-db-pgsql_8_3"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
-echo jsmith Stalled $STALLED
 RUNNING=$(docker ps | grep ${TAG} | grep 5432)
-echo jsmith Running $RUNNING
 if [[ $RUNNING != "" ]]
   then
     echo "Found database container:"

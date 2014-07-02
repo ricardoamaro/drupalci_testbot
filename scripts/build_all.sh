@@ -52,16 +52,12 @@ do
   secondarg[$constant]=1
   if [ "$2" = $constant ] || [ "$2" = "all" ];
   then
-    echo "Match"
     dbtypes[$constant]="$constant"
   fi
 done
-if [ "$2" != "" ] && [ ${secondarg[$2]} ] || [ "$2" = "all" ];
+
+if [ "$2" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
   then
-    # Database argument found
-    echo -e " Received database type $2. "
-    echo
-    else
     echo
     echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_9_1>/<all>\e[39m "
     echo
@@ -72,6 +68,10 @@ if [ "$2" != "" ] && [ ${secondarg[$2]} ] || [ "$2" = "all" ];
     echo -e " Usage help:\t\e[38;5;148msudo ./build_all.sh --help\e[39m "
     echo
     exit 0
+fi
+
+if [ ${#dbtypes[@]} -eq 0 ]; then
+  dbtypes[mysql_5_5]="mysql_5_5"
 fi
 
 # Check if we have root powers
@@ -132,6 +132,30 @@ for DBTYPE in "${dbtypes[@]}";
   ./build.sh
   ./run-server.sh
   cd "${BASEDIR}"
+  # Set up DB container arguments for run script
+  case ${DBTYPE} in
+    postgres_8_3)
+      DBTYPE="pgsql"
+      DBVER="8.3"
+      ;;
+    postgres_9_1|postgres)
+      DBTYPE="pgsql"
+      DBVER="9.1"    #default
+      ;;
+    mariadb_10)
+      DBTYPE="mariadb"
+      DBVER="10"
+      ;;
+    mariadb_5_5|mariadb)
+      DBTYPE="mariadb"
+      DBVER="5.5"    #default
+      ;;
+    mysql_5_5|mysql)
+      DBTYPE="mysql"
+      DBVER="5.5"    #default
+      ;;
+  esac
+
 done
 
 echo
@@ -142,16 +166,19 @@ cd ./containers/web/
 ./build.sh
 cd "${BASEDIR}"
 
+echo -e "Container Images: ${dbtypes[@]} and web5.4 (re)built.\n"
+
+
+
 # Do a test run to collect test list and update repos
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./scripts/run.sh
+  DBTYPE=${DBTYPE} DBVER=${DBVER} UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./scripts/run.sh
 else
   sleep 5
-  DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./scripts/run.sh
+  DBTYPE=${DBTYPE} DBVER=${DBVER} DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./scripts/run.sh
 fi
 
-echo -e "Container Images: Mysql, PgSql and web5.4 (re)built.\n"
-echo -e 'Try example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./scripts/run.sh'
-
+echo -e "Container Images: ${dbtypes[@]} and web5.4 (re)built.\n"
+echo -e "Try example: sudo DBTYPE=${DBTYPE} DBVER=${DBVER} TESTGROUPS='Bootstrap' DRUPALBRANCH='8.x' PATCH='/path/to/your.patch,.' ./scripts/run.sh"

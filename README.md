@@ -146,6 +146,7 @@ PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
 DBUSER="drupaltestbot"
 DBPASS="drupaltestbotpw"
 DBTYPE="mysql"
+DBVER="5.5"         # Used to override the default database version for this database type (Optional)
 DBLINK="--link=drupaltestbot-db:db"
 CMD=""              # Eg. enter container shell with CMD="/bin/bash"
 VERBOSE="false"     # true will give verbose

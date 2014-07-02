@@ -12,8 +12,8 @@ then
 fi
 
 
-TAG="drupal/testbot-mariadb"
-NAME="drupaltestbot-db-mariadb"
+TAG="drupal/testbot-mariadb_5_5"
+NAME="drupaltestbot-db-mariadb_5_5"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306)
 if [[ $RUNNING != "" ]]
@@ -43,5 +43,5 @@ CONTAINER_ID=$(docker ps | grep ${TAG} | awk '{print $1}')
 
 echo "CONTAINER STARTED: $CONTAINER_ID"
 
-docker ps | grep "drupal/testbot-mariadb"
+docker ps | grep "drupal/testbot-mariadb_5_5"
 
