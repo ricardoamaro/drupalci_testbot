@@ -1,0 +1,21 @@
+{
+    "authors": [
+        {
+            "email": "b.widmer@dasrecht.net",
+            "name": "Bastian Widmer",
+            "homepage": "http://bastianwidmer.ch"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "": "scripts/src"
+        },
+        "files": ["scripts/src/helpers.php"]
+    },
+    "description": "Central Script to control drupalci_testbot",
+    "name": "drupalci/drupalci_testbot",
+    "require": {
+        "knplabs/console-service-provider": "dev-master",
+        "silex/silex": "~1.1"
+    }
+}
