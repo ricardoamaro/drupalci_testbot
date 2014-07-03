@@ -1,1 +1,0 @@
-./distributed/apachephp/run.sh
