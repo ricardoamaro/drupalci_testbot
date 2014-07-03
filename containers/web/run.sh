@@ -8,7 +8,7 @@
 #
 # Usage:        sudo {VARIABLES} ./run.sh
 #
-# Author:       Ricardo Amaro (mail@ricardoamaro.com)
+# Author:       Ricardo Amaro (mail_at_ricardoamaro.com)
 # Contributors: Jeremy Thorson jthorson
 #           
 # Bugs/Issues:  Use the issue queue on drupal.org
