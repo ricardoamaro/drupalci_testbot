@@ -11,8 +11,8 @@ then
   fi
 fi
 
-docker ps | grep "drupal/testbot-mysql" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
-docker ps -a | grep "drupal/testbot-mysql" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
+docker ps | grep "drupal/testbot-mysql_5_5" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
+docker ps -a | grep "drupal/testbot-mysql_5_5" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
 
-docker build -t drupal/testbot-mysql --rm=true .
+docker build -t drupal/testbot-mysql_5_5 --rm=true .
 

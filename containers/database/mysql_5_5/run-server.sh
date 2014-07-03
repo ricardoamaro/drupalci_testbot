@@ -12,8 +12,8 @@ then
 fi
 
 
-TAG="drupal/testbot-mysql"
-NAME="drupaltestbot-db-mysql"
+TAG="drupal/testbot-mysql_5_5"
+NAME="drupaltestbot-db-mysql_5_5"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 3306)
 if [[ $RUNNING != "" ]]
@@ -43,5 +43,5 @@ CONTAINER_ID=$(docker ps | grep ${TAG} | awk '{print $1}')
 
 echo "CONTAINER STARTED: $CONTAINER_ID"
 
-docker ps | grep "drupal/testbot-mysql"
+docker ps | grep "drupal/testbot-mysql_5_5"
 

@@ -11,8 +11,8 @@ then
   fi
 fi
 
-TAG="drupal/testbot-pgsql"
-NAME="drupaltestbot-db-pgsql"
+TAG="drupal/testbot-pgsql_9_1"
+NAME="drupaltestbot-db-pgsql_9_1"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 5432 | awk '{print $1}')
 
