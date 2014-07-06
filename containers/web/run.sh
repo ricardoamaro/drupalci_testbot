@@ -8,7 +8,7 @@
 #
 # Usage:        sudo {VARIABLES} ./run.sh
 #
-# Author:       Ricardo Amaro (mail@ricardoamaro.com)
+# Author:       Ricardo Amaro (mail_at_ricardoamaro.com)
 # Contributors: Jeremy Thorson jthorson
 #
 # Bugs/Issues:  Use the issue queue on drupal.org
@@ -66,7 +66,8 @@ sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.x\" PATCH=\"https:/
   exit 0
 fi
 
-# Below there is a list of variables that you can override:
+# A list of variables that we only set if empty. Export them before running the script.
+# Note: Any variable already set on a higher level will keep it's value.
 
 IDENTIFIER=${IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"}
 DRUPALBRANCH=${DRUPALBRANCH:-"8.x"}
@@ -84,7 +85,7 @@ PATCH=${PATCH:-""}
 DBUSER=${DBUSER:-"drupaltestbot"}
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
-#DBVER=${DBVER:-"5.5"} #Optional, only used to override the default for a given database type
+DBVER=${DBVER:-"5.5"}
 CMD=${CMD:-""}
 VERBOSE=${VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
@@ -341,7 +342,7 @@ if [[ $PATCH = "" ]]
       do
       read purl dir <<<$(echo "${row}" | tr "," " ");
       cd ${BUILDSDIR}/${IDENTIFIER}/${dir}/
-      if $(echo "$purl" | egrep -q "^http") ;
+      if $(echo "$purl" | egrep -q "^http");
         then
           curl -s $purl > patch
         else
@@ -396,7 +397,7 @@ TESTGROUPS=\"${TESTGROUPS}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-/usr/bin/time -p docker run -d=false -i=true ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
+/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
 
 echo "exited $?"
 
