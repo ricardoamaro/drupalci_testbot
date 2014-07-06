@@ -67,7 +67,8 @@ sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.x\" PATCH=\"https:/
   exit 0
 fi
 
-# Bellow there is a list of variables that you can override:
+# A list of variables that we only set if empty. Export them before running the script.
+# Note: Any variable already set on a higher level will keep it's value.
 
 IDENTIFIER=${IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"}
 DRUPALBRANCH=${DRUPALBRANCH:-"8.x"}
@@ -85,7 +86,7 @@ PATCH=${PATCH:-""}
 DBUSER=${DBUSER:-"drupaltestbot"}
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
-DBVER=${DBVER:-"5.5"} #Optional, only used to override the default for a given database type
+DBVER=${DBVER:-"5.5"}
 CMD=${CMD:-""}
 INSTALLER=${INSTALLER:-"none"}
 VERBOSE=${VERBOSE:-"false"}

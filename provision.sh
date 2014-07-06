@@ -8,7 +8,7 @@
 #
 # Usage:        vagrant up (on the repo root)
 #
-# Author:       Ricardo Amaro (mail_at_ricardoamaro.com)
+# Author:       Ricardo Amaro (mail@ricardoamaro.com)
 # Contributors: Jeremy Thorson jthorson
 #
 # Bugs/Issues:  Use the issue queue on drupal.org
