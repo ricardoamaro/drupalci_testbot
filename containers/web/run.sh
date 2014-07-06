@@ -40,6 +40,7 @@ VERBOSE:       Default is 'false'
 DBTYPE:        Default is 'mysql' from mysql/sqlite/pgsql
 DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
 CMD:           Default is none. Normally use '/bin/bash' to debug the container
+INSTALLER:     Default is none. Try to use core non install tests.
 UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
 IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
 REPODIR:       Default is 'HOME/testbotdata'
@@ -87,6 +88,7 @@ DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
 DBVER=${DBVER:-"5.5"}
 CMD=${CMD:-""}
+INSTALLER=${INSTALLER:-"none"}
 VERBOSE=${VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
@@ -388,6 +390,7 @@ DBVER=\"${DBVER}\"
 DBCONTAINER=\"${DBCONTAINER}\"
 DBLINK=\"${DBLINK}\"
 CMD=\"${CMD}\"
+INSTALLER=\"${INSTALLER}\"
 VERBOSE=\"${VERBOSE}\"
 PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\"

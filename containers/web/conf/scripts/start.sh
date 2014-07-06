@@ -24,36 +24,41 @@ echo ""
 # --dburl is the effective database connection that is being used for all tests.  Can be any database driver supported by core
 # --sqlite database is used for the test runner only (and only contains the simpletest module database schema)
 #Example: php ./core/scripts/run-tests.sh --sqlite /tmpfs/drupal/test.sqlite --dburl mysql://username:password@localhost/database --url http://example.com/ --all
-#TODO: ${DRUSH} si -y --db-url=pgsql://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com -vd
 
-if (( $DRUPALVERSION >= 8 ))
+if (( $DRUPALVERSION >= 8 )) && [[ $INSTALLER = "none" ]];
   then
     echo "DRUPALVERSION is $DRUPALVERSION"
-    echo "Skipping install"
-
-    #Create drupal database manually
+    echo "Skipping operation [install], using core tester instead..."
+    #Create drupal database manually because Drupal>=8
     case $DBTYPE in
-      pgsql )
-        PGPASSWORD=drupaltestbotpw /usr/bin/psql -U ${DBUSER} -h ${DB_PORT_5432_TCP_ADDR} -c "DROP DATABASE IF EXISTS ${IDENTIFIER};"
-        PGPASSWORD=drupaltestbotpw /usr/bin/psql -U ${DBUSER} -h ${DB_PORT_5432_TCP_ADDR} -c "CREATE DATABASE ${IDENTIFIER} OWNER drupaltestbot TEMPLATE DEFAULT ENCODING='utf8';"
+      pgsql) 
+        export PGPASSWORD="${DBPASS}"; 
+        export PGUSER="${DBUSER}"; 
+        /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "DROP DATABASE IF EXISTS ${IDENTIFIER};" 
+        /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "CREATE DATABASE ${IDENTIFIER} OWNER ${DBUSER} TEMPLATE DEFAULT ENCODING='utf8' LC_CTYPE='en_US.UTF-8' LC_COLLATE='en_US.UTF-8';"
         DBADDR=${DB_PORT_5432_TCP_ADDR}
       ;;
-      mysql|mariadb )
+      mysql|mariadb) 
         DBTYPE="mysql"
         /usr/bin/mysql -u${DBUSER} -p${DBPASS} -h${DB_PORT_3306_TCP_ADDR} -e "CREATE DATABASE IF NOT EXISTS ${IDENTIFIER} ;"
         DBADDR=${DB_PORT_3306_TCP_ADDR}
       ;;
     esac
     EXTRA="--sqlite /var/www/test.sqlite --dburl ${DBTYPE}://${DBUSER}:${DBPASS}@${DBADDR}/${IDENTIFIER} --keep-results"
-
   else
-    echo "Operation [install]..."
-    if [[ $DBTYPE = "sqlite" ]]
-      then
-        ${DRUSH} si -y --db-url=sqlite://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
-      else
-        ${DRUSH} si -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DBADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
-    fi
+    echo "Operation $DRUPALVERSION [install] using drush... "
+    case $DBTYPE in
+      sqlite)
+        ${DRUSH} si -v -y --db-url=${DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
+      ;;
+      mysql|mariadb)
+        DBTYPE="mysql"
+        ${DRUSH} si -v -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_3306_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+      ;;
+      pgsql)
+        ${DRUSH} si -v -y --db-url=${DBTYPE}://${DBUSER}:${DBPASS}@${DB_PORT_5432_TCP_ADDR}/${IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+      ;;
+    esac
     ${DRUSH} -y en simpletest
     EXTRA=""
 fi
@@ -64,7 +69,6 @@ chown -fR www-data /var/www/sites/default/files/ /var/www/sites/simpletest
 # Run the test suite.
 echo ""
 echo "Operation [run tests]..."
-
 echo "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.stdout"
 sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${TESTGROUPS} | tee /var/www/test.stdout"
 
