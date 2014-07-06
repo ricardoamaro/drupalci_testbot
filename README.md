@@ -14,8 +14,6 @@ d) Get realtime output.
 e) Choose mysql, sqlite (more comming soon)
 f) Choose PHP5.3/5.4/5.5
 g) Test offline.
-h) It's really really easy!
-
 
 
 ## Quick Linux Instructions (for the impatient):
@@ -82,7 +80,7 @@ Run 'search_api' module tests, with one patch against D8 and git sandbox:
 ```
 sudo TESTGROUPS="--module 'search_api'" \
 DEPENDENCIES_GIT="http://git.drupal.org/sandbox/daeron/2091893.git,master" \
-PATCH="https://drupal.org/files/issues/2232253-3.patch,modules/2091893" \
+PATCH="https://drupal.org/files/SOME_PATCH_THAT_YOU_HAVE.patch,PATCH_APPLY_DIR" \
 DRUPALBRANCH="8.x" \
 ./run.sh
 ```
@@ -148,6 +146,7 @@ DBPASS="drupaltestbotpw"
 DBTYPE="mysql"
 DBVER="5.5"         # Used to override the default database version for this database type (Optional)
 DBLINK="--link=drupaltestbot-db:db"
+INSTALLER="none"    # Try to use core non install tests.
 CMD=""              # Eg. enter container shell with CMD="/bin/bash"
 VERBOSE="false"     # true will give verbose
 PHPVERSION="5.4"
