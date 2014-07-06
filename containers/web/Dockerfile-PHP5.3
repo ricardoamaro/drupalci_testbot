@@ -23,7 +23,7 @@ RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin
 RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin.ini
 
 # Composer.
-RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin -d detect_unicode=0
 RUN sudo ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
 
 # Drush and dependencies
