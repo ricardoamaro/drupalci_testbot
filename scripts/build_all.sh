@@ -117,7 +117,6 @@ fi
 set -e
 
 # Build and start DB containers
-
 for DBTYPE in "${dbtypes[@]}";
   do
   echo
@@ -155,7 +154,6 @@ for DBTYPE in "${dbtypes[@]}";
       DBVER="5.5"    #default
       ;;
   esac
-
 done
 
 echo
@@ -168,17 +166,16 @@ cd "${BASEDIR}"
 
 echo -e "Container Images: ${dbtypes[@]} and web5.4 (re)built.\n"
 
-
-
 # Do a test run to collect test list and update repos
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  DBTYPE=${DBTYPE} DBVER=${DBVER} UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./scripts/run.sh
+  DBTYPE=${DBTYPE} DBVER=${DBVER} UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 else
   sleep 5
-  DBTYPE=${DBTYPE} DBVER=${DBVER} DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./scripts/run.sh
+  DBTYPE=${DBTYPE} DBVER=${DBVER} DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and web5.4 (re)built.\n"
-echo -e "Try example: sudo DBTYPE=${DBTYPE} DBVER=${DBVER} TESTGROUPS='Bootstrap' DRUPALBRANCH='8.x' PATCH='/path/to/your.patch,.' ./scripts/run.sh"
+echo -e "Try example: sudo DBTYPE='${DBTYPE}' DBVER='${DBVER}' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.x' PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+
