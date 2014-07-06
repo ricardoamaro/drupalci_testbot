@@ -1,6 +1,6 @@
 #FROM ubuntu
 FROM debian:squeeze
-MAINTAINER Ricardo Amaro mail@ricardoamaro.com
+MAINTAINER Ricardo Amaro mail_at_ricardoamaro.com
 
 # Keep upstart from complaining
 RUN dpkg-divert --local --rename --add /sbin/initctl
@@ -19,9 +19,16 @@ ADD ./conf/php5/cli.ini /etc/php5/cli/php.ini
 ADD ./conf/php5/apc.ini /etc/php5/conf.d/apc.ini
 RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin.ini
 
+# whitelist = phar
+RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin.ini
+
 # Composer.
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin -d detect_unicode=0
 RUN sudo ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
+
+# Drush and dependencies
+RUN /usr/local/bin/composer global require drush/drush:dev-master
+RUN /.composer/vendor/drush/drush/drush --version
 
 # Enable a2enmod rewrite
 RUN a2enmod rewrite 
