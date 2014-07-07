@@ -346,12 +346,13 @@ if [[ $PATCH = "" ]]
       cd ${BUILDSDIR}/${IDENTIFIER}/${dir}/
       if $(echo "$purl" | egrep -q "^http");
         then
-          curl -s $purl > patch
+          curl --retry 3 -s $purl > patch
         else
           cat  $purl > patch
       fi
       echo "Applying Patch: ${purl}"
-      git apply --index patch
+      file patch
+      git apply --verbose --index patch
       if [ "$?" == "0" ]; then
         echo -e "Done!\n"
       else
