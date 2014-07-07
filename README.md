@@ -22,7 +22,7 @@ g) Test offline.
 ```
 git clone {thisrepo}
 cd modernizing_testbot__dockerfiles
-sudo ./build_all.sh cleanup
+sudo ./scripts/build_all.sh cleanup
 ```
 
 ## Quick Vagrant MAC/Windows instructions:
