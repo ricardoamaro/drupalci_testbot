@@ -18,6 +18,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
 
 # whitelist = phar
+RUN mkdir -p /etc/php5/conf.d/
 RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin.ini
 
 # Composer.
