@@ -86,20 +86,47 @@ command -v curl >/dev/null 2>&1 || { echo >&2 "Command 'curl' is required. Pleas
 # Make sure we are at the root
 cd "${BASEDIR}"
 
-# Install Docker
+# Check for Docker
 set +e
 if [ ! -f /usr/bin/docker ];
   then
   echo
-  echo "Installing Docker from get.docker.io"
-  echo "------------------------------------"
+  echo "Failed to detect Docker."
+  echo "Please make sure Docker is installed and configured correctly."
+  echo "Visit: https://docs.docker.com/installation/ for further instructions."
+  echo "----------------------------------------------------------------------"
   echo
-  curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
+  exit 1
   else
   echo
-  echo "Docker found at /usr/bin/docker:"
-  echo "------------------------------------"
-  docker version
+  # Check Docker Version
+  DOCKER_VERSION=$(docker version | grep "Server version" | awk '{print $3}')
+  if [ -z ${DOCKER_VERSION} ];
+    then
+    echo
+    echo "Failed to detect Docker Version."
+    echo "Please make sure Docker is installed and configured correctly."
+    echo "--------------------------------------------------------------"
+    echo
+    exit 1
+  fi
+  IFS=. components=(${DOCKER_VERSION})
+  if [ ${components[0]} -ge 1 ] && [ ${components[1]} -ge 0 ];
+    then
+    echo
+    echo "Docker Version ${DOCKER_VERSION} found at /usr/bin/docker:"
+    echo "----------------------------------------------------------"
+    echo
+    else
+    echo
+    echo "Docker Version ${DOCKER_VERSION} found at /usr/bin/docker:"
+    echo "Your installed Docker Version is to old!"
+    echo "Docker Version >= 1.0 is required. Please visit:"
+    echo "http://www.docker.com for instructions how to upgrade to latest release."
+    echo "------------------------------------------------------------------------"
+    echo
+    exit 1
+  fi
 fi
 
 # Clean all images per request
