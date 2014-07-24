@@ -37,10 +37,12 @@ else
 	swapon /var/swapfile
 	/bin/echo "/var/swapfile swap swap defaults 0 0" >>/etc/fstab
 	apt-get update
-	apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli
+	apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli curl
 	apt-get autoclean
-	cd /home/vagrant/drupalci_testbot
-	./scripts/build_all.sh cleanup $database
+        echo "Installing docker"
+        curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
+        cd /home/vagrant/drupalci_testbot
+        ./scripts/build_all.sh cleanup $database
 	touch PROVISIONED
 fi
 
