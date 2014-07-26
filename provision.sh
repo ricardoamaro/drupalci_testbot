@@ -41,7 +41,8 @@ else
 	apt-get autoclean
         echo "Installing docker"
         curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
-        cd /home/vagrant/drupalci_testbot
+        usermod -a -G docker vagrant
+	cd /home/vagrant/drupalci_testbot
         ./scripts/build_all.sh cleanup $database
 	touch PROVISIONED
 fi
