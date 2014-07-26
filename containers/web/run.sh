@@ -401,6 +401,7 @@ TESTGROUPS=\"${TESTGROUPS}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
+RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}"
 /usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
 
 echo "exited $?"
@@ -414,5 +415,7 @@ echo "--------------------------------------------------------------------------
 echo "Results directory: ${BUILDSDIR}/${IDENTIFIER}/results/"
 echo "Make sure to clean up old Builds on ${BUILDSDIR} to save disk space"
 echo "--------------------------------------------------------------------------------"
+echo "Docker run command:"
+echo "${RUNCMD}"
 
 exit 0
