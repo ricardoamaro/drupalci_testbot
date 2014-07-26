@@ -35,7 +35,7 @@ if (( $DRUPALVERSION >= 8 )) && [[ $INSTALLER = "none" ]];
         export PGPASSWORD="${DBPASS}"; 
         export PGUSER="${DBUSER}"; 
         /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "DROP DATABASE IF EXISTS ${IDENTIFIER};" 
-        /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "CREATE DATABASE ${IDENTIFIER} OWNER ${DBUSER} TEMPLATE DEFAULT ENCODING='utf8' LC_CTYPE='en_US.UTF-8' LC_COLLATE='en_US.UTF-8';"
+        /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "CREATE DATABASE ${IDENTIFIER} OWNER ${DBUSER} TEMPLATE DEFAULT ENCODING='utf8';"
         DBADDR=${DB_PORT_5432_TCP_ADDR}
       ;;
       mysql|mariadb) 
