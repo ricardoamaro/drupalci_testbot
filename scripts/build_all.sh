@@ -17,6 +17,9 @@
 # Docs:         README.md for complete information
 #
 
+# Remove intermediate containers after a successful build. Default is True.
+DCI_REMOVEINTCONTAINERS=${DCI_REMOVEINTCONTAINERS:-"true"}
+
 REPODIR=${REPODIR:-"$HOME/testbotdata"}
 BASEDIR="$(pwd)"
 

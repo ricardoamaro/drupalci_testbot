@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Remove intermediate containers after a successful build. Default is True.
+DCI_REMOVEINTCONTAINERS=${DCI_REMOVEINTCONTAINERS:-"true"}
+
 # Check if we have root powers
 if [ `whoami` != root ]; then
     echo "Please run this script as root or using sudo"
@@ -32,7 +35,7 @@ esac
 mkdir -p /tmp/php${VER}/
 cp -r conf/ /tmp/php${VER}/conf/
 cat Dockerfile-PHP${VER} > /tmp/php${VER}/Dockerfile
-time docker build -t drupal/testbot-web${VER} /tmp/php${VER}/.
+time docker build --rm=${DCI_REMOVEINTCONTAINERS} -t drupal/testbot-web${VER} /tmp/php${VER}/.
 rm -rf /tmp/php${VER}/
 
 exit 0
