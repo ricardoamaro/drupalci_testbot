@@ -89,6 +89,46 @@ command -v curl >/dev/null 2>&1 || { echo >&2 "Command 'curl' is required. Pleas
 # Make sure we are at the root
 cd "${BASEDIR}"
 
+# Check for PHP
+set +e
+if [ ! -f /usr/bin/php ];
+  then
+  echo
+  echo "Failed to detect PHP."
+  echo "Please make sure PHP is installed and is >= 5.4."
+  echo "--------------------------------------------------------------"
+  echo
+  exit 1
+  else
+  echo
+  # Check PHP Version
+  PHP_VERSION=$(php -v | grep "(cli)" | awk '{print $2}')
+  if [ -z ${PHP_VERSION} ];
+    then
+    echo
+    echo "Failed to detect PHP version."
+    echo "Please make sure PHP is installed and is >= 5.4."
+    echo "--------------------------------------------------------------"
+    echo
+    exit 1
+  fi
+  IFS=. components=(${PHP_VERSION})
+  if [ ${components[0]} -ge 5 ] && [ ${components[1]} -ge 4 ];
+    then
+    echo
+    echo "PHP version ${PHP_VERSION} found at /usr/bin/php:"
+    echo "----------------------------------------------------------"
+    echo
+    else
+    echo
+    echo "PHP version ${PHP_VERSION} found at /usr/bin/php:"
+    echo "Your installed PHP version is too old! Upgrade to >= 5.4."
+    echo "------------------------------------------------------------------------"
+    echo
+    exit 1
+  fi
+fi
+
 # Check for Docker
 set +e
 if [ ! -f /usr/bin/docker ];
