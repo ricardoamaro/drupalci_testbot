@@ -200,12 +200,12 @@ echo -e "Container Images: ${dbtypes[@]} and web5.4 (re)built.\n"
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  DBTYPE=${DBTYPE} DBVER=${DBVER} UPDATEREPO="true" DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DBTYPE=${DBTYPE} DBVER=${DBVER} UPDATEREPO="true" DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 else
   sleep 5
-  DBTYPE=${DBTYPE} DBVER=${DBVER} DRUPALBRANCH="8.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DBTYPE=${DBTYPE} DBVER=${DBVER} DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and web5.4 (re)built.\n"
-echo -e "Try example: sudo DBTYPE='${DBTYPE}' DBVER='${DBVER}' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.x' PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "Try example: sudo DBTYPE='${DBTYPE}' DBVER='${DBVER}' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 

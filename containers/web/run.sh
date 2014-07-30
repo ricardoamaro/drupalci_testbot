@@ -32,7 +32,7 @@ DEPENDENCIES:  Contrib projects to be downloaded & patched.
                Format: module1,module2,module2...
 DEPENDENCIES_GIT  Format: gitrepo1,branch;gitrepo2,branch;...
 DEPENDENCIES_TGZ  Format: module1_url.tgz,module1_url.tgz,...
-DRUPALBRANCH:  Default is '8.x'
+DRUPALBRANCH:  Default is '8.0.x'
 DRUPALVERSION: Default is '8'
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
@@ -58,11 +58,11 @@ echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
 echo -e "
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 .....................................................................
-sudo TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.x\"  PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
+sudo TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\"  PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
 
 Run all tests using 4 CPUs, 1 core patch against D8:
 .....................................................................
-sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.x\" PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
+sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\" PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
 "
   exit 0
 fi
@@ -71,7 +71,7 @@ fi
 # Note: Any variable already set on a higher level will keep it's value.
 
 IDENTIFIER=${IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"}
-DRUPALBRANCH=${DRUPALBRANCH:-"8.x"}
+DRUPALBRANCH=${DRUPALBRANCH:-"8.0.x"}
 DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
 UPDATEREPO=${UPDATEREPO:-"false"}
 REPODIR=${REPODIR:-"$HOME/testbotdata"}
@@ -94,7 +94,7 @@ PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
-# run-tests.sh place changes on 8.x
+# run-tests.sh place changes on 8.0.x
 case $DRUPALVERSION in
   8) RUNNER="./core/scripts/run-tests.sh"
      MODULESPATH="./modules"

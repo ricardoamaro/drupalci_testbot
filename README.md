@@ -38,7 +38,7 @@ vagrant up
 
 ### Run some group tests:
 ```
-sudo TESTGROUPS="Action,Bootstrap" DRUPALBRANCH="8.x" PATCH="/path/to/your.patch,." ./run.sh
+sudo TESTGROUPS="Action,Bootstrap" DRUPALBRANCH="8.0.x" PATCH="/path/to/your.patch,." ./run.sh
 ```
 See more examples bellow on: "6- RUN EXAMPLES"
 
@@ -81,7 +81,7 @@ Run 'search_api' module tests, with one patch against D8 and git sandbox:
 sudo TESTGROUPS="--module 'search_api'" \
 DEPENDENCIES_GIT="http://git.drupal.org/sandbox/daeron/2091893.git,master" \
 PATCH="https://drupal.org/files/SOME_PATCH_THAT_YOU_HAVE.patch,PATCH_APPLY_DIR" \
-DRUPALBRANCH="8.x" \
+DRUPALBRANCH="8.0.x" \
 ./run.sh
 ```
 
@@ -92,7 +92,7 @@ cd containers/web/
 sudo \
 TESTGROUPS="Action,Node" \
 CONCURRENCY="4" \
-DRUPALBRANCH="8.x" \
+DRUPALBRANCH="8.0.x" \
 PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
 ./run.sh
 ```
@@ -104,8 +104,8 @@ cd containers/web/
 sudo \
 TESTGROUPS="--all" \
 CONCURRENCY="4" \
-DRUPALBRANCH="8.x" \
-DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.x-3.x-dev.tar.gz"
+DRUPALBRANCH="8.0.x" \
+DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz"
 PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
 ```
@@ -130,7 +130,7 @@ And that's it.
 ### Some default environment variables that you can override
 
 ```
-DRUPALBRANCH="8.x"
+DRUPALBRANCH="8.0.x"
 DRUPALVERSION=""
 IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
 REPODIR="$HOME/testbotdata"
@@ -158,7 +158,7 @@ RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost
 ### What tests can I run?
 ```
 sudo \
-DRUPALBRANCH="8.x" \
+DRUPALBRANCH="8.0.x" \
 RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" \
 ./run.sh
 ```
