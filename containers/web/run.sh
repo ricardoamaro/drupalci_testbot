@@ -230,6 +230,12 @@ if [ -f ${REPODIR}/drupal/.git/config ];
     sleep 1 #+INFO: https://drupal.org/project/drupal/git-instructions
     cd ${REPODIR}
     git clone ${DRUPALREPO} drupal
+    cd drupal
+    # GET ALL BRANCHES
+    actualbranch=$(git branch | awk '{print $2}')
+    for remotebranch in $(git branch -a | grep remotes | grep -v ${actualbranch} | grep -v HEAD | grep -v master); do git branch --track ${remotebranch#remotes/origin/} $remotebranch; done
+    git remote update
+    git pull -v --all
     echo ""
 fi
 
@@ -243,18 +249,15 @@ if [ -f ${REPODIR}/vendor/drush/drush/drush ];
 	${REPODIR}/composer.phar -d="${REPODIR}" global require drush/drush:dev-master
 fi
 
-
+# Update Drupal repo 
 if [[ $UPDATEREPO = "true" ]]
   then
-    for rp in drupal
-      do
-      echo "Updating ${rp} git..."
-      cd ${REPODIR}/${rp}
-      pwd
-      git fetch --all
-      git pull origin HEAD
-      echo ""
-    done
+    echo "Updating Drupal git..."
+    cd ${REPODIR}/drupal
+    pwd
+    git remote update
+    git fetch --all
+    git pull -v --all
 fi
 
 #Check our git version and make it compatible with < 1.8
