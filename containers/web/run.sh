@@ -37,7 +37,7 @@ DRUPALVERSION: Default is '8'
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
 VERBOSE:       Default is 'false'
-DBTYPE:        Default is 'mysql' from mysql/sqlite/pgsql
+DBTYPE:        Default is 'mysql-5.5' from mysql/sqlite/pgsql
 DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
 CMD:           Default is none. Normally use '/bin/bash' to debug the container
 INSTALLER:     Default is none. Try to use core non install tests.
@@ -50,7 +50,7 @@ BUILDSDIR:     Default is  equal to REPODIR
 WORKSPACE:     Default is 'HOME/testbotdata/IDENTIFIER/'
 DBUSER:        Default is 'drupaltestbot'
 DBPASS:        Default is 'drupaltestbotpw'
-DBCONTAINER:   Default is 'drupaltestbot-db-mysql'
+DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
 PHPVERSION:    Default is '5.4'
 CONCURRENCY:   Default is '4'  #How many cpus to use per run
 RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  CONCURRENCY  --verbose --xml '/var/workspace/results'  TESTGROUPS  | tee /var/www/test.stdout ' "
@@ -108,12 +108,12 @@ case $DBTYPE in
   pgsql)
      if [ -z ${DBVER+x} ];
        then
-         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql_9_1"}
+         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
        else
          case $DBVER in
-           8.3)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql_8_3"}
+           8.3)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-8.3"}
            ;;
-           9.1)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql_9_1"}
+           9.1)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
            ;;
          esac
      fi

@@ -66,13 +66,14 @@ if [ "$2" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
     echo
     echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.3, pgsql-9.1, or all."
     echo
-    echo -e " Example:\t\e[38;5;148msudo ./scripts/build_all.sh refresh mysql\e[39m "
+    echo -e " Example:\t\e[38;5;148msudo ./scripts/build_all.sh refresh mysql-5.5\e[39m "
     echo
     echo -e " Usage help:\t\e[38;5;148msudo ./scripts/build_all.sh --help\e[39m "
     echo
     exit 0
 fi
 
+# Default to mysql-5.5 if no database argument given
 if [ ${#dbtypes[@]} -eq 0 ]; then
   dbtypes["mysql-5.5"]="mysql-5.5"
 fi
@@ -190,40 +191,27 @@ set -e
 for DBTYPE in "${dbtypes[@]}";
   do
   echo
-  echo "Build and restart ${DBTYPE} container"
+  echo "Build and restart db-${DBTYPE} container"
   echo "------------------------------------"
   echo
-  echo "${DBTYPE}"
   cd "./containers/database/${DBTYPE}"
   ./stop-server.sh
-  umount "/tmp/tmp.*${DBTYPE}" >/dev/null || /bin/true
-  rm -rf "/tmp/tmp.*${DBTYPE}" >/dev/null || /bin/true
+  # This is some trick of wildcard escape by array
+  DCI_SQLCONT=(/tmp/tmp.*"${DBTYPE}")
+  if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
+    for DIR in "${DCI_SQLCONT[@]}"; do
+      umount "${DIR}" || /bin/true
+      rm -fr "${DIR}" || /bin/true
+    done
+  fi
   ./build.sh
   ./run-server.sh
   cd "${BASEDIR}"
+
   # Set up DB container arguments for run script
-  case "${DBTYPE}" in
-    pgsql-8.3)
-      DBTYPE="pgsql"
-      DBVER="8.3"
-      ;;
-    pgsql-9.1|pgsql)
-      DBTYPE="pgsql"
-      DBVER="9.1"    #default
-      ;;
-    mariadb-10.0)
-      DBTYPE="mariadb"
-      DBVER="10"
-      ;;
-    mariadb-5.5|mariadb)
-      DBTYPE="mariadb"
-      DBVER="5.5"    #default
-      ;;
-    mysql-5.5|mysql)
-      DBTYPE="mysql"
-      DBVER="5.5"    #default
-      ;;
-  esac
+  IFS="-" components=($DBTYPE)
+  DCI_DBVER=${components[1]}
+  DCI_DBTYPE=${components[0]}
 done
 
 echo
@@ -240,12 +228,12 @@ echo -e "Container Images: ${dbtypes[@]} and web-${PHP_VERSION} (re)built.\n"
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  DBTYPE=${DBTYPE} DBVER=${DBVER} UPDATEREPO="true" DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DBTYPE=${DCI_DBTYPE} DBVER=${DCI_DBVER} UPDATEREPO="true" DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 else
   sleep 5
-  DBTYPE=${DBTYPE} DBVER=${DBVER} DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DBTYPE=${DCI_DBTYPE} DBVER=${DCI_DBVER} DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
-echo -e "Try example: sudo DBTYPE='${DBTYPE}' DBVER='${DBVER}' PHPVERSION='${PHP_VERSION}' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "Try example: sudo DBTYPE='${DCI_DBTYPE}' DBVER='${DCI_DBVER}' PHPVERSION='${PHP_VERSION}' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 

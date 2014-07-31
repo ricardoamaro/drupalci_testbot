@@ -25,10 +25,10 @@ if [[ $RUNNING != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if ( ls -d /tmp/tmp.*mariadb-10.0/ ); then
-      rm -fr /tmp/tmp.*mariadb-10.0 || /bin/true
-      umount -f /tmp/tmp.*mariadb-10.0 || /bin/true
-      rm -fr /tmp/tmp.*mariadb-10.0 || /bin/true
+    DCI_SQLCONT=(/tmp/tmp.*"mariadb-10.0")
+    if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
+      umount -f "$DCI_SQLCONT" || /bin/true
+      rm -fr "$DCI_SQLCONT" || /bin/true
     fi
 fi
 

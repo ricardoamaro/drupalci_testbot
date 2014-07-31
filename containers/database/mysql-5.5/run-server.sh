@@ -25,14 +25,14 @@ if [[ $RUNNING != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if ( ls -d /tmp/tmp.*mysql55/ ); then
-      rm -fr /tmp/tmp.*mysql55 || /bin/true
-      umount -f /tmp/tmp.*mysql55 || /bin/true
-      rm -fr /tmp/tmp.*mysql55 || /bin/true
+    DCI_SQLCONT=(/tmp/tmp.*"mysql-5.5")
+    if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
+      umount -f "$DCI_SQLCONT" || /bin/true
+      rm -fr "$DCI_SQLCONT" || /bin/true
     fi
 fi
-  
-TMPDIR=$(mktemp -d --suffix=mysql55)
+
+TMPDIR=$(mktemp -d --suffix=mysql-5.5)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 
 docker run -d -p=3306 --name=${NAME} -v="$TMPDIR":/var/lib/mysql ${TAG}

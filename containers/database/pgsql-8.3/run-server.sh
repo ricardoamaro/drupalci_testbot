@@ -25,14 +25,14 @@ if [[ $RUNNING != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if ( ls -d /tmp/tmp.*pgsql83/ ); then
-      rm -fr /tmp/tmp.*pgsql83 || /bin/true
-      umount -f /tmp/tmp.*pgsql83 || /bin/true
-      rm -fr /tmp/tmp.*pgsql83 || /bin/true
+    DCI_SQLCONT=(/tmp/tmp.*"pgsql-8.3")
+    if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
+      umount -f "$DCI_SQLCONT" || /bin/true
+      rm -fr "$DCI_SQLCONT" || /bin/true
     fi
 fi
 
-TMPDIR=$(mktemp -d --suffix=pgsql83)
+TMPDIR=$(mktemp -d --suffix=pgsql-8.3)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 
 docker run -d -p=5432 --name=${NAME} -v="$TMPDIR":/var/lib/postgresql ${TAG}
