@@ -6,7 +6,7 @@
 #
 # Comments:
 #
-# Usage:        sudo ./build_all.sh <cleanup>/<update>/<refresh>
+# Usage:        sudo ./scripts/build_all.sh <cleanup>/<update>/<refresh>
 #
 # Author:       Ricardo Amaro (mail_at_ricardoamaro.com)
 # Contributors: Jeremy Thorson jthorson
@@ -33,7 +33,7 @@ done
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1]} ]];
   then
   echo
-  echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_8_3>/<postgres_9_1>/<all>\e[39m "
+  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_8_3>/<postgres_9_1>/<all>\e[39m "
   echo
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
   echo
@@ -62,13 +62,13 @@ done
 if [ "$2" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
   then
     echo
-    echo -e " Usage:\t\t\e[38;5;148msudo ./build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_9_1>/<all>\e[39m "
+    echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/build_all.sh <cleanup>/<update>/<refresh> <mysql_5_5>/<mariadb_5_5>/<mariadb_10>/<postgres_9_1>/<all>\e[39m "
     echo
     echo -e " Invalid Database type.  Please choose from mysql_5_5, mariadb_5_5, mariadb_10, postgres_8_3, postgres_9_1, or all."
     echo
-    echo -e " Example:\t\e[38;5;148msudo ./build_all.sh refresh mysql\e[39m "
+    echo -e " Example:\t\e[38;5;148msudo ./scripts/build_all.sh refresh mysql\e[39m "
     echo
-    echo -e " Usage help:\t\e[38;5;148msudo ./build_all.sh --help\e[39m "
+    echo -e " Usage help:\t\e[38;5;148msudo ./scripts/build_all.sh --help\e[39m "
     echo
     exit 0
 fi

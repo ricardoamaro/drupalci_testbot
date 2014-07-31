@@ -25,7 +25,7 @@ then
 	echo "I'll just give you a shell..."
 	swapon /var/swapfile
 	cd /home/vagrant/drupalci_testbot
-	./build_all.sh update
+	./scripts/build_all.sh update
 else
 	echo 'Defaults        env_keep +="HOME"' >> /etc/sudoers
 	echo "Installing and building the all thing..."

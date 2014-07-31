@@ -182,7 +182,7 @@ if [[ $DBTYPE != "sqlite" ]]
         echo "--------------------------------------------------------------------------------"
         echo -e "ERROR: There is no ${DBCONTAINER} container running..."
         echo -e "Please make sure you built the image and started it:"
-        echo -e "sudo ./build_all.sh refresh \n"
+        echo -e "sudo ./scripts/build_all.sh refresh \n"
         echo -e "Also please make sure port ${DBPORT} is not being used \nand ${DBTYPE} is stopped on the host."
         echo "--------------------------------------------------------------------------------"
         exit 1
