@@ -37,7 +37,7 @@ else
 	swapon /var/swapfile
 	/bin/echo "/var/swapfile swap swap defaults 0 0" >>/etc/fstab
 	apt-get update
-	apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli curl
+	apt-get install -y git mc ssh gawk grep sudo htop mysql-client php5-cli curl php5-cli
 	apt-get autoclean
         echo "Installing docker"
         curl -s get.docker.io | sh 2>&1 | egrep -i -v "Ctrl|docker installed"
