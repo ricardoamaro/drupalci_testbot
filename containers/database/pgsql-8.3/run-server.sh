@@ -12,10 +12,10 @@ then
 fi
 
 
-TAG="drupal/testbot-mariadb_5_5"
-NAME="drupaltestbot-db-mariadb_5_5"
+TAG="drupalci/db-pgsql-8.3"
+NAME="drupaltestbot-db-pgsql-8.3"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
-RUNNING=$(docker ps | grep ${TAG} | grep 3306)
+RUNNING=$(docker ps | grep ${TAG} | grep 5432)
 if [[ $RUNNING != "" ]]
   then
     echo "Found database container:"
@@ -25,23 +25,19 @@ if [[ $RUNNING != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if ( ls -d /tmp/tmp.*mariadb/ ); then
-      rm -fr /tmp/tmp.*mariadb || /bin/true
-      umount -f /tmp/tmp.*mariadb || /bin/true
-      rm -fr /tmp/tmp.*mariadb || /bin/true
+    if ( ls -d /tmp/tmp.*pgsql83/ ); then
+      rm -fr /tmp/tmp.*pgsql83 || /bin/true
+      umount -f /tmp/tmp.*pgsql83 || /bin/true
+      rm -fr /tmp/tmp.*pgsql83 || /bin/true
     fi
 fi
 
-TMPDIR=$(mktemp -d --suffix=mariadb)
+TMPDIR=$(mktemp -d --suffix=pgsql83)
 mount -t tmpfs -o size=16000M tmpfs $TMPDIR
 
-docker run -d -p=3306 --name=${NAME} -v="$TMPDIR":/var/lib/mysql ${TAG}
+docker run -d -p=5432 --name=${NAME} -v="$TMPDIR":/var/lib/postgresql ${TAG}
 CONTAINER_ID=$(docker ps | grep ${TAG} | awk '{print $1}')
-
-#PORT=$(docker port $MYSQL_ID 3606 | cut -d":" -f2)
-#TAG="drupal/testbot-mysql"
 
 echo "CONTAINER STARTED: $CONTAINER_ID"
 
-docker ps | grep "drupal/testbot-mariadb_5_5"
-
+docker ps | grep "drupalci/db-pgsql-8.3"

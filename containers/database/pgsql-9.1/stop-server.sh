@@ -11,13 +11,13 @@ then
   fi
 fi
 
-TAG="drupal/testbot-pgsql_8_3"
-NAME="drupaltestbot-db-pgsql_8_3"
+TAG="drupalci/db-pgsql-9.1"
+NAME="drupaltestbot-db-pgsql-9.1"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 5432 | awk '{print $1}')
 
 if [[ ${RUNNING} != "" ]]
-  then
+  then 
     echo "Found database container: ${RUNNING} running..."
     echo "Stopping..."
     docker stop ${RUNNING}
@@ -26,10 +26,10 @@ if [[ ${RUNNING} != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if ( ls -d /tmp/tmp.*pgsql/ ); then
-      rm -fr /tmp/tmp.*pgsql || /bin/true
-      umount -f /tmp/tmp.*pgsql || /bin/true
-      rm -fr /tmp/tmp.*pgsql || /bin/true
+    if ( ls -d /tmp/tmp.*pgsql91/ ); then
+      rm -fr /tmp/tmp.*pgsql91 || /bin/true
+      umount -f /tmp/tmp.*pgsql91 || /bin/true
+      rm -fr /tmp/tmp.*pgsql91 || /bin/true
     fi
 fi
 

@@ -122,12 +122,12 @@ case $DBTYPE in
   mariadb)
     if [ -z ${DBVER+x} ];
       then
-        DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb_5_5"}
+        DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
       else
         case $DBVER in
-          5.5)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb_5_5"}
+          5.5)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
           ;;
-          10)   DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb_10"}
+          10)   DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-10.0"}
           ;;
         esac
     fi
@@ -135,7 +135,7 @@ case $DBTYPE in
   ;;
   mysql | *)
     DBPORT="3306"
-    DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mysql_5_5"}
+    DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mysql-5.5"}
   ;;
 esac
 DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
@@ -203,15 +203,15 @@ case $PHPVERSION in
 esac
 
 #Check if the web container is built
-if $(docker images | grep -q testbot-web${PHPVERSION});
+if $(docker images | grep -q web-${PHPVERSION});
   then
   echo "--------------------------------------------------------------------------------"
-  echo "Containers: testbot-web${PHPVERSION} and ${DBCONTAINER} available"
-  echo "Running PHP${PHPVERSION}/${DBTYPE} on drupal/testbot-web${PHPVERSION}"
+  echo "Containers: web-${PHPVERSION} and ${DBCONTAINER} available"
+  echo "Running PHP${PHPVERSION}/${DBTYPE} on drupalci/web-${PHPVERSION}"
   echo "--------------------------------------------------------------------------------"
   else
   echo "--------------------------------------------------------------------------------"
-  echo "ERROR. Image testbot-web${PHPVERSION} needs to be built with:"
+  echo "ERROR. Image drupalci/web-${PHPVERSION} needs to be built with:"
   echo "sudo ./build.sh ${PHPVERSION}"
   echo "--------------------------------------------------------------------------------"
   exit 1
@@ -404,8 +404,8 @@ TESTGROUPS=\"${TESTGROUPS}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}"
-/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupal/testbot-web${PHPVERSION} ${CMD}
+RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${PHPVERSION} ${CMD}"
+/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${PHPVERSION} ${CMD}
 
 echo "exited $?"
 

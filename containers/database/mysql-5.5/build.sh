@@ -14,8 +14,8 @@ then
   fi
 fi
 
-docker ps | grep "drupal/testbot-mariadb_5_5" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
-docker ps -a | grep "drupal/testbot-mariadb_5_5" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
+docker ps | grep "drupalci/db-mysql-5.5" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker stop {}
+docker ps -a | grep "drupalci/db-mysql-5.5" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} sudo docker rm {}
 
-docker build --rm=${DCI_REMOVEINTCONTAINERS} -t drupal/testbot-mariadb_5_5 .
+docker build --rm=${DCI_REMOVEINTCONTAINERS} -t drupalci/db-mysql-5.5 .
 

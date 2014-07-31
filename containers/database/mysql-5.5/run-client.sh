@@ -1,8 +1,9 @@
 #!/bin/sh
 
-TAG="drupal/testbot-pgsql"
+TAG="drupalci/db-mysql-5.5"
 CONTAINER_ID=$(docker ps | grep $TAG | awk '{print $1}')
 IP=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $CONTAINER_ID)
 
 echo $IP
-PGPASSWORD=drupaltestbotpw psql -U drupaltestbot -h $IP
+mysql -u drupaltestbot -pdrupaltestbotpw -h $IP
+

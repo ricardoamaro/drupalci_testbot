@@ -11,10 +11,10 @@ then
   fi
 fi
 
-TAG="drupal/testbot-pgsql_9_1"
-NAME="drupaltestbot-db-pgsql_9_1"
+TAG="drupalci/db-mysql-5.5"
+NAME="drupaltestbot-db-mysql-5.5"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
-RUNNING=$(docker ps | grep ${TAG} | grep 5432 | awk '{print $1}')
+RUNNING=$(docker ps | grep ${TAG} | grep 3306 | awk '{print $1}')
 
 if [[ ${RUNNING} != "" ]]
   then 
@@ -26,10 +26,10 @@ if [[ ${RUNNING} != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    if ( ls -d /tmp/tmp.*pgsql/ ); then
-      rm -fr /tmp/tmp.*pgsql || /bin/true
-      umount -f /tmp/tmp.*pgsql || /bin/true
-      rm -fr /tmp/tmp.*pgsql || /bin/true
+    if ( ls -d /tmp/tmp.*mysql55/ ); then
+      rm -fr /tmp/tmp.*mysql55 || /bin/true
+      umount -f /tmp/tmp.*mysql55 || /bin/true
+      rm -fr /tmp/tmp.*mysql55 || /bin/true
     fi
 fi
 

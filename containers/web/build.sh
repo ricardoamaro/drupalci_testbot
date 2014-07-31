@@ -21,13 +21,13 @@ echo "DEFAULTING TO PHP5.4"
 } fi
 
 case $PHP in
-  5.3) echo "Building PHP5.3 drupal/testbot-web5.3"
+  5.3) echo "Building PHP5.3 drupalci/db-web5.3"
     VER="5.3"
     ;;
-  5.5) echo "Building PHP5.5 drupal/testbot-web5.5"
+  5.5) echo "Building PHP5.5 drupalci/db-web5.5"
     VER="5.5"
     ;;
-  *) echo "Building PHP5.4 drupal/testbot-web5.4"
+  *) echo "Building PHP5.4 drupalci/db-web5.4"
     VER="5.4"
     ;;
 esac
@@ -35,7 +35,7 @@ esac
 mkdir -p /tmp/php${VER}/
 cp -r conf/ /tmp/php${VER}/conf/
 cat Dockerfile-PHP${VER} > /tmp/php${VER}/Dockerfile
-time docker build --rm=${DCI_REMOVEINTCONTAINERS} -t drupal/testbot-web${VER} /tmp/php${VER}/.
+time docker build --rm=${DCI_REMOVEINTCONTAINERS} -t drupalci/web-${VER} /tmp/php${VER}/.
 rm -rf /tmp/php${VER}/
 
 exit 0

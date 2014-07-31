@@ -165,7 +165,7 @@ RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" \
 
 If you need to remove the old web image just run this sequence:
 ```
-sudo docker images | grep "drupal/testbot-web" | awk '{print $3}' | xargs -n1 -I {} sudo docker rm {}
+sudo docker images | grep "drupalci/web" | awk '{print $3}' | xargs -n1 -I {} sudo docker rm {}
 ```
 
 ### 7 - Clean Up
