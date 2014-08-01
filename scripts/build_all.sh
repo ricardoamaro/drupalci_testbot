@@ -50,12 +50,17 @@ fi
 # Check for database argument
 declare -A secondarg
 declare -A dbtypes
-for constant in mysql-5.5 mariadb-5.5 mariadb-10.0 pgsql-8.3 pgsql-9.1
+# Make sure mysql-5.5 is defined as last target in loop to make it default in
+# case script was called with the <all> parameter. In addition we need a
+# numeric array key to keep order.
+DCI_ARRKEY=0
+for constant in mariadb-5.5 mariadb-10.0 pgsql-8.3 pgsql-9.1 mysql-5.5
 do
   secondarg["$constant"]=1
   if [ "$2" = "$constant" ] || [ "$2" = "all" ];
   then
-    dbtypes["$constant"]="$constant"
+    dbtypes[${DCI_ARRKEY}]="$constant"
+    ((DCI_ARRKEY+=1))
   fi
 done
 
@@ -184,6 +189,16 @@ if [ "$1" = "cleanup" ];
   docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker rm {}
   docker images | egrep "drupal|testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} docker rmi {}
   rm -rf ${REPODIR}
+  # Just umount and remove all and everything in /tmp/tmp.*
+  DCI_SQLCONT=(/tmp/tmp.*)
+  if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
+    for DIR in "${DCI_SQLCONT[@]}"; do
+      umount "${DIR}" || /bin/true
+      rm -fr "${DIR}" || /bin/true
+    done
+    unset DCI_SQLCOUNT
+  fi
+
 fi
 set -e
 
@@ -196,7 +211,8 @@ for DBTYPE in "${dbtypes[@]}";
   echo
   cd "./containers/database/${DBTYPE}"
   ./stop-server.sh
-  # This is some trick of wildcard escape by array
+  # This cleanup is specific for a single database type and is required
+  # in case of a container refresh/update build.
   DCI_SQLCONT=(/tmp/tmp.*"${DBTYPE}")
   if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
     for DIR in "${DCI_SQLCONT[@]}"; do
