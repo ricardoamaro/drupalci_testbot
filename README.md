@@ -105,7 +105,7 @@ sudo \
 TESTGROUPS="--all" \
 CONCURRENCY="4" \
 DRUPALBRANCH="8.0.x" \
-DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz"
+DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz" \
 PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
 ```
