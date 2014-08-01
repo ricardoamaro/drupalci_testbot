@@ -108,7 +108,7 @@ if [ ! -f /usr/bin/php ];
   else
   echo
   # Check PHP Version
-  PHP_VERSION=$(php -v | grep "(cli)" | awk '{print $2}')
+  PHP_VERSION=`/usr/bin/php -r 'echo phpversion();'`
   if [ -z ${PHP_VERSION} ];
     then
     echo
@@ -238,7 +238,7 @@ cd ./containers/web/
 ./build.sh
 cd "${BASEDIR}"
 
-echo -e "Container Images: ${dbtypes[@]} and web-${PHP_VERSION} (re)built.\n"
+echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
 
 # Do a test run to collect test list and update repos
 if [ "$1" != "refresh" ];
@@ -251,5 +251,5 @@ else
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
-echo -e "Try example: sudo DBTYPE='${DCI_DBTYPE}' DBVER='${DCI_DBVER}' PHPVERSION='${PHP_VERSION}' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "Try example: sudo DBTYPE='${DCI_DBTYPE}' DBVER='${DCI_DBVER}' PHPVERSION='5.4' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 
