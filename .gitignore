@@ -1,3 +1,7 @@
 /.vagrant
 www/
 .idea
+PROVISIONED
+.buildpath
+.project
+.settings
