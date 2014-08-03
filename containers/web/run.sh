@@ -235,7 +235,7 @@ if [ -f ${REPODIR}/drupal/.git/config ];
     actualbranch=$(git branch | awk '{print $2}')
     for remotebranch in $(git branch -a | grep remotes | grep -v ${actualbranch} | grep -v HEAD | grep -v master); do git branch --track ${remotebranch#remotes/origin/} $remotebranch; done
     git remote update
-    git pull -v --all
+    git pull --all
     echo ""
 fi
 
@@ -257,7 +257,7 @@ if [[ $UPDATEREPO = "true" ]]
     pwd
     git remote update
     git fetch --all
-    git pull -v --all
+    git pull --all
 fi
 
 #Check our git version and make it compatible with < 1.8
