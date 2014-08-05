@@ -39,7 +39,7 @@ TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
 VERBOSE:       Default is 'false'
 DBTYPE:        Default is 'mysql-5.5' from mysql/sqlite/pgsql
 DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
-CMD:           Default is none. Normally use '/bin/bash' to debug the container
+DCI_CMD:           Default is none. Normally use '/bin/bash' to debug the container
 INSTALLER:     Default is none. Try to use core non install tests.
 DCI_UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
 DCI_IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
@@ -87,7 +87,7 @@ DBUSER=${DBUSER:-"drupaltestbot"}
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
 DBVER=${DBVER:-"5.5"}
-CMD=${CMD:-""}
+DCI_CMD=${DCI_CMD:-""}
 INSTALLER=${INSTALLER:-"none"}
 VERBOSE=${VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
@@ -393,7 +393,7 @@ DBTYPE=\"${DBTYPE}\"
 DBVER=\"${DBVER}\"
 DBCONTAINER=\"${DBCONTAINER}\"
 DBLINK=\"${DBLINK}\"
-CMD=\"${CMD}\"
+DCI_CMD=\"${DCI_CMD}\"
 INSTALLER=\"${INSTALLER}\"
 VERBOSE=\"${VERBOSE}\"
 PHPVERSION=\"${PHPVERSION}\"
@@ -404,8 +404,8 @@ TESTGROUPS=\"${TESTGROUPS}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${PHPVERSION} ${CMD}"
-/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${PHPVERSION} ${CMD}
+DCI_RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${PHPVERSION} ${DCI_CMD}"
+/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${PHPVERSION} ${DCI_CMD}
 
 echo "exited $?"
 
@@ -419,6 +419,6 @@ echo "Results directory: ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/results/"
 echo "Make sure to clean up old Builds on ${DCI_BUILDSDIR} to save disk space"
 echo "--------------------------------------------------------------------------------"
 echo "Docker run command:"
-echo "${RUNCMD}"
+echo "${DCI_RUNCMD}"
 
 exit 0
