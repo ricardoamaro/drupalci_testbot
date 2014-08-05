@@ -146,7 +146,7 @@ DBPASS="drupaltestbotpw"
 DBTYPE="mysql"
 DBVER="5.5"         # Used to override the default database version for this database type (Optional)
 DBLINK="--link=drupaltestbot-db:db"
-INSTALLER="none"    # Try to use core non install tests.
+DCI_INSTALLER="none"    # Try to use core non install tests.
 DCI_CMD=""              # Eg. enter container shell with DCI_CMD="/bin/bash"
 VERBOSE="false"     # true will give verbose
 PHPVERSION="5.4"

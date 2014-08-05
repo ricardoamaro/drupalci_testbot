@@ -25,7 +25,7 @@ echo ""
 # --sqlite database is used for the test runner only (and only contains the simpletest module database schema)
 #Example: php ./core/scripts/run-tests.sh --sqlite /tmpfs/drupal/test.sqlite --dburl mysql://username:password@localhost/database --url http://example.com/ --all
 
-if (( $DRUPALVERSION >= 8 )) && [[ $INSTALLER = "none" ]];
+if (( $DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
   then
     echo "DRUPALVERSION is $DRUPALVERSION"
     echo "Skipping operation [install], using core tester instead..."
