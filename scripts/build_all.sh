@@ -19,7 +19,6 @@
 
 # Remove intermediate containers after a successful build. Default is True.
 DCI_REMOVEINTCONTAINERS=${DCI_REMOVEINTCONTAINERS:-"true"}
-
 DCI_REPODIR=${DCI_REPODIR:-"$HOME/testbotdata"}
 BASEDIR="$(pwd)"
 
@@ -103,10 +102,8 @@ if [ ! -f /usr/bin/php ];
   echo "Failed to detect PHP."
   echo "Please make sure PHP is installed and is >= 5.4."
   echo "--------------------------------------------------------------"
-  echo
   exit 1
   else
-  echo
   # Check PHP Version
   PHP_VERSION=`/usr/bin/php -r 'echo phpversion();'`
   if [ -z ${PHP_VERSION} ];
@@ -114,23 +111,20 @@ if [ ! -f /usr/bin/php ];
     echo
     echo "Failed to detect PHP version."
     echo "Please make sure PHP is installed and is >= 5.4."
-    echo "--------------------------------------------------------------"
-    echo
+    echo "----------------------------------------------------------------------"
     exit 1
   fi
   IFS=. components=(${PHP_VERSION})
   if [ ${components[0]} -ge 5 ] && [ ${components[1]} -ge 4 ];
     then
     echo
-    echo "PHP version ${PHP_VERSION} found at /usr/bin/php:"
-    echo "----------------------------------------------------------"
-    echo
+    echo "PHP version ${PHP_VERSION} found at /usr/bin/php"
+    echo "----------------------------------------------------------------------"
     else
     echo
     echo "PHP version ${PHP_VERSION} found at /usr/bin/php:"
     echo "Your installed PHP version is too old! Upgrade to >= 5.4."
-    echo "------------------------------------------------------------------------"
-    echo
+    echo "----------------------------------------------------------------------"
     exit 1
   fi
 fi
@@ -144,7 +138,6 @@ if [ ! -f /usr/bin/docker ];
   echo "Please make sure Docker is installed and configured correctly."
   echo "Visit: https://docs.docker.com/installation/ for further instructions."
   echo "----------------------------------------------------------------------"
-  echo
   exit 1
   else
   echo
@@ -155,17 +148,14 @@ if [ ! -f /usr/bin/docker ];
     echo
     echo "Failed to detect Docker Version."
     echo "Please make sure Docker is installed and configured correctly."
-    echo "--------------------------------------------------------------"
-    echo
+    echo "----------------------------------------------------------------------"
     exit 1
   fi
   IFS=. components=(${DOCKER_VERSION})
   if [ ${components[0]} -ge 1 ] && [ ${components[1]} -ge 0 ];
     then
-    echo
-    echo "Docker Version ${DOCKER_VERSION} found at /usr/bin/docker:"
-    echo "----------------------------------------------------------"
-    echo
+    echo "Docker Version ${DOCKER_VERSION} found at /usr/bin/docker"
+    echo "----------------------------------------------------------------------"
     else
     echo
     echo "Docker Version ${DOCKER_VERSION} found at /usr/bin/docker:"
@@ -173,7 +163,6 @@ if [ ! -f /usr/bin/docker ];
     echo "Docker Version >= 1.0 is required. Please visit:"
     echo "http://www.docker.com for instructions how to upgrade to latest release."
     echo "------------------------------------------------------------------------"
-    echo
     exit 1
   fi
 fi
@@ -183,7 +172,7 @@ if [ "$1" = "cleanup" ];
   then
   echo
   echo "stop and remove testbot containers and images"
-  echo "---------------------------------------------"
+  echo "----------------------------------------------------------------------"
   echo
   docker ps | egrep "drupal|test" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker stop {}
   docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker rm {}
@@ -207,7 +196,7 @@ for DCI_DBTYPE in "${dbtypes[@]}";
   do
   echo
   echo "Build and restart db-${DCI_DBTYPE} container"
-  echo "------------------------------------"
+  echo "----------------------------------------------------------------------"
   echo
   cd "./containers/database/${DCI_DBTYPE}"
   ./stop-server.sh
@@ -231,8 +220,8 @@ for DCI_DBTYPE in "${dbtypes[@]}";
 done
 
 echo
-echo "Make sure we Build web containers"
-echo "------------------------------------"
+echo "Make sure we build web containers"
+echo "----------------------------------------------------------------------"
 echo
 cd ./containers/web/
 ./build.sh
@@ -244,12 +233,12 @@ echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  DCI_DBTYPE=${DCI_DCI_DBTYPE} DCI_DBVER=${DCI_DCI_DBVER} DCI_UPDATEREPO="true" DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DCI_DBTYPE=${DCI_DCI_DBTYPE} DCI_DBVER=${DCI_DCI_DBVER} DCI_UPDATEREPO="true" DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 else
   sleep 5
-  DCI_DBTYPE=${DCI_DCI_DBTYPE} DCI_DBVER=${DCI_DCI_DBVER} DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DCI_DBTYPE=${DCI_DCI_DBTYPE} DCI_DBVER=${DCI_DCI_DBVER} DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
-echo -e "Try example: sudo DCI_DBTYPE='${DCI_DCI_DBTYPE}' DCI_DBVER='${DCI_DCI_DBVER}' DCI_PHPVERSION='5.4' DCI_TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "Try example: sudo DCI_DBTYPE='${DCI_DCI_DBTYPE}' DCI_DBVER='${DCI_DCI_DBVER}' DCI_PHPVERSION='5.4' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 

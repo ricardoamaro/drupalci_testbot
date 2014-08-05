@@ -1,4 +1,4 @@
-Using: sudo DRUPALBRANCH="7.26" RUNSCRIPT="/usr/bin/php ./scripts/run-tests.sh --list" ./run.sh
+Using: sudo DCI_DRUPALBRANCH="7.26" DCI_RUNSCRIPT="/usr/bin/php ./scripts/run-tests.sh --list" ./run.sh
 
 Available test groups & classes
 -------------------------------

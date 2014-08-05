@@ -25,9 +25,9 @@ echo ""
 # --sqlite database is used for the test runner only (and only contains the simpletest module database schema)
 #Example: php ./core/scripts/run-tests.sh --sqlite /tmpfs/drupal/test.sqlite --dburl mysql://username:password@localhost/database --url http://example.com/ --all
 
-if (( $DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
+if (( $DCI_DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
   then
-    echo "DRUPALVERSION is $DRUPALVERSION"
+    echo "DCI_DRUPALVERSION is $DCI_DRUPALVERSION"
     echo "Skipping operation [install], using core tester instead..."
     #Create drupal database manually because Drupal>=8
     case $DCI_DBTYPE in
@@ -46,7 +46,7 @@ if (( $DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
     esac
     EXTRA="--sqlite /var/www/test.sqlite --dburl ${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DBADDR}/${DCI_IDENTIFIER} --keep-results"
   else
-    echo "Operation $DRUPALVERSION [install] using drush... "
+    echo "Operation $DCI_DRUPALVERSION [install] using drush... "
     case $DCI_DBTYPE in
       sqlite)
         ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
@@ -69,8 +69,8 @@ chown -fR www-data /var/www/sites/default/files/ /var/www/sites/simpletest
 # Run the test suite.
 echo ""
 echo "Operation [run tests]..."
-echo "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${DCI_TESTGROUPS} | tee /var/www/test.stdout"
-sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${RUNSCRIPT} ${EXTRA} ${DCI_TESTGROUPS} | tee /var/www/test.stdout"
+echo "export TERM=linux && cd /var/www && ${DCI_RUNSCRIPT} ${EXTRA} ${DCI_TESTGROUPS} | tee /var/www/test.stdout"
+sudo -E -u www-data -H sh -c "export TERM=linux && cd /var/www && ${DCI_RUNSCRIPT} ${EXTRA} ${DCI_TESTGROUPS} | tee /var/www/test.stdout"
 
 #No ugly xml please:
 #for i in $(ls results/* ); do tidy -xml -m -i -q "$i"; done

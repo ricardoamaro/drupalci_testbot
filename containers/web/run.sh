@@ -32,8 +32,8 @@ DCI_DEPENDENCIES:  Contrib projects to be downloaded & patched.
                Format: module1,module2,module2...
 DCI_DEPENDENCIES_GIT  Format: gitrepo1,branch;gitrepo2,branch;...
 DCI_DEPENDENCIES_TGZ  Format: module1_url.tgz,module1_url.tgz,...
-DRUPALBRANCH:  Default is '8.0.x'
-DRUPALVERSION: Default is '8'
+DCI_DRUPALBRANCH:  Default is '8.0.x'
+DCI_DRUPALVERSION: Default is '8'
 DCI_TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
 DCI_VERBOSE:       Default is 'false'
@@ -50,19 +50,19 @@ DCI_BUILDSDIR:     Default is  equal to DCI_REPODIR
 DCI_WORKSPACE:     Default is 'HOME/testbotdata/DCI_IDENTIFIER/'
 DCI_DBUSER:        Default is 'drupaltestbot'
 DCI_DBPASS:        Default is 'drupaltestbotpw'
-DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
+DCI_DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
 DCI_PHPVERSION:    Default is '5.4'
 DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
-RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
+DCI_RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
 echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
 echo -e "
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 .....................................................................
-sudo DCI_TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\"  DCI_PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
+sudo DCI_TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DCI_DRUPALBRANCH=\"8.0.x\"  DCI_PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
 
 Run all tests using 4 CPUs, 1 core patch against D8:
 .....................................................................
-sudo DCI_TESTGROUPS=\"--all\" DCI_CONCURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\" DCI_PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
+sudo DCI_TESTGROUPS=\"--all\" DCI_CONCURRENCY=\"4\" DCI_DRUPALBRANCH=\"8.0.x\" DCI_PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
 "
   exit 0
 fi
@@ -71,8 +71,8 @@ fi
 # Note: Any variable already set on a higher level will keep it's value.
 
 DCI_IDENTIFIER=${DCI_IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"}
-DRUPALBRANCH=${DRUPALBRANCH:-"8.0.x"}
-DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
+DCI_DRUPALBRANCH=${DCI_DRUPALBRANCH:-"8.0.x"}
+DCI_DRUPALVERSION=${DCI_DRUPALVERSION:-"$(echo $DCI_DRUPALBRANCH | awk -F. '{print $1}')"}
 DCI_UPDATEREPO=${DCI_UPDATEREPO:-"false"}
 DCI_REPODIR=${DCI_REPODIR:-"$HOME/testbotdata"}
 DCI_DRUPALREPO=${DCI_DRUPALREPO:-"http://git.drupal.org/project/drupal.git"}
@@ -95,7 +95,7 @@ DCI_CONCURRENCY=${DCI_CONCURRENCY:-"4"} #How many cpus to use per run
 DCI_TESTGROUPS=${DCI_TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
 # run-tests.sh place changes on 8.0.x
-case $DRUPALVERSION in
+case $DCI_DRUPALVERSION in
   8) RUNNER="./core/scripts/run-tests.sh"
      MODULESPATH="./modules"
     ;;
@@ -108,12 +108,12 @@ case $DCI_DBTYPE in
   pgsql)
      if [ -z ${DCI_DBVER+x} ];
        then
-         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
+         DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
        else
          case $DCI_DBVER in
-           8.3)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-8.3"}
+           8.3)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-8.3"}
            ;;
-           9.1)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
+           9.1)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
            ;;
          esac
      fi
@@ -122,12 +122,12 @@ case $DCI_DBTYPE in
   mariadb)
     if [ -z ${DCI_DBVER+x} ];
       then
-        DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
+        DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
       else
         case $DCI_DBVER in
-          5.5)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
+          5.5)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
           ;;
-          10.0)   DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-10.0"}
+          10.0)   DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-mariadb-10.0"}
           ;;
         esac
     fi
@@ -135,10 +135,10 @@ case $DCI_DBTYPE in
   ;;
   mysql | *)
     DBPORT="3306"
-    DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mysql-5.5"}
+    DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-mysql-5.5"}
   ;;
 esac
-DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
+DCI_DBLINK=${DCI_DBLINK:-"--link=${DCI_DBCONTAINER}:db"}
 
 case $DCI_VERBOSE in
   true) VERBO="--verbose"
@@ -147,7 +147,7 @@ case $DCI_VERBOSE in
     ;;
 esac
 
-RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
+DCI_RUNSCRIPT=${DCI_RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
 
 # Check if we have root powers
 if [ `whoami` != root ]; then
@@ -175,12 +175,12 @@ fi
 if [[ $DCI_DBTYPE != "sqlite" ]]
   then
     set +e
-    RUNNING=$(sudo docker ps | grep ${DBCONTAINER} | grep -s ${DBPORT})
+    RUNNING=$(sudo docker ps | grep ${DCI_DBCONTAINER} | grep -s ${DBPORT})
     set -e
     if [[ $RUNNING = "" ]]
       then
         echo "--------------------------------------------------------------------------------"
-        echo -e "ERROR: There is no ${DBCONTAINER} container running..."
+        echo -e "ERROR: There is no ${DCI_DBCONTAINER} container running..."
         echo -e "Please make sure you built the image and started it:"
         echo -e "sudo ./scripts/build_all.sh refresh \n"
         echo -e "Also please make sure port ${DBPORT} is not being used \nand ${DCI_DBTYPE} is stopped on the host."
@@ -206,7 +206,7 @@ esac
 if $(docker images | grep -q web-${DCI_PHPVERSION});
   then
   echo "--------------------------------------------------------------------------------"
-  echo "Containers: web-${DCI_PHPVERSION} and ${DBCONTAINER} available"
+  echo "Containers: web-${DCI_PHPVERSION} and ${DCI_DBCONTAINER} available"
   echo "Running PHP${DCI_PHPVERSION}/${DCI_DBTYPE} on drupalci/web-${DCI_PHPVERSION}"
   echo "--------------------------------------------------------------------------------"
   else
@@ -266,7 +266,7 @@ gitlast=$(echo -e "$gitver\n1.8.0.0" | sort -nr | head -n1)
 [ "$gitlast" = "$gitver" ] && SB="--single-branch" || SB=""
 
 #Clone the local repo to the run directory:
-git clone ${SB} --branch ${DRUPALBRANCH} ${DCI_REPODIR}/drupal/ ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/
+git clone ${SB} --branch ${DCI_DRUPALBRANCH} ${DCI_REPODIR}/drupal/ ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/
 
 # Make it writable for artifacts
 mkdir -p  ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/results
@@ -274,16 +274,16 @@ chmod a+w ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/results
 chmod a+w ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/
 
 #Change to the branch we would like to test
-if [[ ${DRUPALBRANCH} != "" ]]
+if [[ ${DCI_DRUPALBRANCH} != "" ]]
   then
     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/
-    git checkout ${DRUPALBRANCH} 2>&1 | head -n3
+    git checkout ${DCI_DRUPALBRANCH} 2>&1 | head -n3
     echo ""
 fi
 
 if [[ ${DCI_DBTYPE} = "sqlite" ]]
   then
-    DBLINK=""
+    DCI_DBLINK=""
 fi
 
 #DCI_DEPENDENCIES="module1,module2,module3"
@@ -374,8 +374,8 @@ fi
 echo "------------------------- ENVIRONMENT VARIABLES IN USE -------------------------"
 #Write all ENV VARIABLES to ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 echo "DCI_IDENTIFIER=\"${DCI_IDENTIFIER}\"
-DRUPALBRANCH=\"${DRUPALBRANCH}\"
-DRUPALVERSION=\"${DRUPALVERSION}\"
+DCI_DRUPALBRANCH=\"${DCI_DRUPALBRANCH}\"
+DCI_DRUPALVERSION=\"${DCI_DRUPALVERSION}\"
 DCI_UPDATEREPO=\"${DCI_UPDATEREPO}\"
 DCI_REPODIR=\"${DCI_REPODIR}\"
 DCI_DRUPALREPO=\"${DCI_DRUPALREPO}\"
@@ -391,21 +391,21 @@ DCI_DBUSER=\"${DCI_DBUSER}\"
 DCI_DBPASS=\"${DCI_DBPASS}\"
 DCI_DBTYPE=\"${DCI_DBTYPE}\"
 DCI_DBVER=\"${DCI_DBVER}\"
-DBCONTAINER=\"${DBCONTAINER}\"
-DBLINK=\"${DBLINK}\"
+DCI_DBCONTAINER=\"${DCI_DBCONTAINER}\"
+DCI_DBLINK=\"${DCI_DBLINK}\"
 DCI_CMD=\"${DCI_CMD}\"
 DCI_INSTALLER=\"${DCI_INSTALLER}\"
 DCI_VERBOSE=\"${DCI_VERBOSE}\"
 DCI_PHPVERSION=\"${DCI_PHPVERSION}\"
 DCI_CONCURRENCY=\"${DCI_CONCURRENCY}\"
-RUNSCRIPT=\"${RUNSCRIPT}\"
+DCI_RUNSCRIPT=\"${DCI_RUNSCRIPT}\"
 DCI_TESTGROUPS=\"${DCI_TESTGROUPS}\"
 " | tee ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-DCI_RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${DCI_PHPVERSION} ${DCI_CMD}"
-/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}
+DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${DCI_PHPVERSION} ${DCI_CMD}"
+/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}
 
 echo "exited $?"
 

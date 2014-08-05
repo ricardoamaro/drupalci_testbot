@@ -38,7 +38,7 @@ vagrant up
 
 ### Run some group tests:
 ```
-sudo DCI_TESTGROUPS="Action,Bootstrap" DRUPALBRANCH="8.0.x" DCI_PATCH="/path/to/your.patch,." ./run.sh
+sudo DCI_TESTGROUPS="Action,Bootstrap" DCI_DRUPALBRANCH="8.0.x" DCI_PATCH="/path/to/your.patch,." ./run.sh
 ```
 See more examples bellow on: "6- RUN EXAMPLES"
 
@@ -81,7 +81,7 @@ Run 'search_api' module tests, with one patch against D8 and git sandbox:
 sudo DCI_TESTGROUPS="--module 'search_api'" \
 DCI_DEPENDENCIES_GIT="http://git.drupal.org/sandbox/daeron/2091893.git,master" \
 DCI_PATCH="https://drupal.org/files/SOME_DCI_PATCH_THAT_YOU_HAVE.patch,DCI_PATCH_APPLY_DIR" \
-DRUPALBRANCH="8.0.x" \
+DCI_DRUPALBRANCH="8.0.x" \
 ./run.sh
 ```
 
@@ -92,7 +92,7 @@ cd containers/web/
 sudo \
 DCI_TESTGROUPS="Action,Node" \
 DCI_CONCURRENCY="4" \
-DRUPALBRANCH="8.0.x" \
+DCI_DRUPALBRANCH="8.0.x" \
 DCI_PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
 ./run.sh
 ```
@@ -104,7 +104,7 @@ cd containers/web/
 sudo \
 DCI_TESTGROUPS="--all" \
 DCI_CONCURRENCY="4" \
-DRUPALBRANCH="8.0.x" \
+DCI_DRUPALBRANCH="8.0.x" \
 DCI_DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz"
 DCI_PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
@@ -117,7 +117,7 @@ cd containers/web/
 sudo \
 DCI_TESTGROUPS="--all" \
 DCI_CONCURRENCY="6" \
-DRUPALBRANCH="7.26" \
+DCI_DRUPALBRANCH="7.26" \
 DCI_DEPENDENCIES="flag,payment"  \
 DCI_PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag;https://drupal.org/files/issues/payment_2114785_8.patch,sites/all/modules/payment" \
 ./run.sh
@@ -130,8 +130,8 @@ And that's it.
 ### Some default environment variables that you can override
 
 ```
-DRUPALBRANCH="8.0.x"
-DRUPALVERSION=""
+DCI_DRUPALBRANCH="8.0.x"
+DCI_DRUPALVERSION=""
 DCI_IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
 DCI_REPODIR="$HOME/testbotdata"
 DCI_UPDATEREPO="false"  # true to force repos update
@@ -145,21 +145,21 @@ DCI_DBUSER="drupaltestbot"
 DCI_DBPASS="drupaltestbotpw"
 DCI_DBTYPE="mysql"
 DCI_DBVER="5.5"         # Used to override the default database version for this database type (Optional)
-DBLINK="--link=drupaltestbot-db:db"
+DCI_DBLINK="--link=drupaltestbot-db:db"
 DCI_INSTALLER="none"    # Try to use core non install tests.
 DCI_CMD=""              # Eg. enter container shell with DCI_CMD="/bin/bash"
 DCI_VERBOSE="false"     # true will give verbose
 DCI_PHPVERSION="5.4"
 DCI_CONCURRENCY="4"     # How many cpus to use per run
 DCI_TESTGROUPS="--class 'Drupal\block\Tests\NonDefaultBlockAdminTest'" #TESTS TO RUN eg.--all
-RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} --xml '/var/workspace/results' ${DCI_TESTGROUPS} "
+DCI_RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} --xml '/var/workspace/results' ${DCI_TESTGROUPS} "
 ```
 
 ### What tests can I run?
 ```
 sudo \
-DRUPALBRANCH="8.0.x" \
-RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" \
+DCI_DRUPALBRANCH="8.0.x" \
+DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" \
 ./run.sh
 ```
 
