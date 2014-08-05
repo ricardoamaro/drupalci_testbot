@@ -52,8 +52,8 @@ DBUSER:        Default is 'drupaltestbot'
 DBPASS:        Default is 'drupaltestbotpw'
 DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
 DCI_PHPVERSION:    Default is '5.4'
-CONCURRENCY:   Default is '4'  #How many cpus to use per run
-RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  CONCURRENCY  --verbose --xml '/var/workspace/results'  TESTGROUPS  | tee /var/www/test.stdout ' "
+DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
+RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  TESTGROUPS  | tee /var/www/test.stdout ' "
 echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
 echo -e "
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
@@ -62,7 +62,7 @@ sudo TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\"  DCI_PATCH
 
 Run all tests using 4 CPUs, 1 core patch against D8:
 .....................................................................
-sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\" DCI_PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
+sudo TESTGROUPS=\"--all\" DCI_CONCURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\" DCI_PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
 "
   exit 0
 fi
@@ -91,7 +91,7 @@ DCI_CMD=${DCI_CMD:-""}
 DCI_INSTALLER=${DCI_INSTALLER:-"none"}
 DCI_VERBOSE=${DCI_VERBOSE:-"false"}
 DCI_PHPVERSION=${DCI_PHPVERSION:-"5.4"}
-CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
+DCI_CONCURRENCY=${DCI_CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
 # run-tests.sh place changes on 8.0.x
@@ -147,7 +147,7 @@ case $DCI_VERBOSE in
     ;;
 esac
 
-RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
+RUNSCRIPT=${RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
 
 # Check if we have root powers
 if [ `whoami` != root ]; then
@@ -397,7 +397,7 @@ DCI_CMD=\"${DCI_CMD}\"
 DCI_INSTALLER=\"${DCI_INSTALLER}\"
 DCI_VERBOSE=\"${DCI_VERBOSE}\"
 DCI_PHPVERSION=\"${DCI_PHPVERSION}\"
-CONCURRENCY=\"${CONCURRENCY}\"
+DCI_CONCURRENCY=\"${DCI_CONCURRENCY}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
 TESTGROUPS=\"${TESTGROUPS}\"
 " | tee ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info

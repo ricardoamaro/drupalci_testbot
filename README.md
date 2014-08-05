@@ -91,7 +91,7 @@ cd containers/web/
 
 sudo \
 TESTGROUPS="Action,Node" \
-CONCURRENCY="4" \
+DCI_CONCURRENCY="4" \
 DRUPALBRANCH="8.0.x" \
 DCI_PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
 ./run.sh
@@ -103,7 +103,7 @@ cd containers/web/
 
 sudo \
 TESTGROUPS="--all" \
-CONCURRENCY="4" \
+DCI_CONCURRENCY="4" \
 DRUPALBRANCH="8.0.x" \
 DCI_DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz"
 DCI_PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
@@ -116,7 +116,7 @@ cd containers/web/
 
 sudo \
 TESTGROUPS="--all" \
-CONCURRENCY="6" \
+DCI_CONCURRENCY="6" \
 DRUPALBRANCH="7.26" \
 DCI_DEPENDENCIES="flag,payment"  \
 DCI_PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag;https://drupal.org/files/issues/payment_2114785_8.patch,sites/all/modules/payment" \
@@ -150,9 +150,9 @@ DCI_INSTALLER="none"    # Try to use core non install tests.
 DCI_CMD=""              # Eg. enter container shell with DCI_CMD="/bin/bash"
 DCI_VERBOSE="false"     # true will give verbose
 DCI_PHPVERSION="5.4"
-CONCURRENCY="4"     # How many cpus to use per run
+DCI_CONCURRENCY="4"     # How many cpus to use per run
 TESTGROUPS="--class 'Drupal\block\Tests\NonDefaultBlockAdminTest'" #TESTS TO RUN eg.--all
-RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
+RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
 ```
 
 ### What tests can I run?
