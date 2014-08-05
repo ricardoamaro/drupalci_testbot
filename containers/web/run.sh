@@ -97,10 +97,10 @@ DCI_TESTGROUPS=${DCI_TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.dru
 # run-tests.sh place changes on 8.0.x
 case $DCI_DRUPALVERSION in
   8) RUNNER="./core/scripts/run-tests.sh"
-     MODULESPATH="./modules"
+     DCI_MODULESPATH="./modules"
     ;;
   *) RUNNER="./scripts/run-tests.sh"
-     MODULESPATH="./sites/all/modules"
+     DCI_MODULESPATH="./sites/all/modules"
     ;;
 esac
 
@@ -308,8 +308,8 @@ if [[ $DCI_DEPENDENCIES_GIT = "" ]]
     echo -e "NOTICE: \$DCI_DEPENDENCIES_GIT has nothing declared...\n"
   else
      ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
-     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
-     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
+     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
+     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
      for row in ${ARRAY[@]}
       do
       read gurl gbranch <<<$(echo "${row}" | tr "," " ");
@@ -326,8 +326,8 @@ if [[ $DCI_DEPENDENCIES_TGZ = "" ]]
     echo -e "NOTICE: \$DCI_DEPENDENCIES_TGZ has nothing declared...\n"
   else
      ARRAY=($(echo "${DCI_DEPENDENCIES_TGZ}" | tr "," "\n"))
-     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
-     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
+     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
+     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
      for row in ${ARRAY[@]}
       do
       echo "TGZ URL: ${row}  "
@@ -385,7 +385,7 @@ DCI_WORKSPACE=\"${DCI_WORKSPACE}\"
 DCI_DEPENDENCIES=\"${DCI_DEPENDENCIES}\"
 DCI_DEPENDENCIES_GIT=\"${DCI_DEPENDENCIES_GIT}\"
 DCI_DEPENDENCIES_TGZ=\"${DCI_DEPENDENCIES_TGZ}\"
-MODULESPATH=\"${MODULESPATH}\"
+DCI_MODULESPATH=\"${DCI_MODULESPATH}\"
 DCI_PATCH=\"${DCI_PATCH}\"
 DCI_DBUSER=\"${DCI_DBUSER}\"
 DCI_DBPASS=\"${DCI_DBPASS}\"
