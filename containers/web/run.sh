@@ -42,12 +42,12 @@ DBVER:         Default is '5.5'.  Used to override the default version for a giv
 CMD:           Default is none. Normally use '/bin/bash' to debug the container
 INSTALLER:     Default is none. Try to use core non install tests.
 UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
-IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
+DCI_IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
 REPODIR:       Default is 'HOME/testbotdata'
 DRUPALREPO:    Default is 'http://git.drupal.org/project/drupal.git'
 DRUSHREPO:     Default is 'https://github.com/drush-ops/drush.git'
 BUILDSDIR:     Default is  equal to REPODIR
-WORKSPACE:     Default is 'HOME/testbotdata/IDENTIFIER/'
+WORKSPACE:     Default is 'HOME/testbotdata/DCI_IDENTIFIER/'
 DBUSER:        Default is 'drupaltestbot'
 DBPASS:        Default is 'drupaltestbotpw'
 DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
@@ -70,7 +70,7 @@ fi
 # A list of variables that we only set if empty. Export them before running the script.
 # Note: Any variable already set on a higher level will keep it's value.
 
-IDENTIFIER=${IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"}
+DCI_IDENTIFIER=${DCI_IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"}
 DRUPALBRANCH=${DRUPALBRANCH:-"8.0.x"}
 DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
 UPDATEREPO=${UPDATEREPO:-"false"}
@@ -78,7 +78,7 @@ REPODIR=${REPODIR:-"$HOME/testbotdata"}
 DRUPALREPO=${DRUPALREPO:-"http://git.drupal.org/project/drupal.git"}
 DRUSHREPO=${DRUSHREPO:-"https://github.com/drush-ops/drush.git"}
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
-WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$IDENTIFIER/"}
+WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$DCI_IDENTIFIER/"}
 DCI_DEPENDENCIES=${DCI_DEPENDENCIES:-""}
 DCI_DEPENDENCIES_GIT=${DCI_DEPENDENCIES_GIT:-""}
 DCI_DEPENDENCIES_TGZ=${DCI_DEPENDENCIES_TGZ:-""}  #TODO
@@ -266,17 +266,17 @@ gitlast=$(echo -e "$gitver\n1.8.0.0" | sort -nr | head -n1)
 [ "$gitlast" = "$gitver" ] && SB="--single-branch" || SB=""
 
 #Clone the local repo to the run directory:
-git clone ${SB} --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${IDENTIFIER}/
+git clone ${SB} --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${DCI_IDENTIFIER}/
 
 # Make it writable for artifacts
-mkdir -p  ${BUILDSDIR}/${IDENTIFIER}/results
-chmod a+w ${BUILDSDIR}/${IDENTIFIER}/results
-chmod a+w ${BUILDSDIR}/${IDENTIFIER}/
+mkdir -p  ${BUILDSDIR}/${DCI_IDENTIFIER}/results
+chmod a+w ${BUILDSDIR}/${DCI_IDENTIFIER}/results
+chmod a+w ${BUILDSDIR}/${DCI_IDENTIFIER}/
 
 #Change to the branch we would like to test
 if [[ ${DRUPALBRANCH} != "" ]]
   then
-    cd ${BUILDSDIR}/${IDENTIFIER}/
+    cd ${BUILDSDIR}/${DCI_IDENTIFIER}/
     git checkout ${DRUPALBRANCH} 2>&1 | head -n3
     echo ""
 fi
@@ -292,7 +292,7 @@ if [[ $DCI_DEPENDENCIES = "" ]]
   then
     echo -e "NOTICE: \$DCI_DEPENDENCIES has no modules declared...\n"
   else
-      cd ${BUILDSDIR}/${IDENTIFIER}/
+      cd ${BUILDSDIR}/${DCI_IDENTIFIER}/
     for DEP in $(echo "$DCI_DEPENDENCIES" | tr "," "\n")
       do
       echo "Project: $DEP"
@@ -308,8 +308,8 @@ if [[ $DCI_DEPENDENCIES_GIT = "" ]]
     echo -e "NOTICE: \$DCI_DEPENDENCIES_GIT has nothing declared...\n"
   else
      ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
-     mkdir -p ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
-     cd ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
+     mkdir -p ${BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
+     cd ${BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
      for row in ${ARRAY[@]}
       do
       read gurl gbranch <<<$(echo "${row}" | tr "," " ");
@@ -326,8 +326,8 @@ if [[ $DCI_DEPENDENCIES_TGZ = "" ]]
     echo -e "NOTICE: \$DCI_DEPENDENCIES_TGZ has nothing declared...\n"
   else
      ARRAY=($(echo "${DCI_DEPENDENCIES_TGZ}" | tr "," "\n"))
-     mkdir -p ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
-     cd ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
+     mkdir -p ${BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
+     cd ${BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
      for row in ${ARRAY[@]}
       do
       echo "TGZ URL: ${row}  "
@@ -346,7 +346,7 @@ if [[ $PATCH = "" ]]
     for row in ${ARRAY[@]}
       do
       read purl dir <<<$(echo "${row}" | tr "," " ");
-      cd ${BUILDSDIR}/${IDENTIFIER}/${dir}/
+      cd ${BUILDSDIR}/${DCI_IDENTIFIER}/${dir}/
       if $(echo "$purl" | egrep -q "^http");
         then
           curl --retry 3 -s $purl > patch
@@ -372,8 +372,8 @@ fi
 
 
 echo "------------------------- ENVIRONMENT VARIABLES IN USE -------------------------"
-#Write all ENV VARIABLES to ${BUILDSDIR}/${IDENTIFIER}/test.info
-echo "IDENTIFIER=\"${IDENTIFIER}\"
+#Write all ENV VARIABLES to ${BUILDSDIR}/${DCI_IDENTIFIER}/test.info
+echo "DCI_IDENTIFIER=\"${DCI_IDENTIFIER}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"
 DRUPALVERSION=\"${DRUPALVERSION}\"
 UPDATEREPO=\"${UPDATEREPO}\"
@@ -400,22 +400,22 @@ PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
 TESTGROUPS=\"${TESTGROUPS}\"
-" | tee ${BUILDSDIR}/${IDENTIFIER}/test.info
+" | tee ${BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${PHPVERSION} ${CMD}"
-/usr/bin/time -p docker run ${DBLINK} --name=${IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${PHPVERSION} ${CMD}
+RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${PHPVERSION} ${CMD}"
+/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${PHPVERSION} ${CMD}
 
 echo "exited $?"
 
-echo "Saving image ${IDENTIFIER}"
-docker commit ${IDENTIFIER} drupal/${IDENTIFIER}
+echo "Saving image ${DCI_IDENTIFIER}"
+docker commit ${DCI_IDENTIFIER} drupal/${DCI_IDENTIFIER}
 # echo "If you need to debug this container run:"
-# echo "docker run -d=false -i=true drupal/${IDENTIFIER} /bin/bash"
+# echo "docker run -d=false -i=true drupal/${DCI_IDENTIFIER} /bin/bash"
 
 echo "--------------------------------------------------------------------------------"
-echo "Results directory: ${BUILDSDIR}/${IDENTIFIER}/results/"
+echo "Results directory: ${BUILDSDIR}/${DCI_IDENTIFIER}/results/"
 echo "Make sure to clean up old Builds on ${BUILDSDIR} to save disk space"
 echo "--------------------------------------------------------------------------------"
 echo "Docker run command:"

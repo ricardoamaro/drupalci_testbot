@@ -132,11 +132,11 @@ And that's it.
 ```
 DRUPALBRANCH="8.0.x"
 DRUPALVERSION=""
-IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
+DCI_IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
 REPODIR="$HOME/testbotdata"
 UPDATEREPO="false"  # true to force repos update
 BUILDSDIR="$REPODIR"
-WORKSPACE="$BUILDSDIR/$IDENTIFIER/"
+WORKSPACE="$BUILDSDIR/$DCI_IDENTIFIER/"
 DCI_DEPENDENCIES=""     # module1,module2,module2...
 DCI_DEPENDENCIES_GIT="" # gitrepo1,branch;gitrepo2,branch;...
 DCI_DEPENDENCIES_TGZ="" # module1_url.tgz,module1_url.tgz,...
