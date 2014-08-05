@@ -53,4 +53,4 @@ echo
 echo "To access the box and run tests, do:"
 echo "vagrant ssh"
 echo "cd drupalci_testbot"
-#echo 'Example: sudo TESTGROUPS="Bootstrap" DRUPALBRANCH="8.0.x" DCI_PATCH="/path/inthebox/to/your.patch,." ./run.sh'
+#echo 'Example: sudo DCI_TESTGROUPS="Bootstrap" DRUPALBRANCH="8.0.x" DCI_PATCH="/path/inthebox/to/your.patch,." ./run.sh'

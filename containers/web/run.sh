@@ -34,7 +34,7 @@ DCI_DEPENDENCIES_GIT  Format: gitrepo1,branch;gitrepo2,branch;...
 DCI_DEPENDENCIES_TGZ  Format: module1_url.tgz,module1_url.tgz,...
 DRUPALBRANCH:  Default is '8.0.x'
 DRUPALVERSION: Default is '8'
-TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
+DCI_TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
 DCI_VERBOSE:       Default is 'false'
 DBTYPE:        Default is 'mysql-5.5' from mysql/sqlite/pgsql
@@ -53,16 +53,16 @@ DBPASS:        Default is 'drupaltestbotpw'
 DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
 DCI_PHPVERSION:    Default is '5.4'
 DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
-RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  TESTGROUPS  | tee /var/www/test.stdout ' "
+RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
 echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
 echo -e "
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 .....................................................................
-sudo TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\"  DCI_PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
+sudo DCI_TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\"  DCI_PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
 
 Run all tests using 4 CPUs, 1 core patch against D8:
 .....................................................................
-sudo TESTGROUPS=\"--all\" DCI_CONCURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\" DCI_PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
+sudo DCI_TESTGROUPS=\"--all\" DCI_CONCURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\" DCI_PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
 "
   exit 0
 fi
@@ -92,7 +92,7 @@ DCI_INSTALLER=${DCI_INSTALLER:-"none"}
 DCI_VERBOSE=${DCI_VERBOSE:-"false"}
 DCI_PHPVERSION=${DCI_PHPVERSION:-"5.4"}
 DCI_CONCURRENCY=${DCI_CONCURRENCY:-"4"} #How many cpus to use per run
-TESTGROUPS=${TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
+DCI_TESTGROUPS=${DCI_TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
 # run-tests.sh place changes on 8.0.x
 case $DRUPALVERSION in
@@ -399,7 +399,7 @@ DCI_VERBOSE=\"${DCI_VERBOSE}\"
 DCI_PHPVERSION=\"${DCI_PHPVERSION}\"
 DCI_CONCURRENCY=\"${DCI_CONCURRENCY}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
-TESTGROUPS=\"${TESTGROUPS}\"
+DCI_TESTGROUPS=\"${DCI_TESTGROUPS}\"
 " | tee ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 
 #Let the tests start

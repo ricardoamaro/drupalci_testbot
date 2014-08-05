@@ -38,7 +38,7 @@ vagrant up
 
 ### Run some group tests:
 ```
-sudo TESTGROUPS="Action,Bootstrap" DRUPALBRANCH="8.0.x" DCI_PATCH="/path/to/your.patch,." ./run.sh
+sudo DCI_TESTGROUPS="Action,Bootstrap" DRUPALBRANCH="8.0.x" DCI_PATCH="/path/to/your.patch,." ./run.sh
 ```
 See more examples bellow on: "6- RUN EXAMPLES"
 
@@ -78,7 +78,7 @@ sudo ./build.sh 5.4
 
 Run 'search_api' module tests, with one patch against D8 and git sandbox:
 ```
-sudo TESTGROUPS="--module 'search_api'" \
+sudo DCI_TESTGROUPS="--module 'search_api'" \
 DCI_DEPENDENCIES_GIT="http://git.drupal.org/sandbox/daeron/2091893.git,master" \
 DCI_PATCH="https://drupal.org/files/SOME_DCI_PATCH_THAT_YOU_HAVE.patch,DCI_PATCH_APPLY_DIR" \
 DRUPALBRANCH="8.0.x" \
@@ -90,7 +90,7 @@ Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 cd containers/web/
 
 sudo \
-TESTGROUPS="Action,Node" \
+DCI_TESTGROUPS="Action,Node" \
 DCI_CONCURRENCY="4" \
 DRUPALBRANCH="8.0.x" \
 DCI_PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
@@ -102,7 +102,7 @@ Run all tests using 4 CPUs, 1 core patch, 1 tgz module, against D8:
 cd containers/web/
 
 sudo \
-TESTGROUPS="--all" \
+DCI_TESTGROUPS="--all" \
 DCI_CONCURRENCY="4" \
 DRUPALBRANCH="8.0.x" \
 DCI_DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz"
@@ -115,7 +115,7 @@ Run all tests using 6 CPUs, 2 patches and 2 modules on D7.26:
 cd containers/web/
 
 sudo \
-TESTGROUPS="--all" \
+DCI_TESTGROUPS="--all" \
 DCI_CONCURRENCY="6" \
 DRUPALBRANCH="7.26" \
 DCI_DEPENDENCIES="flag,payment"  \
@@ -151,8 +151,8 @@ DCI_CMD=""              # Eg. enter container shell with DCI_CMD="/bin/bash"
 DCI_VERBOSE="false"     # true will give verbose
 DCI_PHPVERSION="5.4"
 DCI_CONCURRENCY="4"     # How many cpus to use per run
-TESTGROUPS="--class 'Drupal\block\Tests\NonDefaultBlockAdminTest'" #TESTS TO RUN eg.--all
-RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} --xml '/var/workspace/results' ${TESTGROUPS} "
+DCI_TESTGROUPS="--class 'Drupal\block\Tests\NonDefaultBlockAdminTest'" #TESTS TO RUN eg.--all
+RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} --xml '/var/workspace/results' ${DCI_TESTGROUPS} "
 ```
 
 ### What tests can I run?
