@@ -48,8 +48,8 @@ DCI_DRUPALREPO:    Default is 'http://git.drupal.org/project/drupal.git'
 DCI_DRUSHREPO:     Default is 'https://github.com/drush-ops/drush.git'
 DCI_BUILDSDIR:     Default is  equal to DCI_REPODIR
 DCI_WORKSPACE:     Default is 'HOME/testbotdata/DCI_IDENTIFIER/'
-DBUSER:        Default is 'drupaltestbot'
-DBPASS:        Default is 'drupaltestbotpw'
+DCI_DBUSER:        Default is 'drupaltestbot'
+DCI_DBPASS:        Default is 'drupaltestbotpw'
 DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
 DCI_PHPVERSION:    Default is '5.4'
 DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
@@ -83,8 +83,8 @@ DCI_DEPENDENCIES=${DCI_DEPENDENCIES:-""}
 DCI_DEPENDENCIES_GIT=${DCI_DEPENDENCIES_GIT:-""}
 DCI_DEPENDENCIES_TGZ=${DCI_DEPENDENCIES_TGZ:-""}  #TODO
 DCI_PATCH=${DCI_PATCH:-""}
-DBUSER=${DBUSER:-"drupaltestbot"}
-DBPASS=${DBPASS:-"drupaltestbotpw"}
+DCI_DBUSER=${DCI_DBUSER:-"drupaltestbot"}
+DCI_DBPASS=${DCI_DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
 DBVER=${DBVER:-"5.5"}
 DCI_CMD=${DCI_CMD:-""}
@@ -387,8 +387,8 @@ DCI_DEPENDENCIES_GIT=\"${DCI_DEPENDENCIES_GIT}\"
 DCI_DEPENDENCIES_TGZ=\"${DCI_DEPENDENCIES_TGZ}\"
 MODULESPATH=\"${MODULESPATH}\"
 DCI_PATCH=\"${DCI_PATCH}\"
-DBUSER=\"${DBUSER}\"
-DBPASS=\"${DBPASS}\"
+DCI_DBUSER=\"${DCI_DBUSER}\"
+DCI_DBPASS=\"${DCI_DBPASS}\"
 DBTYPE=\"${DBTYPE}\"
 DBVER=\"${DBVER}\"
 DBCONTAINER=\"${DBCONTAINER}\"
