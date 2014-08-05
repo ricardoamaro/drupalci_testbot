@@ -30,7 +30,7 @@ if (( $DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
     echo "DRUPALVERSION is $DRUPALVERSION"
     echo "Skipping operation [install], using core tester instead..."
     #Create drupal database manually because Drupal>=8
-    case $DBTYPE in
+    case $DCI_DBTYPE in
       pgsql) 
         export PGPASSWORD="${DCI_DBPASS}"; 
         export PGUSER="${DCI_DBUSER}"; 
@@ -39,24 +39,24 @@ if (( $DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
         DBADDR=${DB_PORT_5432_TCP_ADDR}
       ;;
       mysql|mariadb) 
-        DBTYPE="mysql"
+        DCI_DBTYPE="mysql"
         /usr/bin/mysql -u${DCI_DBUSER} -p${DCI_DBPASS} -h${DB_PORT_3306_TCP_ADDR} -e "CREATE DATABASE IF NOT EXISTS ${DCI_IDENTIFIER} ;"
         DBADDR=${DB_PORT_3306_TCP_ADDR}
       ;;
     esac
-    EXTRA="--sqlite /var/www/test.sqlite --dburl ${DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DBADDR}/${DCI_IDENTIFIER} --keep-results"
+    EXTRA="--sqlite /var/www/test.sqlite --dburl ${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DBADDR}/${DCI_IDENTIFIER} --keep-results"
   else
     echo "Operation $DRUPALVERSION [install] using drush... "
-    case $DBTYPE in
+    case $DCI_DBTYPE in
       sqlite)
-        ${DRUSH} si -v -y --db-url=${DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
+        ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
       ;;
       mysql|mariadb)
-        DBTYPE="mysql"
-        ${DRUSH} si -v -y --db-url=${DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_3306_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        DCI_DBTYPE="mysql"
+        ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_3306_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
       pgsql)
-        ${DRUSH} si -v -y --db-url=${DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_5432_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_5432_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
     esac
     ${DRUSH} -y en simpletest

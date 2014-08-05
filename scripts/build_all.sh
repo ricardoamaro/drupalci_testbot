@@ -203,17 +203,17 @@ fi
 set -e
 
 # Build and start DB containers
-for DBTYPE in "${dbtypes[@]}";
+for DCI_DBTYPE in "${dbtypes[@]}";
   do
   echo
-  echo "Build and restart db-${DBTYPE} container"
+  echo "Build and restart db-${DCI_DBTYPE} container"
   echo "------------------------------------"
   echo
-  cd "./containers/database/${DBTYPE}"
+  cd "./containers/database/${DCI_DBTYPE}"
   ./stop-server.sh
   # This cleanup is specific for a single database type and is required
   # in case of a container refresh/update build.
-  DCI_SQLCONT=(/tmp/tmp.*"${DBTYPE}")
+  DCI_SQLCONT=(/tmp/tmp.*"${DCI_DBTYPE}")
   if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
     for DIR in "${DCI_SQLCONT[@]}"; do
       umount "${DIR}" || /bin/true
@@ -225,9 +225,9 @@ for DBTYPE in "${dbtypes[@]}";
   cd "${BASEDIR}"
 
   # Set up DB container arguments for run script
-  IFS="-" components=($DBTYPE)
-  DCI_DBVER=${components[1]}
-  DCI_DBTYPE=${components[0]}
+  IFS="-" components=($DCI_DBTYPE)
+  DCI_DCI_DBVER=${components[1]}
+  DCI_DCI_DBTYPE=${components[0]}
 done
 
 echo
@@ -244,12 +244,12 @@ echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  DBTYPE=${DCI_DBTYPE} DBVER=${DCI_DBVER} DCI_UPDATEREPO="true" DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DCI_DBTYPE=${DCI_DCI_DBTYPE} DCI_DBVER=${DCI_DCI_DBVER} DCI_UPDATEREPO="true" DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 else
   sleep 5
-  DBTYPE=${DCI_DBTYPE} DBVER=${DCI_DBVER} DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DCI_DBTYPE=${DCI_DCI_DBTYPE} DCI_DBVER=${DCI_DCI_DBVER} DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
-echo -e "Try example: sudo DBTYPE='${DCI_DBTYPE}' DBVER='${DCI_DBVER}' DCI_PHPVERSION='5.4' DCI_TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "Try example: sudo DCI_DBTYPE='${DCI_DCI_DBTYPE}' DCI_DBVER='${DCI_DCI_DBVER}' DCI_PHPVERSION='5.4' DCI_TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 

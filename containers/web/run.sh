@@ -37,8 +37,8 @@ DRUPALVERSION: Default is '8'
 DCI_TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
 DCI_VERBOSE:       Default is 'false'
-DBTYPE:        Default is 'mysql-5.5' from mysql/sqlite/pgsql
-DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
+DCI_DBTYPE:        Default is 'mysql-5.5' from mysql/sqlite/pgsql
+DCI_DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
 DCI_CMD:           Default is none. Normally use '/bin/bash' to debug the container
 DCI_INSTALLER:     Default is none. Try to use core non install tests.
 DCI_UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
@@ -85,8 +85,8 @@ DCI_DEPENDENCIES_TGZ=${DCI_DEPENDENCIES_TGZ:-""}  #TODO
 DCI_PATCH=${DCI_PATCH:-""}
 DCI_DBUSER=${DCI_DBUSER:-"drupaltestbot"}
 DCI_DBPASS=${DCI_DBPASS:-"drupaltestbotpw"}
-DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
-DBVER=${DBVER:-"5.5"}
+DCI_DBTYPE=${DCI_DBTYPE:-"mysql"} #mysql/pgsql/sqlite
+DCI_DBVER=${DCI_DBVER:-"5.5"}
 DCI_CMD=${DCI_CMD:-""}
 DCI_INSTALLER=${DCI_INSTALLER:-"none"}
 DCI_VERBOSE=${DCI_VERBOSE:-"false"}
@@ -104,13 +104,13 @@ case $DRUPALVERSION in
     ;;
 esac
 
-case $DBTYPE in
+case $DCI_DBTYPE in
   pgsql)
-     if [ -z ${DBVER+x} ];
+     if [ -z ${DCI_DBVER+x} ];
        then
          DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
        else
-         case $DBVER in
+         case $DCI_DBVER in
            8.3)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-8.3"}
            ;;
            9.1)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
@@ -120,11 +120,11 @@ case $DBTYPE in
      DBPORT="5432"
   ;;
   mariadb)
-    if [ -z ${DBVER+x} ];
+    if [ -z ${DCI_DBVER+x} ];
       then
         DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
       else
-        case $DBVER in
+        case $DCI_DBVER in
           5.5)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
           ;;
           10.0)   DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-10.0"}
@@ -172,7 +172,7 @@ if (( $FREEDISK <= 100 ));
 fi
 
 # If we are using a non-sqlite database, make sure the container is there
-if [[ $DBTYPE != "sqlite" ]]
+if [[ $DCI_DBTYPE != "sqlite" ]]
   then
     set +e
     RUNNING=$(sudo docker ps | grep ${DBCONTAINER} | grep -s ${DBPORT})
@@ -183,7 +183,7 @@ if [[ $DBTYPE != "sqlite" ]]
         echo -e "ERROR: There is no ${DBCONTAINER} container running..."
         echo -e "Please make sure you built the image and started it:"
         echo -e "sudo ./scripts/build_all.sh refresh \n"
-        echo -e "Also please make sure port ${DBPORT} is not being used \nand ${DBTYPE} is stopped on the host."
+        echo -e "Also please make sure port ${DBPORT} is not being used \nand ${DCI_DBTYPE} is stopped on the host."
         echo "--------------------------------------------------------------------------------"
         exit 1
     fi
@@ -207,7 +207,7 @@ if $(docker images | grep -q web-${DCI_PHPVERSION});
   then
   echo "--------------------------------------------------------------------------------"
   echo "Containers: web-${DCI_PHPVERSION} and ${DBCONTAINER} available"
-  echo "Running PHP${DCI_PHPVERSION}/${DBTYPE} on drupalci/web-${DCI_PHPVERSION}"
+  echo "Running PHP${DCI_PHPVERSION}/${DCI_DBTYPE} on drupalci/web-${DCI_PHPVERSION}"
   echo "--------------------------------------------------------------------------------"
   else
   echo "--------------------------------------------------------------------------------"
@@ -281,7 +281,7 @@ if [[ ${DRUPALBRANCH} != "" ]]
     echo ""
 fi
 
-if [[ ${DBTYPE} = "sqlite" ]]
+if [[ ${DCI_DBTYPE} = "sqlite" ]]
   then
     DBLINK=""
 fi
@@ -389,8 +389,8 @@ MODULESPATH=\"${MODULESPATH}\"
 DCI_PATCH=\"${DCI_PATCH}\"
 DCI_DBUSER=\"${DCI_DBUSER}\"
 DCI_DBPASS=\"${DCI_DBPASS}\"
-DBTYPE=\"${DBTYPE}\"
-DBVER=\"${DBVER}\"
+DCI_DBTYPE=\"${DCI_DBTYPE}\"
+DCI_DBVER=\"${DCI_DBVER}\"
 DBCONTAINER=\"${DBCONTAINER}\"
 DBLINK=\"${DBLINK}\"
 DCI_CMD=\"${DCI_CMD}\"

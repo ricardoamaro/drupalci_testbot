@@ -143,8 +143,8 @@ DCI_DEPENDENCIES_TGZ="" # module1_url.tgz,module1_url.tgz,...
 DCI_PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
 DCI_DBUSER="drupaltestbot"
 DCI_DBPASS="drupaltestbotpw"
-DBTYPE="mysql"
-DBVER="5.5"         # Used to override the default database version for this database type (Optional)
+DCI_DBTYPE="mysql"
+DCI_DBVER="5.5"         # Used to override the default database version for this database type (Optional)
 DBLINK="--link=drupaltestbot-db:db"
 DCI_INSTALLER="none"    # Try to use core non install tests.
 DCI_CMD=""              # Eg. enter container shell with DCI_CMD="/bin/bash"
