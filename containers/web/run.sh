@@ -28,10 +28,10 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]
   echo -e "
 PATCH:         Local or remote Patches to be applied.
                Format: patch_location,apply_dir;patch_location,apply_dir;...
-DEPENDENCIES:  Contrib projects to be downloaded & patched.
+DCI_DEPENDENCIES:  Contrib projects to be downloaded & patched.
                Format: module1,module2,module2...
-DEPENDENCIES_GIT  Format: gitrepo1,branch;gitrepo2,branch;...
-DEPENDENCIES_TGZ  Format: module1_url.tgz,module1_url.tgz,...
+DCI_DEPENDENCIES_GIT  Format: gitrepo1,branch;gitrepo2,branch;...
+DCI_DEPENDENCIES_TGZ  Format: module1_url.tgz,module1_url.tgz,...
 DRUPALBRANCH:  Default is '8.0.x'
 DRUPALVERSION: Default is '8'
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
@@ -79,9 +79,9 @@ DRUPALREPO=${DRUPALREPO:-"http://git.drupal.org/project/drupal.git"}
 DRUSHREPO=${DRUSHREPO:-"https://github.com/drush-ops/drush.git"}
 BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
 WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$IDENTIFIER/"}
-DEPENDENCIES=${DEPENDENCIES:-""}
-DEPENDENCIES_GIT=${DEPENDENCIES_GIT:-""}
-DEPENDENCIES_TGZ=${DEPENDENCIES_TGZ:-""}  #TODO
+DCI_DEPENDENCIES=${DCI_DEPENDENCIES:-""}
+DCI_DEPENDENCIES_GIT=${DCI_DEPENDENCIES_GIT:-""}
+DCI_DEPENDENCIES_TGZ=${DCI_DEPENDENCIES_TGZ:-""}  #TODO
 PATCH=${PATCH:-""}
 DBUSER=${DBUSER:-"drupaltestbot"}
 DBPASS=${DBPASS:-"drupaltestbotpw"}
@@ -286,14 +286,14 @@ if [[ ${DBTYPE} = "sqlite" ]]
     DBLINK=""
 fi
 
-#DEPENDENCIES="module1,module2,module3"
+#DCI_DEPENDENCIES="module1,module2,module3"
 #Get the dependecies
-if [[ $DEPENDENCIES = "" ]]
+if [[ $DCI_DEPENDENCIES = "" ]]
   then
-    echo -e "NOTICE: \$DEPENDENCIES has no modules declared...\n"
+    echo -e "NOTICE: \$DCI_DEPENDENCIES has no modules declared...\n"
   else
       cd ${BUILDSDIR}/${IDENTIFIER}/
-    for DEP in $(echo "$DEPENDENCIES" | tr "," "\n")
+    for DEP in $(echo "$DCI_DEPENDENCIES" | tr "," "\n")
       do
       echo "Project: $DEP"
       ${REPODIR}/vendor/drush/drush/drush -y dl ${DEP}
@@ -301,13 +301,13 @@ if [[ $DEPENDENCIES = "" ]]
     echo ""
 fi
 
-#DEPENDENCIES_GIT="gitrepo1,branch;gitrepo2,branch"
+#DCI_DEPENDENCIES_GIT="gitrepo1,branch;gitrepo2,branch"
 #Get the git dependecies
-if [[ $DEPENDENCIES_GIT = "" ]]
+if [[ $DCI_DEPENDENCIES_GIT = "" ]]
   then
-    echo -e "NOTICE: \$DEPENDENCIES_GIT has nothing declared...\n"
+    echo -e "NOTICE: \$DCI_DEPENDENCIES_GIT has nothing declared...\n"
   else
-     ARRAY=($(echo "${DEPENDENCIES_GIT}" | tr ";" "\n"))
+     ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
      mkdir -p ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
      cd ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
      for row in ${ARRAY[@]}
@@ -319,13 +319,13 @@ if [[ $DEPENDENCIES_GIT = "" ]]
     echo ""
 fi
 
-#DEPENDENCIES_TGZ="module1_url.tgz,module1_url.tgz,module1_url.tgz"
+#DCI_DEPENDENCIES_TGZ="module1_url.tgz,module1_url.tgz,module1_url.tgz"
 #Get the tgz dependecies
-if [[ $DEPENDENCIES_TGZ = "" ]]
+if [[ $DCI_DEPENDENCIES_TGZ = "" ]]
   then
-    echo -e "NOTICE: \$DEPENDENCIES_TGZ has nothing declared...\n"
+    echo -e "NOTICE: \$DCI_DEPENDENCIES_TGZ has nothing declared...\n"
   else
-     ARRAY=($(echo "${DEPENDENCIES_TGZ}" | tr "," "\n"))
+     ARRAY=($(echo "${DCI_DEPENDENCIES_TGZ}" | tr "," "\n"))
      mkdir -p ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
      cd ${BUILDSDIR}/${IDENTIFIER}/${MODULESPATH}
      for row in ${ARRAY[@]}
@@ -382,9 +382,9 @@ DRUPALREPO=\"${DRUPALREPO}\"
 DRUSHREPO=\"${DRUSHREPO}\"
 BUILDSDIR=\"${BUILDSDIR}\"
 WORKSPACE=\"${WORKSPACE}\"
-DEPENDENCIES=\"${DEPENDENCIES}\"
-DEPENDENCIES_GIT=\"${DEPENDENCIES_GIT}\"
-DEPENDENCIES_TGZ=\"${DEPENDENCIES_TGZ}\"
+DCI_DEPENDENCIES=\"${DCI_DEPENDENCIES}\"
+DCI_DEPENDENCIES_GIT=\"${DCI_DEPENDENCIES_GIT}\"
+DCI_DEPENDENCIES_TGZ=\"${DCI_DEPENDENCIES_TGZ}\"
 MODULESPATH=\"${MODULESPATH}\"
 PATCH=\"${PATCH}\"
 DBUSER=\"${DBUSER}\"
