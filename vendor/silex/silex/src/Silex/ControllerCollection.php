@@ -140,7 +140,7 @@ class ControllerCollection
     }
 
     /**
-     * Maps a PATCH request to a callable.
+     * Maps a DCI_PATCH request to a callable.
      *
      * @param string $pattern Matched route pattern
      * @param mixed  $to      Callback that returns the response when matched
@@ -149,7 +149,7 @@ class ControllerCollection
      */
     public function patch($pattern, $to = null)
     {
-        return $this->match($pattern, $to)->method('PATCH');
+        return $this->match($pattern, $to)->method('DCI_PATCH');
     }
 
     public function __call($method, $arguments)

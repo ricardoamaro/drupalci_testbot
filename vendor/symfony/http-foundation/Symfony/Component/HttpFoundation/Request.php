@@ -271,7 +271,7 @@ class Request
         $request = self::createRequestFromFactory($_GET, $_POST, array(), $_COOKIE, $_FILES, $_SERVER);
 
         if (0 === strpos($request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
-            && in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), array('PUT', 'DELETE', 'PATCH'))
+            && in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), array('PUT', 'DELETE', 'DCI_PATCH'))
         ) {
             parse_str($request->getContent(), $data);
             $request->request = new ParameterBag($data);
@@ -358,7 +358,7 @@ class Request
                 if (!isset($server['CONTENT_TYPE'])) {
                     $server['CONTENT_TYPE'] = 'application/x-www-form-urlencoded';
                 }
-            case 'PATCH':
+            case 'DCI_PATCH':
                 $request = $parameters;
                 $query = array();
                 break;

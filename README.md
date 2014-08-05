@@ -38,7 +38,7 @@ vagrant up
 
 ### Run some group tests:
 ```
-sudo TESTGROUPS="Action,Bootstrap" DRUPALBRANCH="8.0.x" PATCH="/path/to/your.patch,." ./run.sh
+sudo TESTGROUPS="Action,Bootstrap" DRUPALBRANCH="8.0.x" DCI_PATCH="/path/to/your.patch,." ./run.sh
 ```
 See more examples bellow on: "6- RUN EXAMPLES"
 
@@ -80,7 +80,7 @@ Run 'search_api' module tests, with one patch against D8 and git sandbox:
 ```
 sudo TESTGROUPS="--module 'search_api'" \
 DCI_DEPENDENCIES_GIT="http://git.drupal.org/sandbox/daeron/2091893.git,master" \
-PATCH="https://drupal.org/files/SOME_PATCH_THAT_YOU_HAVE.patch,PATCH_APPLY_DIR" \
+DCI_PATCH="https://drupal.org/files/SOME_DCI_PATCH_THAT_YOU_HAVE.patch,DCI_PATCH_APPLY_DIR" \
 DRUPALBRANCH="8.0.x" \
 ./run.sh
 ```
@@ -93,7 +93,7 @@ sudo \
 TESTGROUPS="Action,Node" \
 CONCURRENCY="4" \
 DRUPALBRANCH="8.0.x" \
-PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
+DCI_PATCH="/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,." \
 ./run.sh
 ```
 
@@ -106,7 +106,7 @@ TESTGROUPS="--all" \
 CONCURRENCY="4" \
 DRUPALBRANCH="8.0.x" \
 DCI_DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz"
-PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
+DCI_PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
 ```
 
@@ -119,7 +119,7 @@ TESTGROUPS="--all" \
 CONCURRENCY="6" \
 DRUPALBRANCH="7.26" \
 DCI_DEPENDENCIES="flag,payment"  \
-PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag;https://drupal.org/files/issues/payment_2114785_8.patch,sites/all/modules/payment" \
+DCI_PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.patch,sites/all/modules/flag;https://drupal.org/files/issues/payment_2114785_8.patch,sites/all/modules/payment" \
 ./run.sh
 ```
 
@@ -140,7 +140,7 @@ DCI_WORKSPACE="$DCI_BUILDSDIR/$DCI_IDENTIFIER/"
 DCI_DEPENDENCIES=""     # module1,module2,module2...
 DCI_DEPENDENCIES_GIT="" # gitrepo1,branch;gitrepo2,branch;...
 DCI_DEPENDENCIES_TGZ="" # module1_url.tgz,module1_url.tgz,...
-PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
+DCI_PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
 DBUSER="drupaltestbot"
 DBPASS="drupaltestbotpw"
 DBTYPE="mysql"

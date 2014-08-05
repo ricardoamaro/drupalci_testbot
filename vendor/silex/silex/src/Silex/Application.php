@@ -260,7 +260,7 @@ class Application extends \Pimple implements HttpKernelInterface, TerminableInte
     }
 
     /**
-     * Maps a PATCH request to a callable.
+     * Maps a DCI_PATCH request to a callable.
      *
      * @param string $pattern Matched route pattern
      * @param mixed  $to      Callback that returns the response when matched

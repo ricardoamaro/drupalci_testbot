@@ -26,7 +26,7 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]
   echo
   echo "....................... VARIABLES .........................."
   echo -e "
-PATCH:         Local or remote Patches to be applied.
+DCI_PATCH:         Local or remote Patches to be applied.
                Format: patch_location,apply_dir;patch_location,apply_dir;...
 DCI_DEPENDENCIES:  Contrib projects to be downloaded & patched.
                Format: module1,module2,module2...
@@ -58,11 +58,11 @@ echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
 echo -e "
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
 .....................................................................
-sudo TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\"  PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
+sudo TESTGROUPS=\"Action,Node\" CURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\"  DCI_PATCH=\"/tmp/1942178-config-schema-user-28.patch,.;/tmp/1942178-config-schema-30.patch,.\" ./run.sh
 
 Run all tests using 4 CPUs, 1 core patch against D8:
 .....................................................................
-sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\" PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
+sudo TESTGROUPS=\"--all\" CONCURRENCY=\"4\" DRUPALBRANCH=\"8.0.x\" DCI_PATCH=\"https://drupal.org/files/issues/1942178-config-schema-user-28.patch,.\" ./run.sh
 "
   exit 0
 fi
@@ -82,7 +82,7 @@ DCI_WORKSPACE=${DCI_WORKSPACE:-"$DCI_BUILDSDIR/$DCI_IDENTIFIER/"}
 DCI_DEPENDENCIES=${DCI_DEPENDENCIES:-""}
 DCI_DEPENDENCIES_GIT=${DCI_DEPENDENCIES_GIT:-""}
 DCI_DEPENDENCIES_TGZ=${DCI_DEPENDENCIES_TGZ:-""}  #TODO
-PATCH=${PATCH:-""}
+DCI_PATCH=${DCI_PATCH:-""}
 DBUSER=${DBUSER:-"drupaltestbot"}
 DBPASS=${DBPASS:-"drupaltestbotpw"}
 DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
@@ -336,13 +336,13 @@ if [[ $DCI_DEPENDENCIES_TGZ = "" ]]
     echo ""
 fi
 
-#PATCH="patch_url,apply_dir;patch_url,apply_dir;"
+#DCI_PATCH="patch_url,apply_dir;patch_url,apply_dir;"
 #Apply Patch if any
-if [[ $PATCH = "" ]]
+if [[ $DCI_PATCH = "" ]]
   then
-    echo -e "NOTICE: \$PATCH variable has no patch to apply...\n"
+    echo -e "NOTICE: \$DCI_PATCH variable has no patch to apply...\n"
   else
-    ARRAY=($(echo "${PATCH}" | tr ";" "\n"))
+    ARRAY=($(echo "${DCI_PATCH}" | tr ";" "\n"))
     for row in ${ARRAY[@]}
       do
       read purl dir <<<$(echo "${row}" | tr "," " ");
@@ -386,7 +386,7 @@ DCI_DEPENDENCIES=\"${DCI_DEPENDENCIES}\"
 DCI_DEPENDENCIES_GIT=\"${DCI_DEPENDENCIES_GIT}\"
 DCI_DEPENDENCIES_TGZ=\"${DCI_DEPENDENCIES_TGZ}\"
 MODULESPATH=\"${MODULESPATH}\"
-PATCH=\"${PATCH}\"
+DCI_PATCH=\"${DCI_PATCH}\"
 DBUSER=\"${DBUSER}\"
 DBPASS=\"${DBPASS}\"
 DBTYPE=\"${DBTYPE}\"

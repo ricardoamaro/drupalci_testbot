@@ -261,7 +261,7 @@ restricted via the ``method`` method::
     $app->match('/blog', function () {
         // ...
     })
-    ->method('PATCH');
+    ->method('DCI_PATCH');
 
     $app->match('/blog', function () {
         // ...

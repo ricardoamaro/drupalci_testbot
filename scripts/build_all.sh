@@ -251,5 +251,5 @@ else
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
-echo -e "Try example: sudo DBTYPE='${DCI_DBTYPE}' DBVER='${DCI_DBVER}' PHPVERSION='5.4' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "Try example: sudo DBTYPE='${DCI_DBTYPE}' DBVER='${DCI_DBVER}' PHPVERSION='5.4' TESTGROUPS='Bootstrap' DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 

@@ -51,7 +51,7 @@ CHANGELOG
  * added a generic access to the PHP built-in filter mechanism: ParameterBag::filter()
  * made FileBinaryMimeTypeGuesser command configurable
  * added Request::getUser() and Request::getPassword()
- * added support for the PATCH method in Request
+ * added support for the DCI_PATCH method in Request
  * removed the ContentTypeMimeTypeGuesser class as it is deprecated and never used on PHP 5.3
  * added ResponseHeaderBag::makeDisposition() (implements RFC 6266)
  * made mimetype to extension conversion configurable

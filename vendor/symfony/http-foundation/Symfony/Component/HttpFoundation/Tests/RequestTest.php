@@ -921,7 +921,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         return array(
             array('PUT'),
             array('DELETE'),
-            array('PATCH'),
+            array('DCI_PATCH'),
             array('put'),
             array('delete'),
             array('patch'),
