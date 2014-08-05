@@ -127,7 +127,7 @@ case $DBTYPE in
         case $DBVER in
           5.5)  DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-5.5"}
           ;;
-          10)   DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-10.0"}
+          10.0)   DBCONTAINER=${DBCONTAINER:-"drupaltestbot-db-mariadb-10.0"}
           ;;
         esac
     fi
