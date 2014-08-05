@@ -47,13 +47,13 @@ class OutputTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($output->isVeryVerbose());
         $this->assertFalse($output->isDebug());
 
-        $output->setVerbosity(Output::VERBOSITY_VERBOSE);
+        $output->setVerbosity(Output::VERBOSITY_DCI_VERBOSE);
         $this->assertFalse($output->isQuiet());
         $this->assertTrue($output->isVerbose());
         $this->assertFalse($output->isVeryVerbose());
         $this->assertFalse($output->isDebug());
 
-        $output->setVerbosity(Output::VERBOSITY_VERY_VERBOSE);
+        $output->setVerbosity(Output::VERBOSITY_VERY_DCI_VERBOSE);
         $this->assertFalse($output->isQuiet());
         $this->assertTrue($output->isVerbose());
         $this->assertTrue($output->isVeryVerbose());

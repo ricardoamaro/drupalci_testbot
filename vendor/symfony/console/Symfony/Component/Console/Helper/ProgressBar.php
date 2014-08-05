@@ -472,9 +472,9 @@ class ProgressBar
     {
         switch ($this->output->getVerbosity()) {
             // OutputInterface::VERBOSITY_QUIET: display is disabled anyway
-            case OutputInterface::VERBOSITY_VERBOSE:
+            case OutputInterface::VERBOSITY_DCI_VERBOSE:
                 return $this->max > 0 ? 'verbose' : 'verbose_nomax';
-            case OutputInterface::VERBOSITY_VERY_VERBOSE:
+            case OutputInterface::VERBOSITY_VERY_DCI_VERBOSE:
                 return $this->max > 0 ? 'very_verbose' : 'very_verbose_nomax';
             case OutputInterface::VERBOSITY_DEBUG:
                 return $this->max > 0 ? 'debug' : 'debug_nomax';

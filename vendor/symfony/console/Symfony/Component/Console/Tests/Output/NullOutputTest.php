@@ -33,7 +33,7 @@ class NullOutputTest extends \PHPUnit_Framework_TestCase
         $output = new NullOutput();
         $this->assertSame(OutputInterface::VERBOSITY_QUIET, $output->getVerbosity(), '->getVerbosity() returns VERBOSITY_QUIET for NullOutput by default');
 
-        $output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
+        $output->setVerbosity(OutputInterface::VERBOSITY_DCI_VERBOSE);
         $this->assertSame(OutputInterface::VERBOSITY_QUIET, $output->getVerbosity(), '->getVerbosity() always returns VERBOSITY_QUIET for NullOutput');
     }
 }

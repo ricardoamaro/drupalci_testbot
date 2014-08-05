@@ -716,7 +716,7 @@ class Application
 
             $output->writeln($messages, OutputInterface::OUTPUT_RAW);
 
-            if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
+            if (OutputInterface::VERBOSITY_DCI_VERBOSE <= $output->getVerbosity()) {
                 $output->writeln('<comment>Exception trace:</comment>');
 
                 // exception related properties
@@ -856,9 +856,9 @@ class Application
             if ($input->hasParameterOption('-vvv') || $input->hasParameterOption('--verbose=3') || $input->getParameterOption('--verbose') === 3) {
                 $output->setVerbosity(OutputInterface::VERBOSITY_DEBUG);
             } elseif ($input->hasParameterOption('-vv') || $input->hasParameterOption('--verbose=2') || $input->getParameterOption('--verbose') === 2) {
-                $output->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
+                $output->setVerbosity(OutputInterface::VERBOSITY_VERY_DCI_VERBOSE);
             } elseif ($input->hasParameterOption('-v') || $input->hasParameterOption('--verbose=1') || $input->hasParameterOption('--verbose') || $input->getParameterOption('--verbose')) {
-                $output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
+                $output->setVerbosity(OutputInterface::VERBOSITY_DCI_VERBOSE);
             }
         }
     }

@@ -26,10 +26,10 @@ class ProgressHelper extends Helper
 {
     const FORMAT_QUIET         = ' %percent%%';
     const FORMAT_NORMAL        = ' %current%/%max% [%bar%] %percent%%';
-    const FORMAT_VERBOSE       = ' %current%/%max% [%bar%] %percent%% Elapsed: %elapsed%';
+    const FORMAT_DCI_VERBOSE       = ' %current%/%max% [%bar%] %percent%% Elapsed: %elapsed%';
     const FORMAT_QUIET_NOMAX   = ' %current%';
     const FORMAT_NORMAL_NOMAX  = ' %current% [%bar%]';
-    const FORMAT_VERBOSE_NOMAX = ' %current% [%bar%] Elapsed: %elapsed%';
+    const FORMAT_DCI_VERBOSE_NOMAX = ' %current% [%bar%] Elapsed: %elapsed%';
 
     // options
     private $barWidth     = 28;
@@ -202,12 +202,12 @@ class ProgressHelper extends Helper
                         $this->format = self::FORMAT_QUIET;
                     }
                     break;
-                case OutputInterface::VERBOSITY_VERBOSE:
-                case OutputInterface::VERBOSITY_VERY_VERBOSE:
+                case OutputInterface::VERBOSITY_DCI_VERBOSE:
+                case OutputInterface::VERBOSITY_VERY_DCI_VERBOSE:
                 case OutputInterface::VERBOSITY_DEBUG:
-                    $this->format = self::FORMAT_VERBOSE_NOMAX;
+                    $this->format = self::FORMAT_DCI_VERBOSE_NOMAX;
                     if ($this->max > 0) {
-                        $this->format = self::FORMAT_VERBOSE;
+                        $this->format = self::FORMAT_DCI_VERBOSE;
                     }
                     break;
                 default:

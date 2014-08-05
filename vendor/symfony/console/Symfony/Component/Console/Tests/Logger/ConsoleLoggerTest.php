@@ -34,7 +34,7 @@ class ConsoleLoggerTest extends LoggerInterfaceTest
      */
     public function getLogger()
     {
-        $this->output = new DummyOutput(OutputInterface::VERBOSITY_VERBOSE);
+        $this->output = new DummyOutput(OutputInterface::VERBOSITY_DCI_VERBOSE);
 
         return new ConsoleLogger($this->output, array(
             LogLevel::EMERGENCY => OutputInterface::VERBOSITY_NORMAL,

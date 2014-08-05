@@ -105,12 +105,12 @@ abstract class Output implements OutputInterface
 
     public function isVerbose()
     {
-        return self::VERBOSITY_VERBOSE <= $this->verbosity;
+        return self::VERBOSITY_DCI_VERBOSE <= $this->verbosity;
     }
 
     public function isVeryVerbose()
     {
-        return self::VERBOSITY_VERY_VERBOSE <= $this->verbosity;
+        return self::VERBOSITY_VERY_DCI_VERBOSE <= $this->verbosity;
     }
 
     public function isDebug()

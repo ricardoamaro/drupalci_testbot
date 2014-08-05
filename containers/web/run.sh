@@ -36,7 +36,7 @@ DRUPALBRANCH:  Default is '8.0.x'
 DRUPALVERSION: Default is '8'
 TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
                A list is available at the root of this project.
-VERBOSE:       Default is 'false'
+DCI_VERBOSE:       Default is 'false'
 DBTYPE:        Default is 'mysql-5.5' from mysql/sqlite/pgsql
 DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
 DCI_CMD:           Default is none. Normally use '/bin/bash' to debug the container
@@ -89,7 +89,7 @@ DBTYPE=${DBTYPE:-"mysql"} #mysql/pgsql/sqlite
 DBVER=${DBVER:-"5.5"}
 DCI_CMD=${DCI_CMD:-""}
 DCI_INSTALLER=${DCI_INSTALLER:-"none"}
-VERBOSE=${VERBOSE:-"false"}
+DCI_VERBOSE=${DCI_VERBOSE:-"false"}
 PHPVERSION=${PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
@@ -140,7 +140,7 @@ case $DBTYPE in
 esac
 DBLINK=${DBLINK:-"--link=${DBCONTAINER}:db"}
 
-case $VERBOSE in
+case $DCI_VERBOSE in
   true) VERBO="--verbose"
     ;;
   *) VERBO=""
@@ -395,7 +395,7 @@ DBCONTAINER=\"${DBCONTAINER}\"
 DBLINK=\"${DBLINK}\"
 DCI_CMD=\"${DCI_CMD}\"
 DCI_INSTALLER=\"${DCI_INSTALLER}\"
-VERBOSE=\"${VERBOSE}\"
+DCI_VERBOSE=\"${DCI_VERBOSE}\"
 PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
