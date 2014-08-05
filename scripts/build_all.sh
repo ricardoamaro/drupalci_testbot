@@ -215,8 +215,8 @@ for DCI_DBTYPE in "${dbtypes[@]}";
 
   # Set up DB container arguments for run script
   IFS="-" components=($DCI_DBTYPE)
-  DCI_DCI_DBVER=${components[1]}
-  DCI_DCI_DBTYPE=${components[0]}
+  DCI_DBVER=${components[1]}
+  DCI_DBTYPE=${components[0]}
 done
 
 echo
@@ -233,12 +233,12 @@ echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  DCI_DBTYPE=${DCI_DCI_DBTYPE} DCI_DBVER=${DCI_DCI_DBVER} DCI_UPDATEREPO="true" DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_UPDATEREPO="true" DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 else
   sleep 5
-  DCI_DBTYPE=${DCI_DCI_DBTYPE} DCI_DBVER=${DCI_DCI_DBVER} DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
-echo -e "Try example: sudo DCI_DBTYPE='${DCI_DCI_DBTYPE}' DCI_DBVER='${DCI_DCI_DBVER}' DCI_PHPVERSION='5.4' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "Try example: sudo DCI_DBTYPE='${DCI_DBTYPE}' DCI_DBVER='${DCI_DBVER}' DCI_PHPVERSION='5.4' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 
