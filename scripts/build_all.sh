@@ -20,7 +20,7 @@
 # Remove intermediate containers after a successful build. Default is True.
 DCI_REMOVEINTCONTAINERS=${DCI_REMOVEINTCONTAINERS:-"true"}
 
-REPODIR=${REPODIR:-"$HOME/testbotdata"}
+DCI_REPODIR=${DCI_REPODIR:-"$HOME/testbotdata"}
 BASEDIR="$(pwd)"
 
 declare -A firstarg
@@ -188,7 +188,7 @@ if [ "$1" = "cleanup" ];
   docker ps | egrep "drupal|test" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker stop {}
   docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker rm {}
   docker images | egrep "drupal|testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} docker rmi {}
-  rm -rf ${REPODIR}
+  rm -rf ${DCI_REPODIR}
   # Just umount and remove all and everything in /tmp/tmp.*
   DCI_SQLCONT=(/tmp/tmp.*)
   if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
@@ -244,7 +244,7 @@ echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
 if [ "$1" != "refresh" ];
   then
   sleep 5
-  DBTYPE=${DCI_DBTYPE} DBVER=${DCI_DBVER} UPDATEREPO="true" DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  DBTYPE=${DCI_DBTYPE} DBVER=${DCI_DBVER} DCI_UPDATEREPO="true" DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 else
   sleep 5
   DBTYPE=${DCI_DBTYPE} DBVER=${DCI_DBVER} DRUPALBRANCH="8.0.x" RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh

@@ -41,12 +41,12 @@ DBTYPE:        Default is 'mysql-5.5' from mysql/sqlite/pgsql
 DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
 CMD:           Default is none. Normally use '/bin/bash' to debug the container
 INSTALLER:     Default is none. Try to use core non install tests.
-UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
+DCI_UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
 DCI_IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
-REPODIR:       Default is 'HOME/testbotdata'
-DRUPALREPO:    Default is 'http://git.drupal.org/project/drupal.git'
-DRUSHREPO:     Default is 'https://github.com/drush-ops/drush.git'
-BUILDSDIR:     Default is  equal to REPODIR
+DCI_REPODIR:       Default is 'HOME/testbotdata'
+DCI_DRUPALREPO:    Default is 'http://git.drupal.org/project/drupal.git'
+DCI_DRUSHREPO:     Default is 'https://github.com/drush-ops/drush.git'
+BUILDSDIR:     Default is  equal to DCI_REPODIR
 WORKSPACE:     Default is 'HOME/testbotdata/DCI_IDENTIFIER/'
 DBUSER:        Default is 'drupaltestbot'
 DBPASS:        Default is 'drupaltestbotpw'
@@ -73,11 +73,11 @@ fi
 DCI_IDENTIFIER=${DCI_IDENTIFIER:-"build_$(date +%Y_%m_%d_%H%M%S)"}
 DRUPALBRANCH=${DRUPALBRANCH:-"8.0.x"}
 DRUPALVERSION=${DRUPALVERSION:-"$(echo $DRUPALBRANCH | awk -F. '{print $1}')"}
-UPDATEREPO=${UPDATEREPO:-"false"}
-REPODIR=${REPODIR:-"$HOME/testbotdata"}
-DRUPALREPO=${DRUPALREPO:-"http://git.drupal.org/project/drupal.git"}
-DRUSHREPO=${DRUSHREPO:-"https://github.com/drush-ops/drush.git"}
-BUILDSDIR=${BUILDSDIR:-"$REPODIR"}
+DCI_UPDATEREPO=${DCI_UPDATEREPO:-"false"}
+DCI_REPODIR=${DCI_REPODIR:-"$HOME/testbotdata"}
+DCI_DRUPALREPO=${DCI_DRUPALREPO:-"http://git.drupal.org/project/drupal.git"}
+DCI_DRUSHREPO=${DCI_DRUSHREPO:-"https://github.com/drush-ops/drush.git"}
+BUILDSDIR=${BUILDSDIR:-"$DCI_REPODIR"}
 WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$DCI_IDENTIFIER/"}
 DCI_DEPENDENCIES=${DCI_DEPENDENCIES:-""}
 DCI_DEPENDENCIES_GIT=${DCI_DEPENDENCIES_GIT:-""}
@@ -155,7 +155,7 @@ if [ `whoami` != root ]; then
     exit 1
 fi
 
-mkdir -p ${REPODIR}
+mkdir -p ${DCI_REPODIR}
 
 # Check if we have free disk space
 FREEDISK=$(df -m ${BUILDSDIR} | tail -n1 | awk '{print $4}')
@@ -220,16 +220,16 @@ fi
 #TODO: Check if db is running
 
 #Clone the local Drupal and Drush to the run directory:
-if [ -f ${REPODIR}/drupal/.git/config ];
+if [ -f ${DCI_REPODIR}/drupal/.git/config ];
   then
-    echo "Local Drupal repo found on ${REPODIR}/drupal/"
+    echo "Local Drupal repo found on ${DCI_REPODIR}/drupal/"
   else
     echo ""
-    echo "Making onetime Drupal git clone to: ${REPODIR}/drupal/"
+    echo "Making onetime Drupal git clone to: ${DCI_REPODIR}/drupal/"
     echo "Press CTRL+c to Cancel"
     sleep 1 #+INFO: https://drupal.org/project/drupal/git-instructions
-    cd ${REPODIR}
-    git clone ${DRUPALREPO} drupal
+    cd ${DCI_REPODIR}
+    git clone ${DCI_DRUPALREPO} drupal
     cd drupal
     # GET ALL BRANCHES
     actualbranch=$(git branch | awk '{print $2}')
@@ -239,21 +239,21 @@ if [ -f ${REPODIR}/drupal/.git/config ];
     echo ""
 fi
 
-#install drush via composer on ${REPODIR}
-if [ -f ${REPODIR}/vendor/drush/drush/drush ];
+#install drush via composer on ${DCI_REPODIR}
+if [ -f ${DCI_REPODIR}/vendor/drush/drush/drush ];
   then
-    echo "Local Drush found on ${REPODIR}/vendor/drush/drush/drush"
+    echo "Local Drush found on ${DCI_REPODIR}/vendor/drush/drush/drush"
   else
-	cd ${REPODIR}
-	curl -sS https://getcomposer.org/installer | php -- --install-dir=${REPODIR}
-	${REPODIR}/composer.phar -d="${REPODIR}" global require drush/drush:dev-master
+	cd ${DCI_REPODIR}
+	curl -sS https://getcomposer.org/installer | php -- --install-dir=${DCI_REPODIR}
+	${DCI_REPODIR}/composer.phar -d="${DCI_REPODIR}" global require drush/drush:dev-master
 fi
 
 # Update Drupal repo 
-if [[ $UPDATEREPO = "true" ]]
+if [[ $DCI_UPDATEREPO = "true" ]]
   then
     echo "Updating Drupal git..."
-    cd ${REPODIR}/drupal
+    cd ${DCI_REPODIR}/drupal
     pwd
     git remote update
     git fetch --all
@@ -266,7 +266,7 @@ gitlast=$(echo -e "$gitver\n1.8.0.0" | sort -nr | head -n1)
 [ "$gitlast" = "$gitver" ] && SB="--single-branch" || SB=""
 
 #Clone the local repo to the run directory:
-git clone ${SB} --branch ${DRUPALBRANCH} ${REPODIR}/drupal/ ${BUILDSDIR}/${DCI_IDENTIFIER}/
+git clone ${SB} --branch ${DRUPALBRANCH} ${DCI_REPODIR}/drupal/ ${BUILDSDIR}/${DCI_IDENTIFIER}/
 
 # Make it writable for artifacts
 mkdir -p  ${BUILDSDIR}/${DCI_IDENTIFIER}/results
@@ -296,7 +296,7 @@ if [[ $DCI_DEPENDENCIES = "" ]]
     for DEP in $(echo "$DCI_DEPENDENCIES" | tr "," "\n")
       do
       echo "Project: $DEP"
-      ${REPODIR}/vendor/drush/drush/drush -y dl ${DEP}
+      ${DCI_REPODIR}/vendor/drush/drush/drush -y dl ${DEP}
     done
     echo ""
 fi
@@ -376,10 +376,10 @@ echo "------------------------- ENVIRONMENT VARIABLES IN USE -------------------
 echo "DCI_IDENTIFIER=\"${DCI_IDENTIFIER}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"
 DRUPALVERSION=\"${DRUPALVERSION}\"
-UPDATEREPO=\"${UPDATEREPO}\"
-REPODIR=\"${REPODIR}\"
-DRUPALREPO=\"${DRUPALREPO}\"
-DRUSHREPO=\"${DRUSHREPO}\"
+DCI_UPDATEREPO=\"${DCI_UPDATEREPO}\"
+DCI_REPODIR=\"${DCI_REPODIR}\"
+DCI_DRUPALREPO=\"${DCI_DRUPALREPO}\"
+DCI_DRUSHREPO=\"${DCI_DRUSHREPO}\"
 BUILDSDIR=\"${BUILDSDIR}\"
 WORKSPACE=\"${WORKSPACE}\"
 DCI_DEPENDENCIES=\"${DCI_DEPENDENCIES}\"

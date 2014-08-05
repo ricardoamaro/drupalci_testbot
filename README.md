@@ -133,9 +133,9 @@ And that's it.
 DRUPALBRANCH="8.0.x"
 DRUPALVERSION=""
 DCI_IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
-REPODIR="$HOME/testbotdata"
-UPDATEREPO="false"  # true to force repos update
-BUILDSDIR="$REPODIR"
+DCI_REPODIR="$HOME/testbotdata"
+DCI_UPDATEREPO="false"  # true to force repos update
+BUILDSDIR="$DCI_REPODIR"
 WORKSPACE="$BUILDSDIR/$DCI_IDENTIFIER/"
 DCI_DEPENDENCIES=""     # module1,module2,module2...
 DCI_DEPENDENCIES_GIT="" # gitrepo1,branch;gitrepo2,branch;...
