@@ -51,7 +51,7 @@ DCI_WORKSPACE:     Default is 'HOME/testbotdata/DCI_IDENTIFIER/'
 DBUSER:        Default is 'drupaltestbot'
 DBPASS:        Default is 'drupaltestbotpw'
 DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
-PHPVERSION:    Default is '5.4'
+DCI_PHPVERSION:    Default is '5.4'
 CONCURRENCY:   Default is '4'  #How many cpus to use per run
 RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  CONCURRENCY  --verbose --xml '/var/workspace/results'  TESTGROUPS  | tee /var/www/test.stdout ' "
 echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
@@ -90,7 +90,7 @@ DBVER=${DBVER:-"5.5"}
 DCI_CMD=${DCI_CMD:-""}
 DCI_INSTALLER=${DCI_INSTALLER:-"none"}
 DCI_VERBOSE=${DCI_VERBOSE:-"false"}
-PHPVERSION=${PHPVERSION:-"5.4"}
+DCI_PHPVERSION=${DCI_PHPVERSION:-"5.4"}
 CONCURRENCY=${CONCURRENCY:-"4"} #How many cpus to use per run
 TESTGROUPS=${TESTGROUPS:-"Bootstrap"} #TESTS TO RUN from https://api.drupal.org/api/drupal/classes/8
 
@@ -189,30 +189,30 @@ if [[ $DBTYPE != "sqlite" ]]
     fi
 fi
 
-#Ensure PHPVERSION is set
-case $PHPVERSION in
+#Ensure DCI_PHPVERSION is set
+case $DCI_PHPVERSION in
   5.3)
-    PHPVERSION="5.3"
+    DCI_PHPVERSION="5.3"
     ;;
   5.5)
-    PHPVERSION="5.5"
+    DCI_PHPVERSION="5.5"
     ;;
   *)
-    PHPVERSION="5.4"
+    DCI_PHPVERSION="5.4"
     ;;
 esac
 
 #Check if the web container is built
-if $(docker images | grep -q web-${PHPVERSION});
+if $(docker images | grep -q web-${DCI_PHPVERSION});
   then
   echo "--------------------------------------------------------------------------------"
-  echo "Containers: web-${PHPVERSION} and ${DBCONTAINER} available"
-  echo "Running PHP${PHPVERSION}/${DBTYPE} on drupalci/web-${PHPVERSION}"
+  echo "Containers: web-${DCI_PHPVERSION} and ${DBCONTAINER} available"
+  echo "Running PHP${DCI_PHPVERSION}/${DBTYPE} on drupalci/web-${DCI_PHPVERSION}"
   echo "--------------------------------------------------------------------------------"
   else
   echo "--------------------------------------------------------------------------------"
-  echo "ERROR. Image drupalci/web-${PHPVERSION} needs to be built with:"
-  echo "sudo ./build.sh ${PHPVERSION}"
+  echo "ERROR. Image drupalci/web-${DCI_PHPVERSION} needs to be built with:"
+  echo "sudo ./build.sh ${DCI_PHPVERSION}"
   echo "--------------------------------------------------------------------------------"
   exit 1
 fi
@@ -396,7 +396,7 @@ DBLINK=\"${DBLINK}\"
 DCI_CMD=\"${DCI_CMD}\"
 DCI_INSTALLER=\"${DCI_INSTALLER}\"
 DCI_VERBOSE=\"${DCI_VERBOSE}\"
-PHPVERSION=\"${PHPVERSION}\"
+DCI_PHPVERSION=\"${DCI_PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
 TESTGROUPS=\"${TESTGROUPS}\"
@@ -404,8 +404,8 @@ TESTGROUPS=\"${TESTGROUPS}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-DCI_RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${PHPVERSION} ${DCI_CMD}"
-/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${PHPVERSION} ${DCI_CMD}
+DCI_RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${DCI_PHPVERSION} ${DCI_CMD}"
+/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}
 
 echo "exited $?"
 
