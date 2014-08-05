@@ -46,8 +46,8 @@ DCI_IDENTIFIER:    Automated Build Identifier. Only [a-z0-9-_.] are allowed
 DCI_REPODIR:       Default is 'HOME/testbotdata'
 DCI_DRUPALREPO:    Default is 'http://git.drupal.org/project/drupal.git'
 DCI_DRUSHREPO:     Default is 'https://github.com/drush-ops/drush.git'
-BUILDSDIR:     Default is  equal to DCI_REPODIR
-WORKSPACE:     Default is 'HOME/testbotdata/DCI_IDENTIFIER/'
+DCI_BUILDSDIR:     Default is  equal to DCI_REPODIR
+DCI_WORKSPACE:     Default is 'HOME/testbotdata/DCI_IDENTIFIER/'
 DBUSER:        Default is 'drupaltestbot'
 DBPASS:        Default is 'drupaltestbotpw'
 DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
@@ -77,8 +77,8 @@ DCI_UPDATEREPO=${DCI_UPDATEREPO:-"false"}
 DCI_REPODIR=${DCI_REPODIR:-"$HOME/testbotdata"}
 DCI_DRUPALREPO=${DCI_DRUPALREPO:-"http://git.drupal.org/project/drupal.git"}
 DCI_DRUSHREPO=${DCI_DRUSHREPO:-"https://github.com/drush-ops/drush.git"}
-BUILDSDIR=${BUILDSDIR:-"$DCI_REPODIR"}
-WORKSPACE=${WORKSPACE:-"$BUILDSDIR/$DCI_IDENTIFIER/"}
+DCI_BUILDSDIR=${DCI_BUILDSDIR:-"$DCI_REPODIR"}
+DCI_WORKSPACE=${DCI_WORKSPACE:-"$DCI_BUILDSDIR/$DCI_IDENTIFIER/"}
 DCI_DEPENDENCIES=${DCI_DEPENDENCIES:-""}
 DCI_DEPENDENCIES_GIT=${DCI_DEPENDENCIES_GIT:-""}
 DCI_DEPENDENCIES_TGZ=${DCI_DEPENDENCIES_TGZ:-""}  #TODO
@@ -158,15 +158,15 @@ fi
 mkdir -p ${DCI_REPODIR}
 
 # Check if we have free disk space
-FREEDISK=$(df -m ${BUILDSDIR} | tail -n1 | awk '{print $4}')
+FREEDISK=$(df -m ${DCI_BUILDSDIR} | tail -n1 | awk '{print $4}')
 if (( $FREEDISK <= 100 ));
   then
     echo ""
     echo "ERROR! Low disk space!";
     echo ""
-    df -hT ${BUILDSDIR}
+    df -hT ${DCI_BUILDSDIR}
     echo ""
-    echo "Try to clean up some disk space from ${BUILDSDIR}"
+    echo "Try to clean up some disk space from ${DCI_BUILDSDIR}"
     echo "A minimum of 100MB is required..."
     exit 1;
 fi
@@ -266,17 +266,17 @@ gitlast=$(echo -e "$gitver\n1.8.0.0" | sort -nr | head -n1)
 [ "$gitlast" = "$gitver" ] && SB="--single-branch" || SB=""
 
 #Clone the local repo to the run directory:
-git clone ${SB} --branch ${DRUPALBRANCH} ${DCI_REPODIR}/drupal/ ${BUILDSDIR}/${DCI_IDENTIFIER}/
+git clone ${SB} --branch ${DRUPALBRANCH} ${DCI_REPODIR}/drupal/ ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/
 
 # Make it writable for artifacts
-mkdir -p  ${BUILDSDIR}/${DCI_IDENTIFIER}/results
-chmod a+w ${BUILDSDIR}/${DCI_IDENTIFIER}/results
-chmod a+w ${BUILDSDIR}/${DCI_IDENTIFIER}/
+mkdir -p  ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/results
+chmod a+w ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/results
+chmod a+w ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/
 
 #Change to the branch we would like to test
 if [[ ${DRUPALBRANCH} != "" ]]
   then
-    cd ${BUILDSDIR}/${DCI_IDENTIFIER}/
+    cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/
     git checkout ${DRUPALBRANCH} 2>&1 | head -n3
     echo ""
 fi
@@ -292,7 +292,7 @@ if [[ $DCI_DEPENDENCIES = "" ]]
   then
     echo -e "NOTICE: \$DCI_DEPENDENCIES has no modules declared...\n"
   else
-      cd ${BUILDSDIR}/${DCI_IDENTIFIER}/
+      cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/
     for DEP in $(echo "$DCI_DEPENDENCIES" | tr "," "\n")
       do
       echo "Project: $DEP"
@@ -308,8 +308,8 @@ if [[ $DCI_DEPENDENCIES_GIT = "" ]]
     echo -e "NOTICE: \$DCI_DEPENDENCIES_GIT has nothing declared...\n"
   else
      ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
-     mkdir -p ${BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
-     cd ${BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
+     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
+     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
      for row in ${ARRAY[@]}
       do
       read gurl gbranch <<<$(echo "${row}" | tr "," " ");
@@ -326,8 +326,8 @@ if [[ $DCI_DEPENDENCIES_TGZ = "" ]]
     echo -e "NOTICE: \$DCI_DEPENDENCIES_TGZ has nothing declared...\n"
   else
      ARRAY=($(echo "${DCI_DEPENDENCIES_TGZ}" | tr "," "\n"))
-     mkdir -p ${BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
-     cd ${BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
+     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
+     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${MODULESPATH}
      for row in ${ARRAY[@]}
       do
       echo "TGZ URL: ${row}  "
@@ -346,7 +346,7 @@ if [[ $PATCH = "" ]]
     for row in ${ARRAY[@]}
       do
       read purl dir <<<$(echo "${row}" | tr "," " ");
-      cd ${BUILDSDIR}/${DCI_IDENTIFIER}/${dir}/
+      cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${dir}/
       if $(echo "$purl" | egrep -q "^http");
         then
           curl --retry 3 -s $purl > patch
@@ -372,7 +372,7 @@ fi
 
 
 echo "------------------------- ENVIRONMENT VARIABLES IN USE -------------------------"
-#Write all ENV VARIABLES to ${BUILDSDIR}/${DCI_IDENTIFIER}/test.info
+#Write all ENV VARIABLES to ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 echo "DCI_IDENTIFIER=\"${DCI_IDENTIFIER}\"
 DRUPALBRANCH=\"${DRUPALBRANCH}\"
 DRUPALVERSION=\"${DRUPALVERSION}\"
@@ -380,8 +380,8 @@ DCI_UPDATEREPO=\"${DCI_UPDATEREPO}\"
 DCI_REPODIR=\"${DCI_REPODIR}\"
 DCI_DRUPALREPO=\"${DCI_DRUPALREPO}\"
 DCI_DRUSHREPO=\"${DCI_DRUSHREPO}\"
-BUILDSDIR=\"${BUILDSDIR}\"
-WORKSPACE=\"${WORKSPACE}\"
+DCI_BUILDSDIR=\"${DCI_BUILDSDIR}\"
+DCI_WORKSPACE=\"${DCI_WORKSPACE}\"
 DCI_DEPENDENCIES=\"${DCI_DEPENDENCIES}\"
 DCI_DEPENDENCIES_GIT=\"${DCI_DEPENDENCIES_GIT}\"
 DCI_DEPENDENCIES_TGZ=\"${DCI_DEPENDENCIES_TGZ}\"
@@ -400,12 +400,12 @@ PHPVERSION=\"${PHPVERSION}\"
 CONCURRENCY=\"${CONCURRENCY}\"
 RUNSCRIPT=\"${RUNSCRIPT}\"
 TESTGROUPS=\"${TESTGROUPS}\"
-" | tee ${BUILDSDIR}/${DCI_IDENTIFIER}/test.info
+" | tee ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${PHPVERSION} ${CMD}"
-/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${WORKSPACE}:/var/workspace:rw -v=${BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${PHPVERSION} ${CMD}
+RUNCMD="/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${PHPVERSION} ${CMD}"
+/usr/bin/time -p docker run ${DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${PHPVERSION} ${CMD}
 
 echo "exited $?"
 
@@ -415,8 +415,8 @@ docker commit ${DCI_IDENTIFIER} drupal/${DCI_IDENTIFIER}
 # echo "docker run -d=false -i=true drupal/${DCI_IDENTIFIER} /bin/bash"
 
 echo "--------------------------------------------------------------------------------"
-echo "Results directory: ${BUILDSDIR}/${DCI_IDENTIFIER}/results/"
-echo "Make sure to clean up old Builds on ${BUILDSDIR} to save disk space"
+echo "Results directory: ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/results/"
+echo "Make sure to clean up old Builds on ${DCI_BUILDSDIR} to save disk space"
 echo "--------------------------------------------------------------------------------"
 echo "Docker run command:"
 echo "${RUNCMD}"
