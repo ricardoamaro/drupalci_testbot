@@ -136,7 +136,8 @@ if [ ! -f /usr/bin/docker ];
   echo
   echo "Failed to detect Docker."
   echo "Please make sure Docker is installed and configured correctly."
-  echo "Visit: https://docs.docker.com/installation/ for further instructions."
+  echo "Visit: https://docs.docker.com/installation/ for further instructions"
+  echo "Or try to use the available installers on the scripts directory."
   echo "----------------------------------------------------------------------"
   exit 1
   else
