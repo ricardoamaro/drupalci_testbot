@@ -100,7 +100,7 @@ if [ ! -f /usr/bin/php ];
   then
   echo
   echo "Failed to detect PHP."
-  echo "Please make sure PHP is installed and is >= 5.4."
+  echo "Please make sure PHP is installed and is >= 5.3."
   echo "--------------------------------------------------------------"
   exit 1
   else
@@ -110,12 +110,12 @@ if [ ! -f /usr/bin/php ];
     then
     echo
     echo "Failed to detect PHP version."
-    echo "Please make sure PHP is installed and is >= 5.4."
+    echo "Please make sure PHP is installed and is >= 5.3."
     echo "----------------------------------------------------------------------"
     exit 1
   fi
   IFS=. components=(${PHP_VERSION})
-  if [ ${components[0]} -ge 5 ] && [ ${components[1]} -ge 4 ];
+  if [ ${components[0]} -ge 5 ] && [ ${components[1]} -ge 3 ];
     then
     echo
     echo "PHP version ${PHP_VERSION} found at /usr/bin/php"
@@ -123,7 +123,7 @@ if [ ! -f /usr/bin/php ];
     else
     echo
     echo "PHP version ${PHP_VERSION} found at /usr/bin/php:"
-    echo "Your installed PHP version is too old! Upgrade to >= 5.4."
+    echo "Your installed PHP version is too old! Upgrade to >= 5.3."
     echo "----------------------------------------------------------------------"
     exit 1
   fi
