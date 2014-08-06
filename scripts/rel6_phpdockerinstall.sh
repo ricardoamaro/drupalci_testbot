@@ -9,9 +9,3 @@ yum -y install docker-io
 service docker start
 chkconfig docker on
 
-
-#FOR RHE7
-#subscription-manager repos --enable=rhel-7-server-extras-rpms
-#yum -y install docker
-
-
