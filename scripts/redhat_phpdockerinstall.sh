@@ -11,7 +11,7 @@ chkconfig docker on
 
 
 #FOR RHE7
-subscription-manager repos --enable=rhel-7-server-extras-rpms
-yum -y install docker
+#subscription-manager repos --enable=rhel-7-server-extras-rpms
+#yum -y install docker
 
 
