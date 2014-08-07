@@ -1,1 +1,1 @@
-./containers/web/run.sh
+../containers/web/run.sh
