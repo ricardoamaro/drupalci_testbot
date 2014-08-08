@@ -65,10 +65,12 @@ cd containers/database/mysql
 sudo ./run-server.sh
 ```
 
-### 5- Build the WEB image
+### 5- Build the WEB images
 ```
-cd containers/web/
-sudo ./build.sh 5.4
+cd containers/base/web_base
+sudo ./build.sh
+cd containers/web/web-[PHP_VERSION]
+sudo ./build.sh
 ```
 ### 6- RUN EXAMPLES:
 
@@ -182,6 +184,7 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 
 ## Current Structure:
 ```
+TODO: Need to update this!
 .
 ├── build_all.sh
 ├── D7TestGroupsClasses.txt

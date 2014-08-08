@@ -31,14 +31,14 @@ if (( $DCI_DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
     echo "Skipping operation [install], using core tester instead..."
     #Create drupal database manually because Drupal>=8
     case $DCI_DBTYPE in
-      pgsql) 
-        export PGPASSWORD="${DCI_DBPASS}"; 
-        export PGUSER="${DCI_DBUSER}"; 
-        /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "DROP DATABASE IF EXISTS ${DCI_IDENTIFIER};" 
+      pgsql)
+        export PGPASSWORD="${DCI_DBPASS}";
+        export PGUSER="${DCI_DBUSER}";
+        /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "DROP DATABASE IF EXISTS ${DCI_IDENTIFIER};"
         /usr/bin/psql -h ${DB_PORT_5432_TCP_ADDR} -w -c "CREATE DATABASE ${DCI_IDENTIFIER} OWNER ${DCI_DBUSER} TEMPLATE DEFAULT ENCODING='utf8';"
         DBADDR=${DB_PORT_5432_TCP_ADDR}
       ;;
-      mysql|mariadb) 
+      mysql|mariadb)
         DCI_DBTYPE="mysql"
         /usr/bin/mysql -u${DCI_DBUSER} -p${DCI_DBPASS} -h${DB_PORT_3306_TCP_ADDR} -e "CREATE DATABASE IF NOT EXISTS ${DCI_IDENTIFIER} ;"
         DBADDR=${DB_PORT_3306_TCP_ADDR}
@@ -49,7 +49,7 @@ if (( $DCI_DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
     echo "Operation $DCI_DRUPALVERSION [install] using drush... "
     case $DCI_DBTYPE in
       sqlite)
-        ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com 
+        ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
       mysql|mariadb)
         DCI_DBTYPE="mysql"

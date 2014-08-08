@@ -7,3 +7,4 @@ PROVISIONED
 .buildpath
 .project
 .settings
+./vendor

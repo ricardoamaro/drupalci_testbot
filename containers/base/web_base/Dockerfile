@@ -1,4 +1,3 @@
-#FROM ubuntu
 FROM debian:wheezy
 MAINTAINER Ricardo Amaro mail_at_ricardoamaro.com
 
@@ -13,6 +12,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
 
 # whitelist = phar
+RUN mkdir -p /etc/php5/conf.d/
 RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin.ini
 
 # Composer.
@@ -24,7 +24,7 @@ RUN /usr/local/bin/composer global require drush/drush:dev-master
 RUN /.composer/vendor/drush/drush/drush --version
 
 # Enable a2enmod rewrite
-RUN a2enmod rewrite 
+RUN a2enmod rewrite php5
 
 # Supervisord.
 RUN easy_install supervisor
@@ -53,4 +53,3 @@ EXPOSE 80
 
 # Run test script.
 RUN chmod 755 /start.sh
-CMD ["/bin/bash", "/start.sh"]

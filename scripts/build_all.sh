@@ -224,7 +224,9 @@ echo
 echo "Make sure we build web containers"
 echo "----------------------------------------------------------------------"
 echo
-cd ./containers/web/
+cd ./containers/base/web_base/
+./build.sh
+cd ../../web/web-5.4
 ./build.sh
 cd "${BASEDIR}"
 
