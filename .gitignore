@@ -1,6 +1,8 @@
 /.vagrant
 www/
 .idea
+/vendor
+/bin
 PROVISIONED
 .buildpath
 .project
