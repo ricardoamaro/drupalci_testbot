@@ -128,32 +128,69 @@ DCI_PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.pa
 
 And that's it.
 
-
-### Some default environment variables that you can override
+### ./run.sh Options 
+Bellow is a list of Environment Variables and their defaults that can be passed to the ./run.sh runner that will take care of all the legwork:
 
 ```
-DCI_DRUPALBRANCH="8.0.x"
-DCI_DRUPALVERSION=""
+# Any valid Drupal branch or tag, like 8.0.x, 7.x or 7.30:
+DCI_DrupalBRANCH="8.0.x" 
+
+# The identifier used by jenkins to name the Drupal docroot where all is stored:
 DCI_IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
+
+# The place where Drupal repos and DrupalDocRoot indentifiers are kept:
 DCI_REPODIR="$HOME/testbotdata"
+
+# Request the runner to update the Drupal local repo before local cloning:  
 DCI_UPDATEREPO="false"  # true to force repos update
+
+# By default we put the Drupal repo and docroots on the same place, but you can have BUILDSDIR elsewhere:
 DCI_BUILDSDIR="$DCI_REPODIR"
+
+# Same for the workspace:
 DCI_WORKSPACE="$DCI_BUILDSDIR/$DCI_IDENTIFIER/"
+
+# Install modules:
 DCI_DEPENDENCIES=""     # module1,module2,module2...
+
+# Git clone sandboxes:
 DCI_DEPENDENCIES_GIT="" # gitrepo1,branch;gitrepo2,branch;...
+
+# Download tgz modules:
 DCI_DEPENDENCIES_TGZ="" # module1_url.tgz,module1_url.tgz,...
+
+# Download and patch one or several patches:
 DCI_PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
-DCI_DBUSER="drupaltestbot"
-DCI_DBPASS="drupaltestbotpw"
-DCI_DBTYPE="mysql"
-DCI_DBVER="5.5"         # Used to override the default database version for this database type (Optional)
-DCI_DBLINK="--link=drupaltestbot-db:db"
-DCI_INSTALLER="none"    # Try to use core non install tests.
-DCI_CMD=""              # Eg. enter container shell with DCI_CMD="/bin/bash"
+
+# PHP version to run tests on 5.3/5.4/5.5:
+DCI_PHPVERSION="5.4"	
+
+# Database type and version selection, from mysql/mariadb/pgsql/sqlite:
+DCI_DBTYPE="mysql"		
+DCI_DBVER="5.5"         
+
+# Username & Password
+DCI_DBUSER="Drupaltestbot"
+DCI_DBPASS="Drupaltestbotpw"
+
+# Default dbcontainer and link
+DCI_DBCONTAINER="drupaltestbot-db-mysql-5.5"
+DCI_DBLINK="--link=drupaltestbot-db-mysql-5.5:db"
+
+# Try to use core none install tests or "drush"
+DCI_INSTALLER="none"    
+
+# Debug container shell with DCI_CMD="/bin/bash"
+DCI_CMD=""              
 DCI_VERBOSE="false"     # true will give verbose
-DCI_PHPVERSION="5.4"
-DCI_CONCURRENCY="4"     # How many cpus to use per run
-DCI_TESTGROUPS="--class 'Drupal\block\Tests\NonDefaultBlockAdminTest'" #TESTS TO RUN eg.--all
+
+# How many cpus to use per run:
+DCI_CONCURRENCY="4"     
+
+# Testgroups to run, eg. "--all":
+DCI_TESTGROUPS="Bootstrap" #TESTS TO RUN eg.--all
+
+# Default runscript
 DCI_RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} --xml '/var/workspace/results' ${DCI_TESTGROUPS} "
 ```
 
@@ -184,61 +221,38 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 
 ## Current Structure:
 ```
-TODO: Need to update this!
-.
-├── build_all.sh
-├── D7TestGroupsClasses.txt
-├── D8TestGroupsClasses.txt
 ├── containers
-│   ├── web
-│   │   ├── build.sh
-│   │   ├── conf
-│   │   │   ├── apache2
-│   │   │   │   └── vhost.conf
-│   │   │   ├── php5
-│   │   │   │   ├── apache2.ini
-│   │   │   │   ├── apc.ini
-│   │   │   │   └── cli.ini
-│   │   │   ├── scripts
-│   │   │   │   ├── foreground.sh
-│   │   │   │   └── start.sh
-│   │   │   └── supervisor
-│   │   │       └── supervisord.conf
-│   │   ├── Dockerfile -> Dockerfile-PHP5.4
-│   │   ├── Dockerfile-PHP5.3
-│   │   ├── Dockerfile-PHP5.4
-│   │   ├── Dockerfile-PHP5.5
-│   │   └── run.sh
-│   └── database
-│       └── mysql
-│           ├── build.sh
-│           ├── conf
-│           │   └── startup.sh
-│           ├── Dockerfile
-│           ├── run-client.sh
-│           ├── run-server.sh
-│           └── stop-server.sh
-├── patch.p1
-├── provision.sh
-├── README.md
-├── run.sh -> ./containers/web/run.sh
-├── supervisord
-│   ├── build.sh
-│   ├── default
-│   ├── Dockerfile
-│   ├── php-cli.ini
-│   ├── php.ini
-│   ├── run.sh
-│   └── supervisord.conf
-└── Vagrantfile
-
+│   ├── base
+│   │   ├── testbot_base
+│   │   └── web_base
+│   │       └── conf
+│   │           ├── apache2
+│   │           ├── php5
+│   │           ├── scripts
+│   │           └── supervisor
+│   ├── database
+│   │   ├── mariadb-10.0
+│   │   │   └── conf
+│   │   ├── mariadb-5.5
+│   │   │   └── conf
+│   │   ├── mysql-5.5
+│   │   │   └── conf
+│   │   ├── pgsql-8.3
+│   │   │   └── conf
+│   │   └── pgsql-9.1
+│   │       └── conf
+│   └── web
+│       ├── web-5.4
+│       └── web-5.5
+├── drupal
+├── jobs
+│   ├── phpunit
+│   ├── simpletest
+│   └── syntax
+├── scripts
+│   └── src
+└── vendor
 ```
-###CREDITS:
-jthorson
-ricardoamaro
-nickschuch
-beejeebus
-dasrecht
 
 
 ## Contributing
