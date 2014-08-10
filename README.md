@@ -107,7 +107,7 @@ sudo \
 DCI_TESTGROUPS="--all" \
 DCI_CONCURRENCY="4" \
 DCI_DRUPALBRANCH="8.0.x" \
-DCI_DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz"
+DCI_DEPENDENCIES_TGZ="http://ftp.drupal.org/files/projects/admin_menu-8.0.x-3.x-dev.tar.gz" \
 DCI_PATCH="https://drupal.org/files/issues/1942178-config-schema-user-28.patch,." \
 ./run.sh
 ```
