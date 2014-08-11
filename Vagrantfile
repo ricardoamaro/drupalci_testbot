@@ -13,7 +13,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       testbot.vm.provider "virtualbox" do |v|
         v.customize [ "modifyvm", :id, "--cpus", "4" ]
         v.customize [ "modifyvm", :id, "--memory", "756" ]
-	  end
+        v.customize [ "modifyvm", :id, "--natdnshostresolver1", "on" ]
+      end
   end
 end
 
