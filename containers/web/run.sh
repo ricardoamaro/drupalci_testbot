@@ -67,6 +67,13 @@ sudo DCI_TESTGROUPS=\"--all\" DCI_CONCURRENCY=\"4\" DCI_DRUPALBRANCH=\"8.0.x\" D
   exit 0
 fi
 
+# Drupalci console uses $HOME/.drupalci/config to source environment variables: 
+if [ -f $HOME/.drupalci/config ]
+  then
+    echo "Sourcing your default variables from $HOME/.drupalci/config ";
+    source $HOME/.drupalci/config;
+fi
+
 # A list of variables that we only set if empty. Export them before running the script.
 # Note: Any variable already set on a higher level will keep it's value.
 
