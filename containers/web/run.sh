@@ -232,7 +232,7 @@ if [ -f ${DCI_REPODIR}/drupal/.git/config ];
     echo "Local Drupal repo found on ${DCI_REPODIR}/drupal/"
   else
     echo ""
-    echo "Making onetime Drupal git clone to: ${DCI_REPODIR}/drupal/"
+    echo "Making one-time Drupal git clone to: ${DCI_REPODIR}/drupal/"
     echo "Press CTRL+c to Cancel"
     sleep 1 #+INFO: https://drupal.org/project/drupal/git-instructions
     cd ${DCI_REPODIR}
