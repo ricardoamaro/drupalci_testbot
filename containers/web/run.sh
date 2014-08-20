@@ -220,7 +220,8 @@ if $(docker images | grep -q web-${DCI_PHPVERSION});
   else
   echo "--------------------------------------------------------------------------------"
   echo "ERROR. Image drupalci/web-${DCI_PHPVERSION} needs to be built with:"
-  echo "sudo ./build.sh ${DCI_PHPVERSION}"
+  echo "cd containers/web/web-${DCI_PHPVERSION}"
+  echo "sudo ./build.sh"
   echo "--------------------------------------------------------------------------------"
   exit 1
 fi
@@ -409,6 +410,7 @@ DCI_PHPVERSION=\"${DCI_PHPVERSION}\"
 DCI_CONCURRENCY=\"${DCI_CONCURRENCY}\"
 DCI_RUNSCRIPT=\"${DCI_RUNSCRIPT}\"
 DCI_TESTGROUPS=\"${DCI_TESTGROUPS}\"
+VERBO=\"${VERBO}\"
 " | tee ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 
 #Let the tests start
