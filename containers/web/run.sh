@@ -95,6 +95,7 @@ DCI_DBPASS=${DCI_DBPASS:-"drupaltestbotpw"}
 DCI_DBTYPE=${DCI_DBTYPE:-"mysql"} #mysql/pgsql/sqlite
 DCI_DBVER=${DCI_DBVER:-"5.5"}
 DCI_CMD=${DCI_CMD:-""}
+[ ! -z "$DCI_CMD" ] && DCI_INTERACTIVE="-i"
 DCI_INSTALLER=${DCI_INSTALLER:-"none"}
 DCI_VERBOSE=${DCI_VERBOSE:-"false"}
 DCI_PHPVERSION=${DCI_PHPVERSION:-"5.4"}
@@ -401,6 +402,7 @@ DCI_DBVER=\"${DCI_DBVER}\"
 DCI_DBCONTAINER=\"${DCI_DBCONTAINER}\"
 DCI_DBLINK=\"${DCI_DBLINK}\"
 DCI_CMD=\"${DCI_CMD}\"
+DCI_INTERACTIVE=\"${DCI_INTERACTIVE}\"
 DCI_INSTALLER=\"${DCI_INSTALLER}\"
 DCI_VERBOSE=\"${DCI_VERBOSE}\"
 DCI_PHPVERSION=\"${DCI_PHPVERSION}\"
@@ -411,8 +413,8 @@ DCI_TESTGROUPS=\"${DCI_TESTGROUPS}\"
 
 #Let the tests start
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/db-web${DCI_PHPVERSION} ${DCI_CMD}"
-/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}
+DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}"
+/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}
 
 echo "exited $?"
 
