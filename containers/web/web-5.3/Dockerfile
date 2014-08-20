@@ -17,7 +17,6 @@ RUN echo -e "\nPackage: *\nPin: release a=stable\nPin-Priority: 600" >> /etc/apt
 RUN mv -f /etc/php5/conf.d/suhosin.ini /tmp/suhosin.bak
 RUN mv -f /etc/php5/conf.d/apc.ini /tmp/apc.bak
 RUN dpkg --remove php-apc php5-suhosin
-#RUN rm -rf /etc/php5/
 
 # Downgrade to php5.3
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
@@ -25,5 +24,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes --reinstall li
 
 RUN mv -f /tmp/suhosin.bak /etc/php5/conf.d/suhosin.ini
 RUN mv -f /tmp/apc.bak /etc/php5/conf.d/apc.ini
+RUN find /etc/php5/conf.d -type l -exec rm {} \;
 
 CMD ["/bin/bash", "/start.sh"]
