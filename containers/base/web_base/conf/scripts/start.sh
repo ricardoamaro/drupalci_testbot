@@ -4,7 +4,13 @@
 source /var/www/test.info
 
 export PATH=$HOME/bin:$PATH
-export DRUSH="/.composer/vendor/drush/drush/drush"
+# Only need the newest drush version for Drupal 8 and above
+if (( $DCI_DRUPALVERSION >= 8 ));
+  then 
+      export DRUSH="/.composer/vendor/drush/drush/drush"
+    else 
+      export DRUSH="$(which drush)"
+fi
 
 # Start apache
 echo "Operation [start]..."
@@ -49,14 +55,14 @@ if (( $DCI_DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
     echo "Operation $DCI_DRUPALVERSION [install] using drush... "
     case $DCI_DBTYPE in
       sqlite)
-        ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        ${DRUSH} si ${VERBO} -y --db-url=${DCI_DBTYPE}://sites/default/files/.ht.sqlite --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
       mysql|mariadb)
         DCI_DBTYPE="mysql"
-        ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_3306_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        ${DRUSH} si ${VERBO} -y --db-url=${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_3306_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
       pgsql)
-        ${DRUSH} si -v -y --db-url=${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_5432_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
+        ${DRUSH} si ${VERBO} -y --db-url=${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_5432_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
     esac
     ${DRUSH} -y en simpletest
