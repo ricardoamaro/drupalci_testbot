@@ -40,7 +40,8 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1
   echo -e "\t\tupdate  : Update all repos and containers."
   echo -e "\t\trefresh : Just refresh the containers with any new change. "
   echo
-  echo -e "\t\tmysql/pgsql/mariadb/all : Defines the database type(s) to build. "
+  echo -e "\t\tmysql/pgsql/mariadb: Defines the database type(s) to build. "
+  echo -e "\t\tall: Builds all available database + web containers. "
   echo -e "\t\tNote: If you are offline use 'refresh', in order to keep cached data. "
   echo
   exit 0
@@ -221,16 +222,29 @@ for DCI_DBTYPE in "${dbtypes[@]}";
 done
 
 echo
-echo "Make sure we build web containers"
+echo "Make sure we build web_base and web containers"
 echo "----------------------------------------------------------------------"
 echo
+cd "${BASEDIR}"
 cd ./containers/base/web_base/
-./build.sh
-cd ../../web/web-5.4
 ./build.sh
 cd "${BASEDIR}"
 
-echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
+case "$2" in 
+  all)
+    WEBCONTAINERS=$(ls -d ./containers/web/web*| awk -F/ '{print $NF}'| tr '\n' ' ');;
+  *)
+    WEBCONTAINERS="web-5.4";;
+esac
+
+for WEBDIR in ${WEBCONTAINERS};
+  do
+  cd "./containers/web/${WEBDIR}"
+  ./build.sh
+  cd "${BASEDIR}"
+done
+
+echo -e "Container Images: ${dbtypes[@]} and ${WEBCONTAINERS} (re)built.\n"
 
 # Do a test run to collect test list and update repos
 if [ "$1" != "refresh" ];
@@ -242,6 +256,6 @@ else
   DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 fi
 
-echo -e "Container Images: ${dbtypes[@]} and web-5.4 (re)built.\n"
+echo -e "Container Images: ${dbtypes[@]} and ${WEBCONTAINERS} (re)built.\n"
 echo -e "Try example: sudo DCI_DBTYPE='${DCI_DBTYPE}' DCI_DBVER='${DCI_DBVER}' DCI_PHPVERSION='5.4' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 
