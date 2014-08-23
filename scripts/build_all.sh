@@ -17,10 +17,17 @@
 # Docs:         README.md for complete information
 #
 
+############### SETUP DEFAULT ENV VARIABLES ###############
 # Remove intermediate containers after a successful build. Default is True.
 DCI_REMOVEINTCONTAINERS=${DCI_REMOVEINTCONTAINERS:-"true"}
 DCI_REPODIR=${DCI_REPODIR:-"$HOME/testbotdata"}
+DCI_DBVER="5.5"
+DCI_DBTYPE="mysql"
+DCI_DRUPALBRANCH="8.0.x"
+DCI_PHPVERSION="5.4"
 BASEDIR="$(pwd)"
+BASEIFS="${IFS}"
+###########################################################
 
 declare -A firstarg
 for constant in cleanup update refresh
@@ -47,6 +54,14 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1
   exit 0
 fi
 
+# Build all webcontainers or only the default
+case "$2" in 
+  all)
+    WEBCONTAINERS=$(ls -d ./containers/web/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');;
+  *)
+    WEBCONTAINERS="web-5.4";;
+esac
+
 # Check for database argument
 declare -A secondarg
 declare -A dbtypes
@@ -54,7 +69,7 @@ declare -A dbtypes
 # case script was called with the <all> parameter. In addition we need a
 # numeric array key to keep order.
 DCI_ARRKEY=0
-for constant in mariadb-5.5 mariadb-10.0 pgsql-8.3 pgsql-9.1 mysql-5.5
+for constant in $(ls -d ./containers/database/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');
 do
   secondarg["$constant"]=1
   if [ "$2" = "$constant" ] || [ "$2" = "all" ];
@@ -189,22 +204,21 @@ if [ "$1" = "cleanup" ];
     done
     unset DCI_SQLCOUNT
   fi
-
 fi
 set -e
 
 # Build and start DB containers
-for DCI_DBTYPE in "${dbtypes[@]}";
+for DB_BUILD in "${dbtypes[@]}";
   do
   echo
-  echo "Build and restart db-${DCI_DBTYPE} container"
+  echo "Build and restart db-${DB_BUILD} container"
   echo "----------------------------------------------------------------------"
   echo
-  cd "./containers/database/${DCI_DBTYPE}"
+  cd "./containers/database/${DB_BUILD}"
   ./stop-server.sh
   # This cleanup is specific for a single database type and is required
   # in case of a container refresh/update build.
-  DCI_SQLCONT=(/tmp/tmp.*"${DCI_DBTYPE}")
+  DCI_SQLCONT=(/tmp/tmp.*"${DB_BUILD}")
   if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
     for DIR in "${DCI_SQLCONT[@]}"; do
       umount "${DIR}" || /bin/true
@@ -214,48 +228,41 @@ for DCI_DBTYPE in "${dbtypes[@]}";
   ./build.sh
   ./run-server.sh
   cd "${BASEDIR}"
-
-  # Set up DB container arguments for run script
-  IFS="-" components=($DCI_DBTYPE)
-  DCI_DBVER=${components[1]}
-  DCI_DBTYPE=${components[0]}
 done
 
 echo
-echo "Make sure we build web_base and web containers"
+echo "Make sure we build the web_base container"
 echo "----------------------------------------------------------------------"
 echo
 cd "${BASEDIR}"
 cd ./containers/base/web_base/
 ./build.sh
-cd "${BASEDIR}"
 
-case "$2" in 
-  all)
-    WEBCONTAINERS=$(ls -d ./containers/web/web*| awk -F/ '{print $NF}'| tr '\n' ' ');;
-  *)
-    WEBCONTAINERS="web-5.4";;
-esac
-
+IFS="${BASEIFS}"
 for WEBDIR in ${WEBCONTAINERS};
   do
+  echo 
+  echo "Building PHP ${WEBDIR} container"
+  echo "----------------------------------------------------------------------"
+  cd "${BASEDIR}"
   cd "./containers/web/${WEBDIR}"
   ./build.sh
-  cd "${BASEDIR}"
 done
 
-echo -e "Container Images: ${dbtypes[@]} and ${WEBCONTAINERS} (re)built.\n"
+echo -e "Container images (re)built: \n${dbtypes[@]} \nand ${WEBCONTAINERS}\n"
 
+# Set to base 
+cd "${BASEDIR}"
 # Do a test run to collect test list and update repos
 if [ "$1" != "refresh" ];
   then
-  sleep 5
-  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_UPDATEREPO="true" DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  sleep 3
+  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_UPDATEREPO="true" DCI_DRUPALBRANCH=${DCI_DRUPALBRANCH} DCI_PHPVERSION=${DCI_PHPVERSION} DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 else
-  sleep 5
-  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_DRUPALBRANCH="8.0.x" DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+  sleep 3
+  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_DRUPALBRANCH=${DCI_DRUPALBRANCH} DCI_PHPVERSION=${DCI_PHPVERSION} DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
 fi
 
 echo -e "Container Images: ${dbtypes[@]} and ${WEBCONTAINERS} (re)built.\n"
-echo -e "Try example: sudo DCI_DBTYPE='${DCI_DBTYPE}' DCI_DBVER='${DCI_DBVER}' DCI_PHPVERSION='5.4' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='8.0.x' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "Try example: sudo DCI_DBTYPE='${DCI_DBTYPE}' DCI_DBVER='${DCI_DBVER}' DCI_PHPVERSION='${DCI_PHPVERSION}' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='${DCI_DRUPALBRANCH}' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
 
