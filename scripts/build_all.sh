@@ -54,21 +54,19 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1
   exit 0
 fi
 
-# Build all webcontainers or only the default
+# Build all webcontainers present on web directory or only the default
 case "$2" in 
   all)
     WEBCONTAINERS=$(ls -d ./containers/web/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');;
   *)
-    WEBCONTAINERS="web-5.4";;
+    WEBCONTAINERS="web-${DCI_PHPVERSION}";;
 esac
 
 # Check for database argument
 declare -A secondarg
 declare -A dbtypes
-# Make sure mysql-5.5 is defined as last target in loop to make it default in
-# case script was called with the <all> parameter. In addition we need a
-# numeric array key to keep order.
 DCI_ARRKEY=0
+# Check for all database containers available to build  
 for constant in $(ls -d ./containers/database/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');
 do
   secondarg["$constant"]=1
@@ -93,9 +91,9 @@ if [ "$2" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
     exit 0
 fi
 
-# Default to mysql-5.5 if no database argument given
+# Default to ${DCI_DBTYPE}-${DCI_DBVER} if no database argument given
 if [ ${#dbtypes[@]} -eq 0 ]; then
-  dbtypes["mysql-5.5"]="mysql-5.5"
+  dbtypes["${DCI_DBTYPE}-${DCI_DBVER}"]="${DCI_DBTYPE}-${DCI_DBVER}"
 fi
 
 # Check if we have root powers
