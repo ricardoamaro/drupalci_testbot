@@ -21,10 +21,10 @@
 # Remove intermediate containers after a successful build. Default is True.
 DCI_REMOVEINTCONTAINERS=${DCI_REMOVEINTCONTAINERS:-"true"}
 DCI_REPODIR=${DCI_REPODIR:-"$HOME/testbotdata"}
-DCI_DBVER="5.5"
-DCI_DBTYPE="mysql"
-DCI_DRUPALBRANCH="8.0.x"
-DCI_PHPVERSION="5.4"
+DCI_DBVER=${DCI_DBVER:-"5.5"}
+DCI_DBTYPE=${DCI_DBTYPE:-"mysql"}
+DCI_DRUPALBRANCH=${DCI_DRUPALBRANCH:-"8.0.x"}
+DCI_PHPVERSION=${DCI_PHPVERSION:-"5.4"}
 BASEDIR="$(pwd)"
 BASEIFS="${IFS}"
 ###########################################################
@@ -72,10 +72,20 @@ do
   secondarg["$constant"]=1
   if [ "$2" = "$constant" ] || [ "$2" = "all" ];
   then
-    dbtypes[${DCI_ARRKEY}]="$constant"
-    ((DCI_ARRKEY+=1))
+    dbtypes[${DCI_ARRKEY}]="$constant";
+    ((DCI_ARRKEY+=1));
+    if [ "$2" != "all" ];
+    then
+      DCI_DBTYPE=$(awk -F- '{print $1}' <<< "$2")
+      DCI_DBVER=$(awk -F- '{print $2}' <<< "$2")  
+    fi
   fi
 done
+
+# Default to ${DCI_DBTYPE}-${DCI_DBVER} if no database argument given
+if [ ${#dbtypes[@]} -eq 0 ]; then
+  dbtypes["${DCI_DBTYPE}-${DCI_DBVER}"]="${DCI_DBTYPE}-${DCI_DBVER}"
+fi
 
 if [ "$2" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
   then
@@ -91,10 +101,7 @@ if [ "$2" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
     exit 0
 fi
 
-# Default to ${DCI_DBTYPE}-${DCI_DBVER} if no database argument given
-if [ ${#dbtypes[@]} -eq 0 ]; then
-  dbtypes["${DCI_DBTYPE}-${DCI_DBVER}"]="${DCI_DBTYPE}-${DCI_DBVER}"
-fi
+
 
 # Check if we have root powers
 if [ `whoami` != root ]; then
