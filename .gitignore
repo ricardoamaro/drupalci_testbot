@@ -8,3 +8,4 @@ PROVISIONED
 .project
 .settings
 ./vendor
+composer.lock
