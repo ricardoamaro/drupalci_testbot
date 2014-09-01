@@ -1,4 +1,6 @@
 {
+    "name": "drupalci/drupalci_testbot",
+    "description": "Central Script to control drupalci_testbot",
     "authors": [
         {
             "email": "b.widmer@dasrecht.net",
@@ -8,14 +10,21 @@
     ],
     "autoload": {
         "psr-0": {
-            "": "scripts/src"
-        },
-        "files": ["scripts/src/helpers.php"]
+            "": "src"
+        }
     },
-    "description": "Central Script to control drupalci_testbot",
-    "name": "drupalci/drupalci_testbot",
+    "bin" : [
+        "drupalci"
+    ],
+    "config": {
+        "bin-dir" : "bin/"
+    },
     "require": {
-        "knplabs/console-service-provider": "dev-master",
-        "silex/silex": "~1.1"
-    }
+        "symfony/console": "~2.5",
+        "symfony/finder": "~2.5.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3"
+    },
+    "prefer-stable": true
 }
