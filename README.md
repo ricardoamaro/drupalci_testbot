@@ -2,7 +2,7 @@
 
 ### Test your Drupal patches locally with docker.
 
-This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal patch testing, using Linux, Apache, PHP and MySQL/sqlite.
+This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal patch testing, using Linux, Apache, PHP and MariaDB/PostegreSQL/MySQL/Sqlite.
 
 This is part of the core code powering the future version of [Drupal automated-testing](https://drupal.org/automated-testing) infrastructure at http://qa.drupal.org .
 
@@ -11,8 +11,8 @@ a) Test patches on your local box or http://qa.drupal.org
 b) Test multiple patches and multiple modules at once.
 c) Test any Drupal version.
 d) Get realtime output.
-e) Choose mysql, sqlite (more comming soon)
-f) Choose PHP5.3/5.4/5.5
+e) Choose mariadb, postgresql, mysql, sqlite.
+f) Choose PHP5.3/5.4/5.5/5.6
 g) Test offline.
 
 
@@ -26,9 +26,8 @@ sudo ./scripts/build_all.sh cleanup
 ```
 
 ## Quick Vagrant MAC/Windows instructions:
-This will not run natively since it's a Virtualbox VM
-and you need to install Vagrant.
-
+Docker will not run natively on MAC/Windows,
+Install Virtualbox, Vagrant and run: 
 ```
 git clone {thisrepo}
 cd drupalci_testbot
