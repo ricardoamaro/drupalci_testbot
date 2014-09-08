@@ -12,7 +12,7 @@
 # Contributors: Jeremy Thorson jthorson
 #
 # Bugs/Issues:  Use the issue queue on drupal.org
-#               IRC #drupal-infrastructure
+#               IRC: #drupal-testing
 #
 # Docs:         README.md for complete information
 #
@@ -39,6 +39,7 @@ DCI_TESTGROUPS:    Tests to run. Default is '--class NonDefaultBlockAdmin'
 DCI_VERBOSE:       Default is 'false'
 DCI_DBTYPE:        Default is 'mysql-5.5' from mysql/sqlite/pgsql
 DCI_DBVER:         Default is '5.5'.  Used to override the default version for a given database type.
+DCI_ENTRYPOINT:    Default is none. Executes other funcionality in the container prepending CMD.
 DCI_CMD:           Default is none. Normally use '/bin/bash' to debug the container
 DCI_INSTALLER:     Default is none. Try to use core non install tests.
 DCI_UPDATEREPO:    Force git pull of Drupal & Drush. Default is 'false'
@@ -94,6 +95,8 @@ DCI_DBUSER=${DCI_DBUSER:-"drupaltestbot"}
 DCI_DBPASS=${DCI_DBPASS:-"drupaltestbotpw"}
 DCI_DBTYPE=${DCI_DBTYPE:-"mysql"} #mysql/pgsql/sqlite
 DCI_DBVER=${DCI_DBVER:-"5.5"}
+DCI_ENTRYPOINT=${DCI_ENTRYPOINT:-""}
+[ ! -z "$DCI_ENTRYPOINT" ] && DCI_ENTRYPOINT="--entrypoint $DCI_ENTRYPOINT"
 DCI_CMD=${DCI_CMD:-""}
 [ ! -z "$DCI_CMD" ] && DCI_INTERACTIVE="-i"
 DCI_INSTALLER=${DCI_INSTALLER:-"none"}
@@ -417,7 +420,7 @@ VERBO=\"${VERBO}\"
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
 [ ! -z "$DCI_CMD" ] && echo "--------- Interactive mode activated! Use: /start.sh to run tests --------------"
 DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}"
-/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}
+/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD} ${DCI_ENTRYPOINT}
 
 echo "exited $?"
 
