@@ -2,7 +2,7 @@
 
 ### Test your Drupal patches locally with docker.
 
-This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal patch testing, using Linux, Apache, PHP and MariaDB/PostegreSQL/MySQL/Sqlite.
+This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal patch testing, using Linux, Apache, PHP and MariaDB/PostgreSQL/MySQL/Sqlite.
 
 This is part of the core code powering the future version of [Drupal automated-testing](https://drupal.org/automated-testing) infrastructure at http://qa.drupal.org .
 
