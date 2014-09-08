@@ -13,15 +13,16 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential software-p
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
 
-# Serverspec
+# Serverspec.
 RUN gem install bundler -v 1.6.3 2>/dev/null 
 RUN gem install serverspec rake 2>/dev/null
 
-# PHPENV
+# PHPENV.
 RUN git clone https://github.com/CHH/phpenv.git /tmp/phpenv
 RUN /bin/bash /tmp/phpenv/bin/phpenv-install.sh
 RUN scp /tmp/phpenv/extensions/* $HOME/.phpenv/libexec/
 
+RUN echo 'export PATH="//.phpenv/bin:$PATH"' >> /$HOME/.bashrc
 RUN echo 'eval "$(phpenv init -)"' >> /$HOME/.bashrc
 ENV PATH /home/travis/.phpenv/shims:/home/travis/.phpenv/bin:$PATH
 
@@ -36,11 +37,11 @@ RUN echo "suhosin.executor.include.whitelist = phar" >> /etc/php5/conf.d/suhosin
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin -d detect_unicode=0
 RUN sudo ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
 
-# Drush and dependencies
+# Drush and dependencies.
 RUN /usr/local/bin/composer global require drush/drush:dev-master
 RUN /.composer/vendor/drush/drush/drush --version
 
-# Enable a2enmod rewrite
+# Enable a2enmod rewrite.
 RUN a2enmod rewrite php5
 
 # Supervisord.
@@ -68,5 +69,5 @@ ADD ./conf/php5/apc.ini /etc/php5/conf.d/apc.ini
 
 EXPOSE 80
 
-# Make start.sh executable
+# Make start.sh executable.
 RUN chmod 755 /start.sh
