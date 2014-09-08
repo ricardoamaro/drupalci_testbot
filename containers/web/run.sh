@@ -420,7 +420,7 @@ VERBO=\"${VERBO}\"
 echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
 [ ! -z "$DCI_CMD" ] && echo "--------- Interactive mode activated! Use: /start.sh to run tests --------------"
 DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}"
-/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD} ${DCI_ENTRYPOINT}
+/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t ${DCI_ENTRYPOINT} drupalci/web-${DCI_PHPVERSION} ${DCI_CMD} 
 
 echo "exited $?"
 
