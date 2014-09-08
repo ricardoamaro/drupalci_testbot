@@ -7,9 +7,25 @@ RUN ln -sf /bin/true /sbin/initctl
 
 # Packages.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sqlite3 mysql-client postgresql-client apache2 curl git libapache2-mod-php5 openssh-server php5-curl php5-gd php5-mysql php5-sqlite php5-pgsql php-apc php-pear php-codesniffer pwgen sudo python-setuptools nano apt-utils tidy vim drush
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential software-properties-common python-software-properties sqlite3 mysql-client postgresql-client apache2 curl git libapache2-mod-php5 openssh-server php5-cli php5-curl php5-gd php5-mysql php5-sqlite php5-pgsql php-apc php-pear php-codesniffer pwgen unzip sudo python-setuptools nano apt-utils tidy vim drush ruby ruby-dev   make re2c bison libxml2-dev libssl-dev libbz2-dev libcurl3-dev libdb5.1-dev libjpeg-dev libpng-dev libXpm-dev libfreetype6-dev libt1-dev libgmp3-dev libc-client-dev libldap2-dev libmcrypt-dev libmhash-dev freetds-dev libz-dev libmysqlclient15-dev ncurses-dev libpcre3-dev unixODBC-dev libsqlite-dev libaspell-dev libreadline6-dev librecode-dev libsnmp-dev libtidy-dev libxslt-dev libt1-dev ccache sudo 
+
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
+
+# Serverspec
+RUN gem install bundler -v 1.6.3 2>/dev/null 
+RUN gem install serverspec rake 2>build-dep
+
+# PHPENV
+RUN git clone https://github.com/CHH/phpenv.git /tmp/phpenv
+RUN /tmp/phpenv/bin/phpenv-install.sh
+RUN scp /tmp/phpenv/extensions/* $HOME/.phpenv/libexec/
+
+RUN echo 'eval "$(phpenv init -)"' >> /$HOME/.bashrc
+ENV PATH /home/travis/.phpenv/shims:/home/travis/.phpenv/bin:$PATH
+
+RUN git clone git://github.com/nickschuch/php-build.git $HOME/.phpenv/plugins/php-build
+RUN sudo $HOME/.phpenv/plugins/php-build/install.sh
 
 # whitelist = phar
 RUN mkdir -p /etc/php5/conf.d/
