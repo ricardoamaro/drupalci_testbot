@@ -197,8 +197,8 @@ if [ "$1" = "cleanup" ];
   echo "----------------------------------------------------------------------"
   echo
   docker ps | egrep "drupal|test" | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker stop {}
-  docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker rm {}
-  docker images | egrep "drupal|testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} docker rmi {}
+  docker ps -a | awk '{print $1}' | grep -v CONTAINER | xargs -n1 -I {} docker rm -f {}
+  docker images | egrep "drupal|testbot|none" | grep -v IMAGE |  awk '{print $3}' | xargs -n1 -I {} docker rmi -f {}
   rm -rf ${DCI_REPODIR}
   # Just umount and remove all and everything in /tmp/tmp.*
   DCI_SQLCONT=(/tmp/tmp.*)

@@ -177,8 +177,11 @@ DCI_DBPASS="Drupaltestbotpw"
 DCI_DBCONTAINER="drupaltestbot-db-mysql-5.5"
 DCI_DBLINK="--link=drupaltestbot-db-mysql-5.5:db"
 
-# Try to use core none install tests or "drush"
+# Try to use core "none" install tests or "drush"
 DCI_INSTALLER="none"    
+
+# Executes other funcionality in the container prepending CMD.
+DCI_ENTRYPOINT=""  
 
 # Debug container shell with DCI_CMD="/bin/bash"
 DCI_CMD=""              
