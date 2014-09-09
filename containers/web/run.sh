@@ -186,7 +186,7 @@ fi
 if [[ $DCI_DBTYPE != "sqlite" ]]
   then
     set +e
-    RUNNING=$(sudo docker ps | grep ${DCI_DBCONTAINER} | grep -s ${DBPORT})
+    RUNNING=$(docker ps | grep ${DCI_DBCONTAINER} | grep -s ${DBPORT})
     set -e
     if [[ $RUNNING = "" ]]
       then
