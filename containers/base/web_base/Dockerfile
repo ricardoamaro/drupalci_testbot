@@ -10,23 +10,27 @@ RUN ln -sf /bin/true /sbin/initctl
 # Packages.
 RUN sed -i 's|http://http.debian.net/debian|ftp://ftp.debian.org/debian|g' /etc/apt/sources.list
 RUN apt-get update
-RUN apt-get -y install build-essential software-properties-common \
-    python-software-properties sqlite3 mysql-client postgresql-client \
-    apache2 curl git libapache2-mod-php5 openssh-server php5-cli php5-curl \
-    php5-gd php5-mysql php5-sqlite php5-pgsql php-apc php-pear php-codesniffer \
-    pwgen unzip sudo python-setuptools nano apt-utils tidy vim drush \
-    ruby ruby-dev make re2c bison libxml2-dev libssl-dev libbz2-dev \
-    libcurl3-dev libdb5.1-dev libjpeg-dev libpng-dev libXpm-dev \
-    libfreetype6-dev libt1-dev libgmp3-dev libc-client-dev libldap2-dev \
-    libmcrypt-dev libmhash-dev freetds-dev libz-dev libmysqlclient15-dev \
-    ncurses-dev libpcre3-dev unixODBC-dev libsqlite-dev libaspell-dev \
-    libreadline6-dev librecode-dev libsnmp-dev libtidy-dev libxslt-dev libt1-dev ccache sudo 
+RUN apt-get -y install apache2 apache2-prefork-dev apt-utils bison \
+    build-essential ccache curl drush freetds-dev git libapache2-mod-php5 \
+    libaspell-dev libbz2-dev libc-client-dev libcurl4-gnutls-dev libdb5.1-dev \
+    libfreetype6-dev libgmp3-dev libjpeg62 libjpeg62-dev \
+    libldap2-dev libmcrypt-dev libmhash-dev libmysqlclient15-dev \
+    libpcre3-dev libpng-dev libreadline6-dev librecode-dev \
+    libsnmp-dev libsqlite-dev libssl-dev libt1-dev libtidy-dev \
+    libxml2-dev libXpm-dev libxslt1-dev libxslt-dev libz-dev \
+    make mysql-client mc nano ncurses-dev openssh-server php5-cli php5-curl \
+    php5-gd php5-mysql php5-pgsql php5-sqlite php-apc php-codesniffer \
+    php-pear postgresql-client pwgen python-setuptools php5-dev \
+    re2c ruby ruby-dev sqlite3 sudo tidy time unixODBC-dev unzip vim
 
-RUN apt-get autoclean
-RUN apt-get autoremove
+RUN apt-get clean
+RUN apt-get -y autoremove
+
+# Ruby. (TODO if 2.0 needed)
+# curl -L https://get.rvm.io | bash -s stable --autolibs=enabled
 
 # Serverspec.
-RUN gem install bundler -v 1.6.3 2>/dev/null 
+RUN gem install bundler -v 1.6.3 2>/dev/null
 RUN gem install serverspec rake 2>/dev/null
 
 # PHPENV.
@@ -38,7 +42,7 @@ RUN echo 'export PATH="//.phpenv/bin:$PATH"' >> /$HOME/.bashrc
 RUN echo 'eval "$(phpenv init -)"' >> /$HOME/.bashrc
 ENV PATH /home/travis/.phpenv/shims:/home/travis/.phpenv/bin:$PATH
 
-RUN git clone git://github.com/nickschuch/php-build.git $HOME/.phpenv/plugins/php-build
+RUN git clone https://github.com/CHH/php-build.git $HOME/.phpenv/plugins/php-build
 RUN sudo $HOME/.phpenv/plugins/php-build/install.sh
 
 # whitelist = phar

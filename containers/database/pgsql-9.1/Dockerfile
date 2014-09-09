@@ -15,13 +15,15 @@ RUN echo 'LANGUAGE="en_US:en"' >> /etc/default/locale
 RUN apt-get -y update && \
     apt-get -y install postgresql postgresql-client
 
+RUN apt-get clean
+RUN apt-get -y autoremove
+
 # Adjust PostgreSQL configuration so that remote connections to the database are possible.
 RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/9.1/main/pg_hba.conf
 RUN echo "listen_addresses='*'" >> /etc/postgresql/9.1/main/postgresql.conf
 
 # Expose the PostgreSQL port
 EXPOSE 5432
-
 
 ENV LANGUAGE en_US.UTF-8
 ENV LANG en_US.UTF-8

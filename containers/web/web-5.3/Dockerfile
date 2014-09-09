@@ -1,7 +1,8 @@
 FROM drupalci/web-base
 
-# Squeeze
+ENV DEBIAN_FRONTEND noninteractive
 
+# Squeeze
 RUN echo "deb http://ftp.debian.org/debian/ squeeze main contrib non-free" >> /etc/apt/sources.list.d/squeeze.list 
 RUN echo "deb http://security.debian.org/ squeeze/updates main contrib non-free" >> /etc/apt/sources.list.d/squeeze.list
 
@@ -16,11 +17,14 @@ RUN echo -e "\nPackage: *\nPin: release a=stable\nPin-Priority: 600" >> /etc/apt
 # Solve conflicts
 RUN mv -f /etc/php5/conf.d/suhosin.ini /tmp/suhosin.bak
 RUN mv -f /etc/php5/conf.d/apc.ini /tmp/apc.bak
-RUN dpkg --remove php-apc php5-suhosin
+RUN dpkg --remove php-apc
 
 # Downgrade to php5.3
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes --reinstall libapache2-mod-php5 php5-curl php5-gd php5-mysql php5-sqlite php5-pgsql php-pear php-codesniffer php5 php5-suhosin php-apc
+RUN apt-get update
+RUN apt-get install -y --force-yes --reinstall libapache2-mod-php5 php5-curl php5-gd php5-mysql php5-sqlite php5-pgsql php-pear php-codesniffer php5 php5-suhosin php-apc
+
+RUN apt-get clean
+RUN apt-get -y autoremove
 
 RUN mv -f /tmp/suhosin.bak /etc/php5/conf.d/suhosin.ini
 RUN mv -f /tmp/apc.bak /etc/php5/conf.d/apc.ini
