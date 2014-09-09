@@ -1,17 +1,29 @@
 FROM debian:wheezy
 MAINTAINER Ricardo Amaro mail_at_ricardoamaro.com
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # Keep upstart from complaining
 RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -sf /bin/true /sbin/initctl
 
 # Packages.
 RUN sed -i 's|http://http.debian.net/debian|ftp://ftp.debian.org/debian|g' /etc/apt/sources.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential software-properties-common python-software-properties sqlite3 mysql-client postgresql-client apache2 curl git libapache2-mod-php5 openssh-server php5-cli php5-curl php5-gd php5-mysql php5-sqlite php5-pgsql php-apc php-pear php-codesniffer pwgen unzip sudo python-setuptools nano apt-utils tidy vim drush ruby ruby-dev   make re2c bison libxml2-dev libssl-dev libbz2-dev libcurl3-dev libdb5.1-dev libjpeg-dev libpng-dev libXpm-dev libfreetype6-dev libt1-dev libgmp3-dev libc-client-dev libldap2-dev libmcrypt-dev libmhash-dev freetds-dev libz-dev libmysqlclient15-dev ncurses-dev libpcre3-dev unixODBC-dev libsqlite-dev libaspell-dev libreadline6-dev librecode-dev libsnmp-dev libtidy-dev libxslt-dev libt1-dev ccache sudo 
+RUN apt-get update
+RUN apt-get -y install build-essential software-properties-common \
+    python-software-properties sqlite3 mysql-client postgresql-client \
+    apache2 curl git libapache2-mod-php5 openssh-server php5-cli php5-curl \
+    php5-gd php5-mysql php5-sqlite php5-pgsql php-apc php-pear php-codesniffer \
+    pwgen unzip sudo python-setuptools nano apt-utils tidy vim drush \
+    ruby ruby-dev make re2c bison libxml2-dev libssl-dev libbz2-dev \
+    libcurl3-dev libdb5.1-dev libjpeg-dev libpng-dev libXpm-dev \
+    libfreetype6-dev libt1-dev libgmp3-dev libc-client-dev libldap2-dev \
+    libmcrypt-dev libmhash-dev freetds-dev libz-dev libmysqlclient15-dev \
+    ncurses-dev libpcre3-dev unixODBC-dev libsqlite-dev libaspell-dev \
+    libreadline6-dev librecode-dev libsnmp-dev libtidy-dev libxslt-dev libt1-dev ccache sudo 
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
-RUN DEBIAN_FRONTEND=noninteractive apt-get autoremove
+RUN apt-get autoclean
+RUN apt-get autoremove
 
 # Serverspec.
 RUN gem install bundler -v 1.6.3 2>/dev/null 
