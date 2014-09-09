@@ -43,4 +43,4 @@ USER postgres
 
 ADD ./conf/startup.sh /opt/startup.sh
 
-CMD ["bin/bash", "/opt/startup.sh"]
+CMD ["/bin/bash", "/opt/startup.sh"]

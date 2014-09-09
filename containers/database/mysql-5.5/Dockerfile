@@ -18,4 +18,4 @@ EXPOSE 3306
 
 ADD ./conf/startup.sh /opt/startup.sh
 
-CMD ["bin/bash", "/opt/startup.sh"]
+CMD ["/bin/bash", "/opt/startup.sh"]
