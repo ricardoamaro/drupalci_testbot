@@ -73,9 +73,9 @@ sudo ./build.sh
 ```
 ### 6- RUN EXAMPLES:
 
-**Results will be available at:**
-**{USERHOME}/testbotdata/BUILD_{DATE}/results**
-**and at the live running terminal**
+**Results will be available at:**  
+**{USERHOME}/testbotdata/BUILD_{DATE}/results**  
+**and at the live running terminal**  
 
 Run 'search_api' module tests, with one patch against D8 and git sandbox:
 ```
@@ -128,7 +128,8 @@ DCI_PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.pa
 And that's it.
 
 ### ./run.sh Options 
-Bellow is a list of Environment Variables and their defaults that can be passed to the ./run.sh runner that will take care of all the legwork:
+Bellow is the list of Environment Variables and defaults that can be passed to the ./run.sh runner.
+These options can also be added to a **$HOME/.drupalci/config** file.
 
 ```
 # Any valid Drupal branch or tag, like 8.0.x, 7.x or 7.30:
