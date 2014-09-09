@@ -2,10 +2,15 @@ FROM debian:wheezy
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# Packages.
+RUN sed -i 's|http://http.debian.net/debian|ftp://ftp.debian.org/debian|g' /etc/apt/sources.list
 RUN apt-get -qq update
 RUN apt-get -qq -y install locales debconf wget
 RUN apt-get -y install python-software-properties && \
     add-apt-repository 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main'
+    
+RUN apt-get autoclean
+RUN apt-get autoremove
 
 # Set a default language, so that PostgreSQL can use UTF-8 encoding (required)
 RUN localedef -i en_US -c -f UTF-8 en_US.UTF-8
