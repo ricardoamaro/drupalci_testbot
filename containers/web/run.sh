@@ -68,11 +68,41 @@ sudo DCI_TESTGROUPS=\"--all\" DCI_CONCURRENCY=\"4\" DCI_DRUPALBRANCH=\"8.0.x\" D
   exit 0
 fi
 
-# Drupalci console uses $HOME/.drupalci/config to source environment variables: 
-if [ -f $HOME/.drupalci/config ]
+parse_yaml() {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
+
+# Make sure the config.yml and config do not conflict
+if [ -f $HOME/.drupalci/config ] && [ -f $HOME/.drupalci/config.yml ];
+  then 
+  echo "Runner can only use one config per run:"
+  echo "$HOME/.drupalci/config &"
+  echo "$HOME/.drupalci/config.yml are in conflict"
+  echo "Please remove one or both and try again!"
+  exit 1
+fi
+
+# Source $HOME/.drupalci/config environment variables:
+if [ -f $HOME/.drupalci/config ];
   then
     echo "Sourcing your default variables from $HOME/.drupalci/config ";
     source $HOME/.drupalci/config;
+  elif [ -f $HOME/.drupalci/config.yml ];
+  then
+    echo "Sourcing your default variables from $HOME/.drupalci/config.yml ";
+    eval $(parse_yaml $HOME/.drupalci/config.yml);
 fi
 
 # A list of variables that we only set if empty. Export them before running the script.
