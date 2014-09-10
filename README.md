@@ -209,6 +209,51 @@ DCI_TESTGROUPS="Bootstrap" #TESTS TO RUN eg.--all
 DCI_RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} --xml '/var/workspace/results' ${DCI_TESTGROUPS} "
 ```
 
+## Using a config.yml or config file
+
+The runner can use one config per run instead of env variables.
+- A config or a config.yml file can be placed into
+  $HOME/.drupalci/config or
+  $HOME/.drupalci/config.yml 
+  
+  While the config file just has the bash variables per line
+  the config.yml follows the yaml format, like this example:
+
+```  
+DCI_DBTYPE 	: mysql
+DCI_DBVER	: 5.5
+DCI_PHPVERSION	: 5.6
+DCI_TESTGROUPS	: Bootstrap,Action
+DCI_DRUPALBRANCH : 8.0.x
+DCI_RUNSCRIPT : php ./core/scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency 4  --xml '/var/workspace/results'
+DCI_PATCH : https://www.drupal.org/files/issues/remove-language_list-2328293-9.patch,.
+DCI_CMD		: /bin/bash /start.sh
+```  
+  Only one file type can be use per run.
+  
+
+if [ -f $HOME/.drupalci/config ] && [ -f $HOME/.drupalci/config.yml ];
+  then 
+  echo "Runner can only use one config per run:"
+  echo "$HOME/.drupalci/config &"
+  echo "$HOME/.drupalci/config.yml are in conflict"
+  echo "Please remove one or both and try again!"
+  exit 1
+fi
+
+# Source $HOME/.drupalci/config environment variables:
+if [ -f $HOME/.drupalci/config ];
+  then
+    echo "Sourcing your default variables from $HOME/.drupalci/config ";
+    source $HOME/.drupalci/config;
+  elif [ -f $HOME/.drupalci/config.yml ];
+  then
+    echo "Sourcing your default variables from $HOME/.drupalci/config.yml ";
+    eval $(parse_yaml $HOME/.drupalci/config.yml);
+fi
+
+
+
 ### What tests can I run?
 ```
 sudo \
