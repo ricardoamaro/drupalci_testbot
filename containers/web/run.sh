@@ -54,7 +54,7 @@ DCI_DBPASS:        Default is 'drupaltestbotpw'
 DCI_DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
 DCI_PHPVERSION:    Default is '5.4'
 DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
-DCI_RUNSCRIPT:     Default is 'php  RUNNER  --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
+DCI_RUNSCRIPT:     Default is 'php RUNNER --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
 echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
 echo -e "
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
@@ -208,6 +208,9 @@ case $DCI_PHPVERSION in
   5.5)
     DCI_PHPVERSION="5.5"
     ;;
+  5.6)
+    DCI_PHPVERSION="5.6"
+    ;;
   *)
     DCI_PHPVERSION="5.4"
     ;;
@@ -218,7 +221,7 @@ if $(docker images | grep -q web-${DCI_PHPVERSION});
   then
   echo "--------------------------------------------------------------------------------"
   echo "Containers: web-${DCI_PHPVERSION} and ${DCI_DBCONTAINER} available"
-  echo "Running PHP${DCI_PHPVERSION}/${DCI_DBTYPE} on drupalci/web-${DCI_PHPVERSION}"
+  echo "Running PHP${DCI_PHPVERSION}/${DCI_DBTYPE} on drupalci/web-${DCI_PHPVERSION} at $(date -u)"
   echo "--------------------------------------------------------------------------------"
   else
   echo "--------------------------------------------------------------------------------"
@@ -422,9 +425,8 @@ echo "------------------------- STARTING DOCKER CONTAINER ----------------------
 DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}"
 /usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t ${DCI_ENTRYPOINT} drupalci/web-${DCI_PHPVERSION} ${DCI_CMD} 
 
-echo "exited $?"
-
-echo "Saving image ${DCI_IDENTIFIER}"
+echo 
+echo "Saving image ${DCI_IDENTIFIER} at $(date -u):"
 docker commit ${DCI_IDENTIFIER} drupal/${DCI_IDENTIFIER}
 # echo "If you need to debug this container run:"
 # echo "docker run -d=false -i=true drupal/${DCI_IDENTIFIER} /bin/bash"
