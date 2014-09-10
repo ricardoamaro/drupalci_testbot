@@ -190,12 +190,12 @@ if [[ $DCI_DBTYPE != "sqlite" ]]
     set -e
     if [[ $RUNNING = "" ]]
       then
-        echo "--------------------------------------------------------------------------------"
+        echo "------------------------------------------------------------------------------"
         echo -e "ERROR: There is no ${DCI_DBCONTAINER} container running..."
         echo -e "Please make sure you built the image and started it:"
         echo -e "sudo ./scripts/build_all.sh refresh \n"
         echo -e "Also please make sure port ${DBPORT} is not being used \nand ${DCI_DBTYPE} is stopped on the host."
-        echo "--------------------------------------------------------------------------------"
+        echo "------------------------------------------------------------------------------"
         exit 1
     fi
 fi
@@ -219,16 +219,16 @@ esac
 #Check if the web container is built
 if $(docker images | grep -q web-${DCI_PHPVERSION});
   then
-  echo "--------------------------------------------------------------------------------"
+  echo "------------------------------------------------------------------------------"
   echo "Containers: web-${DCI_PHPVERSION} and ${DCI_DBCONTAINER} available"
   echo "Running PHP${DCI_PHPVERSION}/${DCI_DBTYPE} on drupalci/web-${DCI_PHPVERSION} at $(date -u)"
-  echo "--------------------------------------------------------------------------------"
+  echo "------------------------------------------------------------------------------"
   else
-  echo "--------------------------------------------------------------------------------"
+  echo "------------------------------------------------------------------------------"
   echo "ERROR. Image drupalci/web-${DCI_PHPVERSION} needs to be built with:"
   echo "cd containers/web/web-${DCI_PHPVERSION}"
   echo "sudo ./build.sh"
-  echo "--------------------------------------------------------------------------------"
+  echo "------------------------------------------------------------------------------"
   exit 1
 fi
 
@@ -386,7 +386,7 @@ if [[ $DCI_PATCH = "" ]]
 fi
 
 
-echo "------------------------- ENVIRONMENT VARIABLES IN USE -------------------------"
+echo "------------------------ ENVIRONMENT VARIABLES IN USE ------------------------"
 #Write all ENV VARIABLES to ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 echo "DCI_IDENTIFIER=\"${DCI_IDENTIFIER}\"
 DCI_DRUPALBRANCH=\"${DCI_DRUPALBRANCH}\"
@@ -420,8 +420,8 @@ VERBO=\"${VERBO}\"
 " | tee ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/test.info
 
 #Let the tests start
-echo "------------------------- STARTING DOCKER CONTAINER ----------------------------"
-[ ! -z "$DCI_CMD" ] && echo "--------- Interactive mode activated! Use: /start.sh to run tests --------------"
+echo "------------------------ STARTING DOCKER CONTAINER ---------------------------"
+[ ! -z "$DCI_CMD" ] && echo "-------- Interactive mode activated! Use: /start.sh to run tests -------------"
 DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}"
 /usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t ${DCI_ENTRYPOINT} drupalci/web-${DCI_PHPVERSION} ${DCI_CMD} 
 
@@ -431,11 +431,9 @@ docker commit ${DCI_IDENTIFIER} drupal/${DCI_IDENTIFIER}
 # echo "If you need to debug this container run:"
 # echo "docker run -d=false -i=true drupal/${DCI_IDENTIFIER} /bin/bash"
 
-echo "--------------------------------------------------------------------------------"
+echo "------------------------------------------------------------------------------"
 echo "Results directory: ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/results/"
-echo "Make sure to clean up old Builds on ${DCI_BUILDSDIR} to save disk space"
-echo "--------------------------------------------------------------------------------"
+echo "Clean up old Builds on ${DCI_BUILDSDIR} to save disk space"
+echo "------------------------------------------------------------------------------"
 echo "Docker run command:"
 echo "${DCI_RUNCMD}"
-
-exit 0
