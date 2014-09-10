@@ -9,7 +9,7 @@
 * Running Tests
   * [run.sh Examples](#6--run-examples)
   * [run.sh Options](#runsh-options)
-  * [config.yml and config files](#TODO)
+  * [config.yml and config files](#using-a-configyml-or-config-file)
   * [run.sh Test list](#what-tests-can-i-run)
 * [Cleanup](#7---clean-up)
 
