@@ -174,15 +174,15 @@ fi
 for DB_BUILD in "${dbtypes[@]}";
   do
   echo
-  echo "Build and restart db-${DB_BUILD} container"
+  echo "Restart db-${DB_BUILD} container"
   echo "----------------------------------------------------------------------"
   echo
   cd "./containers/database/${DB_BUILD}"
-  ./stop-server.sh
+  ./stop-server.sh 2>/dev/null
   # This cleanup is specific for a single database type and is required
   # in case of a container refresh/update build.
   DCI_SQLCONT=(/tmp/tmp.*"${DB_BUILD}")
-  if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
+  if ( ls -d "$DCI_SQLCONT" > /dev/null 2>&1 ); then
     for DIR in "${DCI_SQLCONT[@]}"; do
       umount "${DIR}" || /bin/true
       rm -fr "${DIR}" || /bin/true

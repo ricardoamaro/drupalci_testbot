@@ -224,7 +224,7 @@ for DB_BUILD in "${dbtypes[@]}";
   # This cleanup is specific for a single database type and is required
   # in case of a container refresh/update build.
   DCI_SQLCONT=(/tmp/tmp.*"${DB_BUILD}")
-  if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
+  if ( ls -d "$DCI_SQLCONT" > /dev/null 2>&1 ); then
     for DIR in "${DCI_SQLCONT[@]}"; do
       umount "${DIR}" || /bin/true
       rm -fr "${DIR}" || /bin/true
