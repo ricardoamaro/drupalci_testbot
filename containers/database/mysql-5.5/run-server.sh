@@ -41,4 +41,3 @@ CONTAINER_ID=$(docker ps | grep ${TAG} | awk '{print $1}')
 echo "CONTAINER STARTED: $CONTAINER_ID"
 
 docker ps | grep "drupalci/db-mysql-5.5"
-

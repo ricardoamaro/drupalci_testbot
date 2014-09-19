@@ -24,6 +24,7 @@ RUN apt-get update
 RUN apt-get install -y --force-yes --reinstall libapache2-mod-php5 php5-curl php5-gd php5-mysql php5-sqlite php5-pgsql php-pear php-codesniffer php5 php5-suhosin php-apc
 
 RUN apt-get clean
+RUN apt-get autoclean
 RUN apt-get -y autoremove
 
 RUN mv -f /tmp/suhosin.bak /etc/php5/conf.d/suhosin.ini

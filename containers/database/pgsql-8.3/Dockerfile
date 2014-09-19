@@ -29,6 +29,7 @@ RUN apt-get -y update && \
     apt-get -y install postgresql-8.3
 
 RUN apt-get clean
+RUN apt-get autoclean
 RUN apt-get -y autoremove
 
 # Adjust PostgreSQL configuration so that remote connections to the database are possible.

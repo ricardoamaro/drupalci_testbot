@@ -8,6 +8,7 @@ RUN apt-get -y update
 RUN apt-get -y install mysql-server netcat
 
 RUN apt-get clean
+RUN apt-get autoclean
 RUN apt-get -y autoremove
 
 RUN sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
