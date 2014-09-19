@@ -199,7 +199,7 @@ docker ps
 
 echo -e "Container(s) started: ${dbtypes[@]} \n"
 echo -e "Example of a run:"
-echo -e "sudo DCI_DBTYPE='${DCI_DBTYPE}' DCI_DBVER='${DCI_DBVER}' DCI_PHPVERSION='${DCI_PHPVERSION}' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='${DCI_DRUPALBRANCH}' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
+echo -e "sudo DCI_PATCH='/path/to/your.patch,.' DCI_CONCURRENCY="8"  DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='${DCI_DRUPALBRANCH}' DCI_UPDATEREPO="true"  DCI_DBTYPE='${DCI_DBTYPE}' DCI_DBVER='${DCI_DBVER}' DCI_PHPVERSION='${DCI_PHPVERSION}' ./containers/web/run.sh"
 echo
 
 
