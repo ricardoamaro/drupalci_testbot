@@ -7,7 +7,7 @@ export PATH=$HOME/bin:$PATH
 # Only need the newest drush version for Drupal 8 and above
 if (( $DCI_DRUPALVERSION >= 8 ));
   then 
-      export DRUSH="/opt/.composer/vendor/drush/drush/drush"
+      export DRUSH="/.composer/vendor/drush/drush/drush"
     else 
       export DRUSH="$(which drush)"
 fi

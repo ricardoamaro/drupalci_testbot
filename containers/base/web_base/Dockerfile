@@ -35,16 +35,17 @@ RUN gem install bundler -v 1.6.3 2>/dev/null
 RUN gem install serverspec rake 2>/dev/null
 
 # PHPENV.
+ENV PHPENV_ROOT /.phpenv/
 RUN git clone https://github.com/CHH/phpenv.git /tmp/phpenv
 RUN /bin/bash /tmp/phpenv/bin/phpenv-install.sh
-RUN scp /tmp/phpenv/extensions/* /opt/.phpenv/libexec/
+RUN scp /tmp/phpenv/extensions/* /.phpenv/libexec/
 
-RUN echo 'export PATH="/opt/.phpenv/bin:$PATH"' >> $HOME/.bashrc
+RUN echo 'export PATH="/.phpenv/bin:$PATH"' >> $HOME/.bashrc
 RUN echo 'eval "$(phpenv init -)"' >> $HOME/.bashrc
-ENV PATH /opt/.phpenv/shims:/opt/.phpenv/bin:$PATH
+ENV PATH /.phpenv/shims:/.phpenv/bin:$PATH
 
-RUN git clone https://github.com/CHH/php-build.git /opt/.phpenv/plugins/php-build
-RUN sudo /opt/.phpenv/plugins/php-build/install.sh
+RUN git clone https://github.com/CHH/php-build.git /.phpenv/plugins/php-build
+RUN sudo /.phpenv/plugins/php-build/install.sh
 
 # whitelist = phar
 RUN mkdir -p /etc/php5/conf.d/
@@ -55,8 +56,8 @@ RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/
 RUN sudo ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
 
 # Drush and dependencies.
-RUN /usr/local/bin/composer global require drush/drush:dev-master
-RUN /opt/.composer/vendor/drush/drush/drush --version
+RUN HOME=/ /usr/local/bin/composer global require drush/drush:dev-master
+RUN /.composer/vendor/drush/drush/drush --version
 
 # Enable a2enmod rewrite.
 RUN a2enmod rewrite php5
