@@ -25,6 +25,7 @@ use DrupalCI\Console\Command\Config\ConfigSaveCommand;
 use DrupalCI\Console\Command\Config\ConfigSetCommand;
 use DrupalCI\Console\Command\Config\ConfigShowCommand;
 use DrupalCI\Console\Command\Status\StatusCommand;
+use PrivateTravis\PrivateTravisCommand;
 
 class DrupalCIConsoleApp extends Application {
 
@@ -54,6 +55,7 @@ class DrupalCIConsoleApp extends Application {
       new InitWebContainersCommand(),
       new RunCommand(),
       new StatusCommand(),
+      new PrivateTravisCommand('travis'),
     ];
     $this->addCommands($commands);
   }
