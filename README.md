@@ -11,6 +11,7 @@
   * [run.sh Options](#runsh-options)
   * [config.yml and config files](#using-a-configyml-or-config-file)
   * [run.sh Test list](#what-tests-can-i-run)
+  * [Travis](#travis)
 * [Cleanup](#7---clean-up)
 
 This repo contains a recipe for making a [Docker](http://docker.io) containers for Drupal patch testing, using Linux, Apache, PHP and MariaDB/PostgreSQL/MySQL/Sqlite.
@@ -267,6 +268,24 @@ If you need to remove the old web image just run this sequence:
 sudo docker images | grep "drupalci/web" | awk '{print $3}' | xargs -n1 -I {} sudo docker rm {}
 ```
 
+### Travis
+
+Travis support is provided via an upstream project call PrivateTravis.
+
+To perform a Travis build in it's simplest form run the following command:
+
+```
+$ drupalci travis > run && sh run
+```
+
+The above performs 2 tasks:
+* Converts a .travis.yml file to a set of Docker commands.
+* Pipes and runs the commands in a single script (to avoid PHP running Docker running PHP).
+
+For more information on this command see the PrivateTravis documentation:
+
+https://github.com/nickschuch/PrivateTravis
+
 ### 7 - Clean Up
 
 a) Results will be saved at:
@@ -313,7 +332,6 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 │   └── src
 └── vendor
 ```
-
 
 ## Contributing
 Feel free to fork and contribute to this code. :)
