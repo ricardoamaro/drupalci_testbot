@@ -9,3 +9,4 @@ PROVISIONED
 .settings
 ./vendor
 composer.lock
+drupalci.phar
