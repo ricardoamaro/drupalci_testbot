@@ -40,7 +40,7 @@ sudo ./scripts/build_all.sh cleanup
 
 ## Quick Vagrant MAC/Windows instructions:
 Docker will not run natively on MAC/Windows,
-Install Virtualbox, Vagrant and run: 
+Install Virtualbox, Vagrant and run:
 ```
 git clone {thisrepo}
 cd drupalci_testbot
@@ -140,13 +140,13 @@ DCI_PATCH="https://drupal.org/files/issues/flag_fix_global_flag_uid_2087797_3.pa
 
 And that's it.
 
-### ./run.sh Options 
+### ./run.sh Options
 Bellow is the list of Environment Variables and defaults that can be passed to the ./run.sh runner.
 These options can also be added to a **$HOME/.drupalci/config** file.
 
 ```
 # Any valid Drupal branch or tag, like 8.0.x, 7.x or 7.30:
-DCI_DrupalBRANCH="8.0.x" 
+DCI_DrupalBRANCH="8.0.x"
 
 # The identifier used by jenkins to name the Drupal docroot where all is stored:
 DCI_IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
@@ -176,11 +176,11 @@ DCI_DEPENDENCIES_TGZ="" # module1_url.tgz,module1_url.tgz,...
 DCI_PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
 
 # PHP version to run tests on 5.3/5.4/5.5:
-DCI_PHPVERSION="5.4"	
+DCI_PHPVERSION="5.4"
 
 # Database type and version selection, from mysql/mariadb/pgsql/sqlite:
-DCI_DBTYPE="mysql"		
-DCI_DBVER="5.5"         
+DCI_DBTYPE="mysql"
+DCI_DBVER="5.5"
 
 # Username & Password
 DCI_DBUSER="Drupaltestbot"
@@ -191,17 +191,17 @@ DCI_DBCONTAINER="drupaltestbot-db-mysql-5.5"
 DCI_DBLINK="--link=drupaltestbot-db-mysql-5.5:db"
 
 # Try to use core "none" install tests or "drush"
-DCI_INSTALLER="none"    
+DCI_INSTALLER="none"
 
 # Executes other funcionality in the container prepending CMD.
 DCI_ENTRYPOINT=""  
 
 # Debug container shell with DCI_CMD="/bin/bash"
-DCI_CMD=""              
+DCI_CMD=""
 DCI_VERBOSE="false"     # true will give verbose
 
 # How many cpus to use per run:
-DCI_CONCURRENCY="4"     
+DCI_CONCURRENCY="4"
 
 # Testgroups to run, eg. "--all":
 DCI_TESTGROUPS="Bootstrap" #TESTS TO RUN eg.--all
@@ -215,8 +215,8 @@ DCI_RUNSCRIPT="php ./scripts/run-tests.sh --php /usr/bin/php --url 'http://local
 The runner can use one config per run instead of env variables.
 - A config or a config.yml file can be placed into
   $HOME/.drupalci/config or
-  $HOME/.drupalci/config.yml 
-  
+  $HOME/.drupalci/config.yml
+
   While the config file just has the bash variables per line
   the config.yml follows the yaml format, like this example:
 
@@ -231,10 +231,10 @@ DCI_PATCH : https://www.drupal.org/files/issues/remove-language_list-2328293-9.p
 DCI_CMD		: /bin/bash /start.sh
 ```  
   Only one file type can be use per run.
-  
+
 
 if [ -f $HOME/.drupalci/config ] && [ -f $HOME/.drupalci/config.yml ];
-  then 
+  then
   echo "Runner can only use one config per run:"
   echo "$HOME/.drupalci/config &"
   echo "$HOME/.drupalci/config.yml are in conflict"
@@ -333,6 +333,15 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 └── vendor
 ```
 
+## PHAR
+
+We have the ability to generate a binary for distrubtion. To build the .phar file
+run the following command:
+
+```
+bin/box build
+```
+
 ## Contributing
 Feel free to fork and contribute to this code. :)
 
@@ -341,4 +350,3 @@ Feel free to fork and contribute to this code. :)
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
-
