@@ -28,8 +28,7 @@ class ContainerHelper extends DrupalCIHelperBase {
    * {@inheritdoc}
    */
   public function getAllContainers() {
-    // $option = getContainers(base);  // TODO: Enable once testbot_base exists
-    $options = $this->getContainers('database') + $this->getContainers('web');
+    $options = $this->getContainers('database') + $this->getContainers('web') + $this->getContainers('base');
     return $options;
   }
 
