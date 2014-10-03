@@ -1,10 +1,6 @@
-FROM debian:wheezy
-
-ENV DEBIAN_FRONTEND noninteractive
+FROM drupalci/db-base
 
 # Packages.
-RUN sed -i 's|http://http.debian.net/debian|ftp://ftp.debian.org/debian|g' /etc/apt/sources.list
-RUN apt-get -y update
 RUN apt-get -y install mysql-server netcat
 
 RUN apt-get clean

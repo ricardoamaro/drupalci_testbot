@@ -1,14 +1,11 @@
-FROM debian:wheezy
-
-ENV DEBIAN_FRONTEND noninteractive
+FROM drupalci/db-base
 
 # Packages.
-RUN sed -i 's|http://http.debian.net/debian|ftp://ftp.debian.org/debian|g' /etc/apt/sources.list
 RUN apt-get -qq update
 RUN apt-get -qq -y install locales debconf wget
 RUN apt-get -y install python-software-properties && \
     add-apt-repository 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main'
-    
+
 # Set a default language, so that PostgreSQL can use UTF-8 encoding (required)
 RUN localedef -i en_US -c -f UTF-8 en_US.UTF-8
 RUN echo 'LANG="en_US.UTF-8"' > /etc/default/locale
