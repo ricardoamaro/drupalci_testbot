@@ -62,6 +62,8 @@ if (( $DCI_DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
         ${DRUSH} si ${VERBO} -y --db-url=${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_3306_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
       pgsql)
+        export PGPASSWORD="${DCI_DBPASS}";
+        export PGUSER="${DCI_DBUSER}";
         ${DRUSH} si ${VERBO} -y --db-url=${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DB_PORT_5432_TCP_ADDR}/${DCI_IDENTIFIER} --clean-url=0 --strict=0 --account-name=admin --account-pass=drupal --account-mail=admin@example.com
       ;;
     esac
