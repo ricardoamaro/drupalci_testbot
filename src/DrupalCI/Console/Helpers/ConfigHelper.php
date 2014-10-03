@@ -124,7 +124,7 @@ class ConfigHelper extends DrupalCIHelperBase {
     $handle = fopen($filename, "w");
     if ($handle) {
       foreach ($config as $key => $value) {
-        fwrite($handle, $key . "=" . $value);
+        fwrite($handle, $key . "=" . $value . "\n");
       }
     }
     fclose($handle);
