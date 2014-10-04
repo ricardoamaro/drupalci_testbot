@@ -73,7 +73,7 @@ class InitDatabaseContainersCommand extends DrupalCICommandBase {
     }
 
     if (empty($names)) {
-      $output->writeln("<error>No valid database container names provided.  Aborting.");
+      $output->writeln("<error>No valid database container names provided. Aborting.");
       return;
     }
     else {

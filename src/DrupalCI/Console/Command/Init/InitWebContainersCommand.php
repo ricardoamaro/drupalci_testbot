@@ -73,7 +73,7 @@ class InitWebContainersCommand extends DrupalCICommandBase {
     }
 
     if (empty($names)) {
-      $output->writeln("<error>No valid web container names provided.  Aborting.");
+      $output->writeln("<error>No valid web container names provided. Aborting.");
       return;
     }
     else {
@@ -95,7 +95,7 @@ class InitWebContainersCommand extends DrupalCICommandBase {
     $helper = $this->getHelperSet()->get('question');
     $containers[] = 'all';
     $question = new ChoiceQuestion(
-      '<fg=cyan;bg=blue>Please select the numbers corresponding to which DrupalCI web environments to support.  Separate multiple entries with commas. (Default: [0])</fg=cyan;bg=blue>',
+      '<fg=cyan;bg=blue>Please select the numbers corresponding to which DrupalCI web environments to support. Separate multiple entries with commas. (Default: [0])</fg=cyan;bg=blue>',
       $containers,
       '0'
     );
