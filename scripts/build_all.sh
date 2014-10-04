@@ -265,7 +265,7 @@ for WEBDIR in ${WEBCONTAINERS};
   ./build.sh
 done
 echo "----------------------------------------------------------------------"
-echo -e "\tContainer images (re)built: \nBASE:\t${BASECONTAINERS}\n DB:\t${dbtypes[@]} \nWEB:\t${WEBCONTAINERS}\n"
+echo -e "\tContainer images (re)built: \nBASE:\t${BASECONTAINERS}\n  DB:\t${dbtypes[@]} \n WEB:\t${WEBCONTAINERS}\n"
 
 # Set to base 
 cd "${BASEDIR}"
