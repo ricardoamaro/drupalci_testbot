@@ -9,12 +9,5 @@ $loader = require_once __DIR__ . '/vendor/autoload.php';
 
 use DrupalCI\Console\DrupalCIConsoleApp;
 
-// Load our global functions.
-#require_once 'includes/includes.php';
-
-// Parse some global environment variables.
-#$env = get_defined_vars();
-#$env = preg_grep_keys('/DRUPALCI/', $env['_SERVER']);
-
 $app = new DrupalCIConsoleApp('DrupalCI - CommandLine', '0.1');
 $app->run();
