@@ -50,7 +50,9 @@ class ConfigLoadCommand extends DrupalCICommandBase {
       $options = array_keys($configsets);
       $question = new ChoiceQuestion($message, $options, 0);
       $selected = $qhelper->ask($input, $output, $question);
+      // TODO: Validate argument is a valid config set
     }
+
     $output->writeln("You chose configset:" . $configsets[$selected]);
 
     $qhelper = $this->getHelper('question');
