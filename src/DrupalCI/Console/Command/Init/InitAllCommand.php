@@ -58,9 +58,13 @@ class InitAllCommand extends DrupalCICommandBase {
 
     # Generate Base Containers
     $cmd = $this->getApplication()->find('init:base');
-    $cmdinput = new ArrayInput(array('command' => 'init:base') + $options);
-    $cmd->run($cmdinput, $output);
-    # TODO: Error Handling
+
+    $arguments = array(
+      'command' => 'init:base',
+      'container_name' => array('db-base', 'web-base'),
+    );
+    $cmdinput = new ArrayInput($arguments + $options);
+    $returnCode = $cmd->run($cmdinput, $output);
 
     # Generate Database Containers
     $cmd = $this->getApplication()->find('init:database');

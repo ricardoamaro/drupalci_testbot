@@ -46,4 +46,11 @@ class ContainerHelper extends DrupalCIHelperBase {
     return $this->getContainers('web');
   }
 
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBaseContainers() {
+    return $this->getContainers('base');
+  }
 }
