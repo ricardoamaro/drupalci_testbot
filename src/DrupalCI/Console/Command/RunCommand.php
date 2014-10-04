@@ -39,6 +39,28 @@ class RunCommand extends DrupalCICommandBase {
    */
   public function execute(InputInterface $input, OutputInterface $output) {
     $this->showArguments($input, $output);
-  }
 
+    // Determine what job type is being run (based on passed argument)
+
+    // Validate job type as one of our valid job types
+        // Get list of job types (directories from /jobs)
+        // Validate passed job type
+
+    // Instantiate the $jobtype class
+        // Get the $jobtype config
+            // Is this a .yml file, or defined in the class?
+        // Parse the $jobtype config
+            // Get the container list for that job type
+                // Differentiate between mandatory and optional?
+            // Load the default build steps for that job type
+                // $buildsteps = $jobtype->buildsteps();
+                    // Options:
+                    // environment (env), pre-install (pre-install), install, pre-execute (pre-script), execute (script), post-success, post-fail, post-execute
+                        //  e.g. pre-install might contain container validation, install containing container creation, execute containing the docker command.
+                        // We could have a default drupalci_job class which has metadata and other info common to all job types.
+
+    // For each build step:
+        // Run $jobtype->buildstep
+    // Next
+  }
 }
