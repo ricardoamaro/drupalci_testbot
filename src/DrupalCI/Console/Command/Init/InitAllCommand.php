@@ -24,11 +24,8 @@ class InitAllCommand extends DrupalCICommandBase {
     $this
       ->setName('init')
       ->setDescription('Setup the DrupalCI Environment with sane defaults for testing')
-      #->addOption(
-      #  'dbtype', '', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Database types to support'
-      #3)
-      #->addOption('php_version', '', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'PHP Versions to support', array('5.4'))
-      #->addOption('force', 'f', InputOption::VALUE_NONE, 'Override a previous setup')
+      ->addOption('dbtype', '', InputOption::VALUE_OPTIONAL, 'Database types to support')
+      ->addOption('phptype', '', InputOption::VALUE_OPTIONAL, 'PHP Versions to support')
     ;
   }
 
@@ -48,7 +45,6 @@ class InitAllCommand extends DrupalCICommandBase {
     $cmd = $this->getApplication()->find('init:dependencies');
     $arguments = array(
       'command' => 'init:dependencies',
-      '--dbtype' => ($dbtype = $input->getOption('dbtype')) ? $dbtype : NULL,
     );
     $cmdinput = new ArrayInput($arguments + $options);
     $returnCode = $cmd->run($cmdinput, $output);
@@ -68,18 +64,34 @@ class InitAllCommand extends DrupalCICommandBase {
 
     # Generate Database Containers
     $cmd = $this->getApplication()->find('init:database');
+
     $arguments = array(
-      'command' => 'init:database',
-      '--dbtype' => ($dbtype = $input->getOption('dbtype')) ? $dbtype : NULL,
-    );
+      'command' => 'init:datase',
+      );
+
+    $dbtype = $input->getOption('dbtype');
+    if(isset($dbtype)) {
+      $arguments['container_name'] = array($dbtype);
+    }
+
     $cmdinput = new ArrayInput($arguments + $options);
     $returnCode = $cmd->run($cmdinput, $output);
     # TODO: Error Handling
 
     # Generate Web Containers
     $cmd = $this->getApplication()->find('init:web');
-    $cmdinput = new ArrayInput(array('command' => 'init:web') + $options);
-    $cmd->run($cmdinput, $output);
+
+    $arguments = array(
+      'command' => 'init:web',
+    );
+
+    $phptype = $input->getOption('phptype');
+    if(isset($phptype)) {
+      $arguments['container_name'] = array($phptype);
+    }
+
+    $cmdinput = new ArrayInput($arguments + $options);
+    $returnCode = $cmd->run($cmdinput, $output);
     # TODO: Error Handling
 
   }
