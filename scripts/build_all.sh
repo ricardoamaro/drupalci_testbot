@@ -54,6 +54,9 @@ if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1
   exit 0
 fi
 
+# Build all the base containers
+BASECONTAINERS=$(ls -d ./containers/base/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');
+
 # Build all webcontainers present on web directory or only the default
 case "$2" in 
   all)
@@ -212,6 +215,21 @@ if [ "$1" = "cleanup" ];
 fi
 set -e
 
+echo
+echo "Make sure we build the base containers"
+
+IFS="${BASEIFS}"
+for BASEDIRS in ${BASECONTAINERS};
+  do
+  echo
+  echo "Building BASE ${BASEDIRS} container"
+  echo "----------------------------------------------------------------------"
+  cd "${BASEDIR}"
+  cd "./containers/base/${BASEDIRS}"
+  ./build.sh
+done
+
+
 # Build and start DB containers
 for DB_BUILD in "${dbtypes[@]}";
   do
@@ -219,6 +237,7 @@ for DB_BUILD in "${dbtypes[@]}";
   echo "Build and restart db-${DB_BUILD} container"
   echo "----------------------------------------------------------------------"
   echo
+  cd "${BASEDIR}"
   cd "./containers/database/${DB_BUILD}"
   ./stop-server.sh
   # This cleanup is specific for a single database type and is required
@@ -235,14 +254,6 @@ for DB_BUILD in "${dbtypes[@]}";
   cd "${BASEDIR}"
 done
 
-echo
-echo "Make sure we build the web-base container"
-echo "----------------------------------------------------------------------"
-echo
-cd "${BASEDIR}"
-cd ./containers/base/web-base/
-./build.sh
-
 IFS="${BASEIFS}"
 for WEBDIR in ${WEBCONTAINERS};
   do
@@ -254,20 +265,19 @@ for WEBDIR in ${WEBCONTAINERS};
   ./build.sh
 done
 echo "----------------------------------------------------------------------"
-echo -e "\tContainer images (re)built: \nDB:\t${dbtypes[@]} \nWEB:\t${WEBCONTAINERS}\n"
-echo
+echo -e "\tContainer images (re)built: \nBASE:\t${BASECONTAINERS}\n DB:\t${dbtypes[@]} \nWEB:\t${WEBCONTAINERS}\n"
 
 # Set to base 
 cd "${BASEDIR}"
 # Do a test run to collect test list and update repos
-if [ "$1" != "refresh" ];
-  then
-  sleep 3
-  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_UPDATEREPO="true" DCI_DRUPALBRANCH=${DCI_DRUPALBRANCH} DCI_PHPVERSION=${DCI_PHPVERSION} DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
-else
-  sleep 3
-  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_DRUPALBRANCH=${DCI_DRUPALBRANCH} DCI_PHPVERSION=${DCI_PHPVERSION} DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
-fi
+#if [ "$1" != "refresh" ];
+#  then
+#  sleep 3
+#  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_UPDATEREPO="true" DCI_DRUPALBRANCH=${DCI_DRUPALBRANCH} DCI_PHPVERSION=${DCI_PHPVERSION} DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+#else
+#  sleep 3
+#  DCI_DBTYPE=${DCI_DBTYPE} DCI_DBVER=${DCI_DBVER} DCI_DRUPALBRANCH=${DCI_DRUPALBRANCH} DCI_PHPVERSION=${DCI_PHPVERSION} DCI_RUNSCRIPT="/usr/bin/php ./core/scripts/run-tests.sh --list" ./containers/web/run.sh
+#fi
 
 echo -e "Container Images: ${dbtypes[@]} and ${WEBCONTAINERS} (re)built.\n"
 echo -e "Try example: sudo DCI_DBTYPE='${DCI_DBTYPE}' DCI_DBVER='${DCI_DBVER}' DCI_PHPVERSION='${DCI_PHPVERSION}' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='${DCI_DRUPALBRANCH}' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
