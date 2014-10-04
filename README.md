@@ -79,7 +79,7 @@ sudo ./run-server.sh
 
 ### 5- Build the WEB images
 ```
-cd containers/base/web_base
+cd containers/base/web-base
 sudo ./build.sh
 cd containers/web/web-[PHP_VERSION]
 sudo ./build.sh
@@ -303,7 +303,7 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 ├── containers
 │   ├── base
 │   │   ├── testbot_base
-│   │   └── web_base
+│   │   └── web-base
 │   │       └── conf
 │   │           ├── apache2
 │   │           ├── php5

@@ -236,11 +236,11 @@ for DB_BUILD in "${dbtypes[@]}";
 done
 
 echo
-echo "Make sure we build the web_base container"
+echo "Make sure we build the web-base container"
 echo "----------------------------------------------------------------------"
 echo
 cd "${BASEDIR}"
-cd ./containers/base/web_base/
+cd ./containers/base/web-base/
 ./build.sh
 
 IFS="${BASEIFS}"
