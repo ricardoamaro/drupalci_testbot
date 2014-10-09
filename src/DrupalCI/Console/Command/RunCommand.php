@@ -7,11 +7,10 @@
 
 namespace DrupalCI\Console\Command;
 
-use DrupalCI\Console\Command\DrupalCICommandBase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Yaml\Yaml;
 
 class RunCommand extends DrupalCICommandBase {
 
@@ -30,28 +29,35 @@ class RunCommand extends DrupalCICommandBase {
     $this
       ->setName('run')
       ->setDescription('Execute a given job run.')
-      ->addArgument('job', InputArgument::REQUIRED, 'Job definition.')
-      ->addOption('something', '', InputOption::VALUE_NONE, 'See TODOs.');
+      ->addArgument('job', InputArgument::REQUIRED, 'Job definition.');
   }
 
   /**
    * {@inheritdoc}
    */
   public function execute(InputInterface $input, OutputInterface $output) {
-    $this->showArguments($input, $output);
+    // Determine what job type is being run.
+    $job_type = $input->getArgument('job');
 
-    // Determine what job type is being run (based on passed argument)
+    // Get the list of job types.
+    $jobs = $this->discoverJobs();
+    // Validate the passed job type.
+    if (!isset($jobs[$job_type])) {
+      $output->writeln("The job type '$job_type' does not exist.");
+      return;
+    }
 
-    // Validate job type as one of our valid job types
-        // Get list of job types (directories from /jobs)
-        // Validate passed job type
+    $job = $jobs[$job_type];
 
-    // Instantiate the $jobtype class
-        // Get the $jobtype config
-            // Is this a .yml file, or defined in the class?
-        // Parse the $jobtype config
-            // Get the container list for that job type
-                // Differentiate between mandatory and optional?
+
+
+
+
+
+    // @todo The rest is still todo.
+          // Get the container list for that job type
+          // Differentiate between mandatory and optional?
+
             // Load the default build steps for that job type
                 // $buildsteps = $jobtype->buildsteps();
                     // Options:
@@ -63,4 +69,40 @@ class RunCommand extends DrupalCICommandBase {
         // Run $jobtype->buildstep
     // Next
   }
+
+  /**
+   * Discovers the list of available jobs.
+   *
+   * @return \Symfony\Component\Console\Command\Command[]
+   *   An array of job commands.
+   */
+  protected function discoverJobs() {
+    $path = __DIR__ . '/../Jobs';
+    // RecursiveDirectoryIterator recurses into directories and returns an
+    // iterator for each directory. RecursiveIteratorIterator then iterates over
+    // each of the directory iterators, which consecutively return the files in
+    // each directory.
+    $directory = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS));
+
+    $jobs = [];
+    foreach ($directory as $file) {
+      if (!$file->isDir() && $file->isReadable() && $file->getExtension() === 'yml') {
+        $job_type = $file->getBasename('.yml');
+        // Get the job type definition.
+        $job_type_definition = Yaml::parse(file_get_contents($file->getPathname()));
+
+        if (!isset($job_type_definition['class'])) {
+          // This does not mean the caller did something wrong, but there is a
+          // misconfiguration so throwing an exception seems fine?!
+          throw new \Exception("The $job_type definition must specify a class in {$file->getPathname()}");
+        }
+
+        // Instantiate the job type class.
+        // Pass the job definition to the job constructor.
+        $jobs[$job_type] = new $job_type_definition['class']($job_type_definition);
+      }
+    }
+    return $jobs;
+  }
+
 }

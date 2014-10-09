@@ -8,6 +8,6 @@ namespace DrupalCI\Console\Jobs\Utility\Drupal\RerollPatch;
 
 use DrupalCI\Console\Jobs\Utility\Drupal\DrupalUtilityJobBase;
 
-class RerollPatch extends DrupalUtilityJobBase{
+class RerollPatchJob extends DrupalUtilityJobBase {
 
 }

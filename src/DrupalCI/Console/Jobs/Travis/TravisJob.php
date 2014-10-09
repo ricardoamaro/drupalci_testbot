@@ -6,7 +6,8 @@
 
 namespace DrupalCI\Console\Jobs\Travis;
 
+use DrupalCI\Console\Jobs\JobBase;
 
-class TravisJob {
+class TravisJob extends JobBase {
 
 }

@@ -1,12 +1,14 @@
 <?php
+
 /**
  * @file
  * Job class for SimpleTest jobs on DrupalCI.
  */
 
-namespace DrupalCI\Console\Jobs\SimpletestJob;
+namespace DrupalCI\Console\Jobs\Simpletest;
 
+use DrupalCI\Console\Jobs\JobBase;
 
-class SimpletestJob {
+class SimpletestJob extends JobBase {
 
 }

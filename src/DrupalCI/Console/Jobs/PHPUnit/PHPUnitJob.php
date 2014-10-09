@@ -6,7 +6,8 @@
 
 namespace DrupalCI\Console\Jobs\PHPUnit;
 
+use DrupalCI\Console\Jobs\JobBase;
 
-class PHPUnitJob {
+class PHPUnitJob extends JobBase {
 
 }
