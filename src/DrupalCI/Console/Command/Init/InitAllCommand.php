@@ -98,5 +98,11 @@ class InitAllCommand extends DrupalCICommandBase {
     $returnCode = $cmd->run($cmdinput, $output);
     # TODO: Error Handling
 
+    # Generate Base Config
+    $cmd = $this->getApplication()->find('init:config');
+    $cmdinput = new ArrayInput(array('command' => 'init:config') + $options);
+    $returnCode = $cmd->run($cmdinput, $output);
+    # TODO: Error Handling
+
   }
 }
