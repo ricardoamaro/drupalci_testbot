@@ -53,7 +53,12 @@ class ConfigLoadCommand extends DrupalCICommandBase {
       // TODO: Validate argument is a valid config set
     }
 
-    $output->writeln("You chose configset:" . $configsets[$selected]);
+    if (empty($configsets[$selected])) {
+      $output->writeln("<error>Unable to load configset. The specified configset does not exist.");
+      return;
+    }
+
+    $output->writeln("You chose configset: " . $configsets[$selected]);
 
     $qhelper = $this->getHelper('question');
     $output->writeln("<info>This will wipe out your current DrupalCI defaults and replace them with the values from the <option=bold>$selected</option=bold> configset.</info>");
