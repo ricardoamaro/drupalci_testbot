@@ -49,10 +49,14 @@ class RunCommand extends DrupalCICommandBase {
 
     $job = $jobs[$job_type];
 
+    // Link the job to our $output variable, so that jobs can display their work.
+    $job->setOutput($output);
 
+    $build_steps = $job->build_steps();
 
-
-
+    foreach ($build_steps as $step) {
+      $result = $job->{$step}();
+    }
 
     // @todo The rest is still todo.
           // Get the container list for that job type

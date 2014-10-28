@@ -8,6 +8,7 @@
 namespace DrupalCI\Console\Helpers;
 
 use DrupalCI\Console\Helpers\DrupalCIHelperBase;
+use Symfony\Component\Process\Process;
 
 class ContainerHelper extends DrupalCIHelperBase {
 
@@ -46,11 +47,36 @@ class ContainerHelper extends DrupalCIHelperBase {
     return $this->getContainers('web');
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function getBaseContainers() {
     return $this->getContainers('base');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function containerExists($container) {
+    $containers = $this->getAllContainers();
+    return in_array($container, array_keys($containers));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function startContainer($container) {
+    $containers = $this->getAllContainers();
+    $name = explode('/', $container)[1];
+    $dir = $containers[$name];
+    $process = new Process("cd " . $dir . " && ./run-server.sh");
+
+    try {
+      $process->mustRun();
+      echo $process->getOutput();
+    } catch (ProcessFailedException $e) {
+      echo $e->getMessage();
+    }
+    return;
   }
 }
