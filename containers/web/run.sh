@@ -136,6 +136,10 @@ case $DCI_DRUPALVERSION in
 esac
 
 case $DCI_DBTYPE in
+  mongodb)
+    DBPORT="27017"
+    DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-mongodb-2.6"}
+  ;;
   pgsql)
      if [ -z ${DCI_DBVER+x} ];
        then
@@ -321,6 +325,13 @@ if [[ ${DCI_DBTYPE} = "sqlite" ]]
     DCI_DBLINK=""
 fi
 
+if [[ $DCI_DBTYPE = "mongodb" ]]
+  then
+    mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/drivers/lib/Drupal/Driver/Database/
+    ln -s ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}/mongodb/drivers/mongodb ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/drivers/lib/Drupal/Driver/Database/mongodb
+    DCI_DEPENDENCIES_GIT=$DCI_DEPENDENCIES${DCI_DEPENDENCIES+;}http://git.drupal.org/project/mongodb.git,8.x-1.x
+fi
+
 #DCI_DEPENDENCIES="module1,module2,module3"
 #Get the dependecies
 if [[ $DCI_DEPENDENCIES = "" ]]
@@ -382,6 +393,7 @@ if [[ $DCI_PATCH = "" ]]
       do
       read purl dir <<<$(echo "${row}" | tr "," " ");
       cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${dir}/
+pwd
       if $(echo "$purl" | egrep -q "^http");
         then
           curl --retry 3 -s $purl > patch
