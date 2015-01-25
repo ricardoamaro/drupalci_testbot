@@ -50,7 +50,14 @@ if (( $DCI_DRUPALVERSION >= 8 )) && [[ $DCI_INSTALLER = "none" ]];
         DBADDR=${DB_PORT_3306_TCP_ADDR}
       ;;
     esac
-    EXTRA="--sqlite /var/www/test.sqlite --dburl ${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DBADDR}/${DCI_IDENTIFIER} --keep-results"
+    EXTRA="--sqlite /var/www/test.sqlite --keep-results"
+    if [ $DCI_DBTYPE = "mongodb" ]
+    then
+      cp modules/mongodb/drivers/mongodb/Install/settings.php sites/default/settings.testing.php
+      sed "s/\[host\]/mongodb:\/\/${DB_PORT_27017_TCP_ADDR}:${DB_PORT_27017_TCP_PORT}/" /mongodb.settings.php > sites/default/settings.php
+    else
+      EXTRA="${EXTRA} --dburl ${DCI_DBTYPE}://${DCI_DBUSER}:${DCI_DBPASS}@${DBADDR}/${DCI_IDENTIFIER}"
+    fi
   else
     echo "Operation $DCI_DRUPALVERSION [install] using drush... "
     case $DCI_DBTYPE in
