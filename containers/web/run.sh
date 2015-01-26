@@ -328,7 +328,8 @@ fi
 if [[ $DCI_DBTYPE = "mongodb" ]]
   then
     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/drivers/lib/Drupal/Driver/Database/
-    ln -s ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}/mongodb/drivers/mongodb ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/drivers/lib/Drupal/Driver/Database/mongodb
+    cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/drivers/lib/Drupal/Driver/Database/
+    ln -s ../../../../../modules/mongodb/drivers/mongodb
     DCI_DEPENDENCIES_GIT=$DCI_DEPENDENCIES${DCI_DEPENDENCIES+;}http://git.drupal.org/project/mongodb.git,8.x-1.x
 fi
 
