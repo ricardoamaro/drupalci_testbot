@@ -20,7 +20,7 @@ class ContainerHelper extends DrupalCIHelperBase {
     $option = array();
     $containers = glob('containers/'.$type.'/*', GLOB_ONLYDIR);
     foreach ($containers as $container) {
-      $option[explode('/', $container)[2]] = $container;
+      $option['drupalci/' . explode('/', $container)[2]] = $container;
     }
     return $option;
   }
@@ -29,7 +29,7 @@ class ContainerHelper extends DrupalCIHelperBase {
    * {@inheritdoc}
    */
   public function getAllContainers() {
-    $options = $this->getContainers('database') + $this->getContainers('web') + $this->getContainers('base');
+    $options = $this->getDBContainers() + $this->getWebContainers() + $this->getBaseContainers();
     return $options;
   }
 
@@ -67,7 +67,7 @@ class ContainerHelper extends DrupalCIHelperBase {
    */
   public function startContainer($container) {
     $containers = $this->getAllContainers();
-    $name = explode('/', $container)[1];
+    $name = 'drupalci/' . explode('/', $container)[1];
     $dir = $containers[$name];
     $process = new Process("cd " . $dir . " && ./run-server.sh");
 
