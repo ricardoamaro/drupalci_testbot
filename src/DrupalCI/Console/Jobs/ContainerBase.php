@@ -14,16 +14,36 @@ use DrupalCI\Console\Helpers\ContainerHelper;
 
 class ContainerBase {
 
+  protected $helper = NULL;
+
   public function startContainer($container) {
+    if (isNull($this->helper)) {
+      $this->helper = new ContainerHelper();
+    }
     // Validate container name
-    $helper = new ContainerHelper();
-    if (!($helper->containerExists($container))) {
+    if (!($this->validateContainerName($container))) {
       // TODO: Invalid container.  Throw an exception.
       return FALSE;
     }
     // Start container
-    $output = $helper->startContainer($container);
+    $output = $this->helper->startContainer($container);
     return $output;
+  }
+
+  public function stopContainer($container) {
+    if (isNull($this->helper)) {
+      $this->helper = new ContainerHelper();
+    }
+    // TODO: Stop Container logic
+    $output = $this->helper->stopContainer($container);
+    return $output;
+  }
+
+  protected function validateContainerName($container) {
+    if (isNull($this->helper)) {
+      $this->helper = new ContainerHelper();
+    }
+    return $this->helper->containerExists($container);
   }
 
 }

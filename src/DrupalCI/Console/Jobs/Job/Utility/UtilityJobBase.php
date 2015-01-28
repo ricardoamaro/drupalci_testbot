@@ -4,9 +4,9 @@
  * Base utility class for DrupalCI
  */
 
-namespace DrupalCI\Console\Jobs\Utility;
+namespace DrupalCI\Console\Jobs\Job\Utility;
 
-use DrupalCI\Console\Jobs\JobBase;
+use DrupalCI\Console\Jobs\Job\JobBase;
 
 class UtilityJobBase extends JobBase {
 

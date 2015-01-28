@@ -1,0 +1,1 @@
+class: 'DrupalCI\Console\Jobs\Job\PHPUnit\PHPUnitJob'

@@ -5,10 +5,10 @@
  * Job class for SimpleTest jobs on DrupalCI.
  */
 
-namespace DrupalCI\Console\Jobs\Simpletest;
+namespace DrupalCI\Console\Jobs\Job\Simpletest;
 
 use DrupalCI\Console\Helpers\ContainerHelper;
-use DrupalCI\Console\Jobs\JobBase;
+use DrupalCI\Console\Jobs\Job\JobBase;
 use Symfony\Component\Finder\Tests\Iterator\DateRangeFilterIteratorTest;
 
 class SimpletestJob extends JobBase {
@@ -77,65 +77,32 @@ class SimpletestJob extends JobBase {
     'DCI_RUNSCRIPT',
   );
 
-  protected $default_arguments = array(
-    'DCI_DBTYPE' => 'mysql',
-    'DCI_DBVER' => '5.5',
-    'DCI_PHPVERSION' => '5.4',
+  protected $default_arguments = array();
+
+  protected $required_arguments = array(
+    'DCI_DBTYPE',
+    'DCI_DBVER',
+    'DCI_PHPVERSION',
   );
 
   public function build_steps() {
     return array(
-      'configure',
+      'validate',
       'environment',
       'setup',
-      'install',
-      'validate',
+      //'install',
+      //'validate_install',
       'execute',
-      'complete',
-      'success',
-      'failure'
+      //'complete',
+      //'success',
+      //'failure'
     );
   }
 
   protected $variables = array();
 
-  /**
-   * Populate initial job properties
-   */
-  public function configure() {
-    // Simpletest testing via the bash script pulls it's configuration from a
-    // combination of default environment variables, local defaults defined in
-    // ~/.drupalci/config, and test definition parameters passed in with the
-    // test request.
-
-    // Presumably, there will be a test definition file created with all of the
-    // required configuration information; which will be sourced by the bash
-    // script.  As such, no configuration logic needs to be performed within
-    // this class, other than to ensure that all mandatory job properties are
-    // established with appropriate defaults; and loading the test definition
-    // parameters into this class so that they may be referenced by the rest of
-    // the code while processing the job.
-
-    // Get default arguments
-    $defaults = $this->default_arguments;
-
-    // Get job arguments
-    $definition = array();   // TODO: Where do we retrieve the test definition from for a simpletest run?
-
-    // Merge defaults and job specific arguments
-    $job_arguments = array_merge($defaults, $definition);
-
-    if (!empty($job_arguments)) {
-      $this->arguments = $job_arguments;
-    }
-
-    // Load any initial build_vars
-    // $this->build_vars = array('foo'=>'bar');
-
-    return;
-  }
-
   public function environment() {
+    $this->output->writeln("<comment>Parsing environment variables to determine required containers.</comment>");
     // Retrieve environment-related variables from the job arguments
     $dbtype = $this->arguments['DCI_DBTYPE'];
     $dbver = $this->arguments['DCI_DBVER'];
@@ -159,6 +126,10 @@ class SimpletestJob extends JobBase {
     foreach ($this->build_vars['images'] as $image) {
       if (!($helper->containerExists($image['name']))) {
         // Error: No such container
+        $container = $image['name'];
+        $this->output->writeln("<error>FAIL:</error> <comment>Required container image <options=bold>'$container'</options=bold> does not exist.</comment>");
+        // TODO: Robust error handling.
+        return -1;
       }
     }
     return;
@@ -192,7 +163,7 @@ class SimpletestJob extends JobBase {
     return;
   }
 
-  public function validate() {
+  public function validate_install() {
     // Validate that any required linked containers are actually running.
     return;
   }
