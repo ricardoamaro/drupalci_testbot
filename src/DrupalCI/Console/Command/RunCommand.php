@@ -52,10 +52,29 @@ class RunCommand extends DrupalCICommandBase {
     // Link the job to our $output variable, so that jobs can display their work.
     $job->setOutput($output);
 
+    // Load the job definition, environment defaults, and any job-specific configuration steps which need to occur
+    // TODO: If passed a job definition source file as a command argument, pass it in to the configure function
+    $result = $job->configure();
+
+    if ($result == -1) {
+      // Step returned an error.  Halt execution.
+      // TODO: Graceful handling of early exit states.
+      $output->writeln("<error>Job halted.</error>");
+      $output->writeln("<comment>Exiting job due to an invalid return code during job build step: <options=bold>'configure'</options=bold></comment>");
+      return;
+    }
+
     $build_steps = $job->build_steps();
 
     foreach ($build_steps as $step) {
       $result = $job->{$step}();
+      if ($result == -1) {
+        // Step returned an error.  Halt execution.
+        // TODO: Graceful handling of early exit states.
+        $output->writeln("<error>Job halted.</error>");
+        $output->writeln("<comment>Exiting job due to an invalid return code during job build step: <options=bold>'$step'</options=bold></comment>");
+        break;
+      }
     }
 
     // @todo The rest is still todo.
@@ -72,6 +91,7 @@ class RunCommand extends DrupalCICommandBase {
     // For each build step:
         // Run $jobtype->buildstep
     // Next
+
   }
 
   /**
