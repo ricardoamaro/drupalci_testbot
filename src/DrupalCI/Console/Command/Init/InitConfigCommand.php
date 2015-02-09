@@ -75,6 +75,7 @@ class InitConfigCommand extends DrupalCICommandBase {
       $configlink = $homedir . "/.drupalci/config";
       if (!file_exists($configsdir)) {
         mkdir($configsdir, 0777, true);
+        mkdir($configsdir . '/configsets', 0777, true);
         $output->writeln("<info>Created $configsdir directory.</info>");
       }
       else {
