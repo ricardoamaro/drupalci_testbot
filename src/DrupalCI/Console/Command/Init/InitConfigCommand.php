@@ -75,7 +75,6 @@ class InitConfigCommand extends DrupalCICommandBase {
       $configlink = $homedir . "/.drupalci/config";
       if (!file_exists($configsdir)) {
         mkdir($configsdir, 0777, true);
-        mkdir($configsdir . '/configsets', 0777, true);
         $output->writeln("<info>Created $configsdir directory.</info>");
       }
       else {
@@ -85,7 +84,12 @@ class InitConfigCommand extends DrupalCICommandBase {
       // Copy default files over to the configs directory
       // TODO: Currently using placeholder files.  Populate file contents.
       $finder = new Finder();
-      $iterator = $finder->files()->in('./configsets');
+      $directory = "./configsets";
+      // TODO: This means we can only execute the command from the drupalci
+      // directory.  Need to be able to run from anywhere - determine how to
+      // get the current script execution directory (not the /bin symlink!)
+      // and construct an absolute directory path above.
+      $iterator = $finder->files()->in($directory);
       foreach ($iterator as $file) {
         copy($file->getRealPath(), $configsdir . "/" . $file->getFileName() );
       }
