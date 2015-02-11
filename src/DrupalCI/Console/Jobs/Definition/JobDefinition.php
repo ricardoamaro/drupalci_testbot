@@ -40,7 +40,7 @@ class JobDefinition {
         // TODO: Error Handling
         return -1;
       }
-      $parameters = $yaml->parse(file_get_contents($this->source));
+      //$parameters = $yaml->parse(file_get_contents($this->source));
       $this->parameters = $parameters;
     }
     return;

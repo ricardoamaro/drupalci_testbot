@@ -14,6 +14,8 @@ class TravisJob extends JobBase {
 
   protected $namespace = "privatetravis";
 
+  public $jobtype = "travis";
+
   public function set_namespace($namespace) {
     $this->namespace = $namespace;
   }
@@ -22,7 +24,7 @@ class TravisJob extends JobBase {
     return $this->namespace;
   }
 
-  protected $travisfile = ".travisci.yml";
+  protected $travisfile = ".travis.yml";
 
   public function set_travisfile($travisfile) {
     $this->travisfile = $travisfile;
@@ -61,7 +63,7 @@ class TravisJob extends JobBase {
   );
 
   protected $default_arguments = array(
-    'DCI_TravisFile' => '.travisci.yml',
+    'DCI_TravisFile' => '.travis.yml',
   );
 
   protected $required_arguments = array(
@@ -71,8 +73,9 @@ class TravisJob extends JobBase {
   public function build_steps() {
     return array(
       'validate',
+      'checkout',
       'environment',
-      'setup',
+         //'setup',
       //'install',
       //'validate_install',
       'execute',
@@ -88,7 +91,12 @@ class TravisJob extends JobBase {
     $travis_file = $this->arguments['DCI_TravisFile'];
     $this->output->writeln("<comment>Loading test build parameters from travis file: </comment><info>$travis_file</info>");
     $build = new JobDefinition();
-    $result = $build->load($travis_file);
+    $directory = trim($this->working_dir);
+    // Ensure directory ends in a /
+    if ($directory[strlen($directory) -1] != '/') {
+      $directory = $directory . "/";
+    }
+    $result = $build->load($directory . $travis_file);
     if ($result == -1) {
       // Error loading definition file.
       $this->output->writeln("<error>FAILED:</error> <info>Unable to parse travis file.</info>");
@@ -148,8 +156,13 @@ class TravisJob extends JobBase {
 
   public function execute() {
     // Execute Script
+    $this->output->writeln("<comment>Starting Travis Job execution.</comment>");
+    //echo "Script: " . print_r($this->script, TRUE);
     //foreach ($this->script as $cmd) {
-      $this->shell_command($this->script);
+    $dir = trim($this->working_dir);
+    $cmd = "cd $dir && " . $this->script;
+    echo "Script Cmd: " . $cmd;
+    $this->shell_command($cmd);
     //}
   }
 
