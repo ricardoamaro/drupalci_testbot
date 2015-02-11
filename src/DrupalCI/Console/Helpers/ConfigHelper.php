@@ -119,6 +119,15 @@ class ConfigHelper extends DrupalCIHelperBase {
   /**
    * {@inheritdoc}
    */
+  public function clearConfigVariable($key) {
+    $config = $this->getCurrentConfigSetParsed();
+    unset($config[$key]);
+    $this->writeConfig($config);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function writeConfig($config) {
     $homedir = getenv('HOME');
     $configpath = $homedir . '/.drupalci';

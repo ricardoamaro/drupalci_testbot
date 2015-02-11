@@ -24,6 +24,7 @@ use DrupalCI\Console\Command\Config\ConfigResetCommand;
 use DrupalCI\Console\Command\Config\ConfigSaveCommand;
 use DrupalCI\Console\Command\Config\ConfigSetCommand;
 use DrupalCI\Console\Command\Config\ConfigShowCommand;
+use DrupalCI\Console\Command\Config\ConfigClearCommand;
 use DrupalCI\Console\Command\Status\StatusCommand;
 use PrivateTravis\PrivateTravisCommand;
 
@@ -46,6 +47,7 @@ class DrupalCIConsoleApp extends Application {
       new ConfigSaveCommand(),
       new ConfigSetCommand(),
       new ConfigShowCommand(),
+      new ConfigClearCommand(),
       new InitAllCommand(),
       new InitBaseContainersCommand(),
       new InitDatabaseContainersCommand(),
