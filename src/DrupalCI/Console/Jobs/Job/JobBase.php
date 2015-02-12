@@ -54,7 +54,7 @@ class JobBase extends ContainerBase {
   public $working_dir = "./";
 
   // Holds build variables which need to be persisted between build steps
-  protected $build_vars;
+  protected $build_vars = array();
 
   // Retrieves the build variables for this job
   public function get_buildvars() {
@@ -100,27 +100,39 @@ class JobBase extends ContainerBase {
     $platform_args = $this->platform_defaults;
     $default_args = $this->default_arguments;
     if (!empty($default_args)) {
-      $this->output->writeln("<comment>Loading default test parameters for this job type.</comment>");
+      $this->output->writeln("<comment>Loading buid variables for this job type.</comment>");
     }
 
     // Load DrupalCI local config overrides
     $local_args = $confighelper->getCurrentConfigSetParsed();
     if (!empty($local_args)) {
-      $this->output->writeln("<comment>Loading test parameters from DrupalCI local config overrides.</comment>");
+      $this->output->writeln("<comment>Loading build variables from DrupalCI local config overrides.</comment>");
     }
 
     // Load "DCI_ namespaced" environment variable overrides
     $environment_args = $confighelper->getCurrentEnvVars();
     if (!empty($environment_args)) {
-      $this->output->writeln("<comment>Loading test parameters from namespaced environment variable overrides.</comment>");
+      $this->output->writeln("<comment>Loading build variables from namespaced environment variable overrides.</comment>");
     }
 
-    $config = $environment_args + $local_args + $default_args + $platform_args;
-
+    // Load any build vars defined in the job definition file
     // Retrieve test definition file
     if (isset($source)) {
       $config['explicit_source'] = $source;
     }
+
+    // Load command line arguments
+    // TODO: Routine for loading command line arguments.
+    // TODO: How do we pull arguments off the drupalci command, when in a job class?
+    // $cli_args = $somehelper->loadCLIargs();
+    $cli_args = array();
+    if (!empty($cli_args)) {
+      $this->output->writeln("<comment>Loading test parameters from command line arguments.</comment>");
+    }
+
+    // Create temporary config array to use in determining the definition file source
+    $config = $cli_args + $environment_args + $local_args + $default_args + $platform_args;
+
     $definition_file = $this->getDefinitionFile($config);
 
     $definition_args = array();
@@ -136,26 +148,21 @@ class JobBase extends ContainerBase {
         // TODO: Robust error handling
         return -1;
       };
-      $definition_args = $job->getParameters();
-      if (empty($definition_args)) {
-        $definition_args = array();
+      $job_definition = $job->getParameters();
+      if (empty($job_definition)) {
+        $job_definition = array();
       }
-    }
-
-    // Load command line arguments
-    // TODO: Routine for loading command line arguments.
-    // TODO: How do we pull arguments off the drupalci command, when in a job class?
-    // $cli_args = $somehelper->loadCLIargs();
-    $cli_args = array();
-    if (!empty($environment_args)) {
-      $this->output->writeln("<comment>Loading test parameters from command line arguments.</comment>");
+      $definition_args = !empty($job_definition['build_vars']) ? $job_definition['build_vars'] : array();
     }
 
     $config = $cli_args + $definition_args + $environment_args + $local_args + $default_args + $platform_args;
-    $this->arguments = $config;
 
-    // TODO: Load any initial build_vars
-    // $this->build_vars = array('foo'=>'bar');
+    // Set initial build variables
+    $buildvars = $this->get_buildvars();
+    $this->set_buildvars($buildvars + $config);
+
+    // TODO: Remove the 'arguments' parameter.
+    $this->set_arguments($config);
 
     return;
   }
@@ -202,7 +209,7 @@ class JobBase extends ContainerBase {
     $this->output->write("<comment>Validating test parameters ... </comment>");
     // TODO: Ensure that all 'required' arguments are defined
     foreach ($this->required_arguments as $arg) {
-      if (empty($this->arguments[$arg])) {
+      if (empty($this->build_vars[$arg])) {
         $this->output->writeln("<error>FAILED</error>");
         $this->output->writeln("<info>Required test parameter <options=bold>'$arg'</options=bold> not found.</info>");
         // TODO: Graceful handling of failed exit states
@@ -215,13 +222,13 @@ class JobBase extends ContainerBase {
   }
 
   public function checkout() {
-    $arguments = $this->get_arguments();
+    $arguments = $this->get_buildvars();
 
     // Check if the source codebase directory has been specified
     if (empty($arguments['DCI_CodeBase'])) {
       // If no explicit codebase provided, assume we are using the code in the local directory.
       $arguments['DCI_CodeBase'] = "./";
-      $this->set_arguments($arguments);
+      $this->set_buildvars($arguments);
     }
     // Check if the target working directory has been specified.
     if (empty($arguments['DCI_CheckoutDir'])) {
@@ -235,7 +242,7 @@ class JobBase extends ContainerBase {
       }
       $this->output->writeln("<comment>Checkout directory created at <info>$tmpdir</info></comment>");
       $arguments['DCI_CheckoutDir'] = $tmpdir;
-      $this->set_arguments($arguments);
+      $this->set_buildvars($arguments);
     }
     elseif ($arguments['DCI_CheckoutDir'] != $arguments['DCI_CodeBase']) {
       // We ensure the checkout directory is within the system temporary directory, to ensure
@@ -253,7 +260,7 @@ class JobBase extends ContainerBase {
     $this->working_dir = $arguments['DCI_CheckoutDir'];
 
     // Refresh our arguments list (may have changed in create_local_checkout_dir())
-    $arguments = $this->get_arguments();
+    $arguments = $this->get_buildvars();
 
     // Determine if local or remote codebase
     $parsed_url = parse_url($arguments['DCI_CodeBase']);
@@ -298,7 +305,7 @@ class JobBase extends ContainerBase {
   }
 
   protected function create_local_checkout_dir() {
-    $arguments = $this->get_arguments();
+    $arguments = $this->get_buildvars();
     $directory = $arguments['DCI_CheckoutDir'];
     $tempdir = sys_get_temp_dir();
 
@@ -309,7 +316,7 @@ class JobBase extends ContainerBase {
         $directory = "/" . $directory;
       }
       $arguments['DCI_CheckoutDir'] = $tempdir . $directory;
-      $this->set_arguments($arguments);
+      $this->set_buildvars($arguments);
     }
 
     // Check if the DCI_CheckoutDir exists within the /tmp directory, or create it if not
@@ -345,7 +352,7 @@ class JobBase extends ContainerBase {
   }
 
   protected function validate_checkout_dir() {
-    $arguments = $this->get_arguments();
+    $arguments = $this->get_buildvars();
     $path = realpath($arguments['DCI_CheckoutDir']);
     $tmpdir = sys_get_temp_dir();
     if (strpos($path, $tmpdir) === 0) {
@@ -356,7 +363,7 @@ class JobBase extends ContainerBase {
 
   protected function checkout_local_to_working() {
     // Load arguments
-    $arguments = $this->get_arguments();
+    $arguments = $this->get_buildvars();
     $srcdir = $arguments['DCI_CodeBase'];
     $targetdir = $arguments['DCI_CheckoutDir'];
     // TODO: Prompt for confirmation.
@@ -375,12 +382,12 @@ class JobBase extends ContainerBase {
 
   protected function checkout_git_to_working() {
     // Load arguments
-    $arguments = $this->get_arguments();
+    $arguments = $this->get_buildvars();
 
     // See if a specific branch has been supplied.  If not, default to 'master'.
     if (empty($arguments['DCI_GitBranch'])) {
       $arguments['DCI_GitBranch'] = "master";
-      $this->set_arguments($arguments);
+      $this->set_buildvars($arguments);
     }
 
     $repodir = $arguments['DCI_CodeBase'];

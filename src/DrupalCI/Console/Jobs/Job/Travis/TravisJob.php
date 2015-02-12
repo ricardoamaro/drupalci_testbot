@@ -88,7 +88,7 @@ class TravisJob extends JobBase {
   public function environment() {
 
     // Load and parse travis file
-    $travis_file = $this->arguments['DCI_TravisFile'];
+    $travis_file = $this->build_vars['DCI_TravisFile'];
     $this->output->writeln("<comment>Loading test build parameters from travis file: </comment><info>$travis_file</info>");
     $build = new JobDefinition();
     $directory = trim($this->working_dir);

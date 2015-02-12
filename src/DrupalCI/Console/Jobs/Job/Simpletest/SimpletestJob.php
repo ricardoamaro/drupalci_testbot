@@ -104,18 +104,18 @@ class SimpletestJob extends JobBase {
   public function environment() {
     $this->output->writeln("<comment>Parsing environment variables to determine required containers.</comment>");
     // Retrieve environment-related variables from the job arguments
-    $dbtype = $this->arguments['DCI_DBTYPE'];
-    $dbver = $this->arguments['DCI_DBVER'];
-    $phpversion = $this->arguments['DCI_PHPVERSION'];
+    $dbtype = $this->build_vars['DCI_DBTYPE'];
+    $dbver = $this->build_vars['DCI_DBVER'];
+    $phpversion = $this->build_vars['DCI_PHPVERSION'];
 
     // Determine the web container name
-    $this->build_vars['images'][] = array(
+    $this->build_vars['DCI_Container_Images'][] = array(
       'name' => 'drupalci/web-' . $phpversion,
       'type' => 'execute',
     );
 
     // Determine the database container name
-    $this->build_vars['images'][] = array(
+    $this->build_vars['DCI_Container_Images'][] = array(
       'name' => 'drupalci/' . $dbtype . '-' . $dbver,
       'type' => 'prereq',
     );
@@ -123,7 +123,7 @@ class SimpletestJob extends JobBase {
     // Validate the environmental variables from the above list
     // Verify that the appropriate container images exist
     $helper = new ContainerHelper();
-    foreach ($this->build_vars['images'] as $image) {
+    foreach ($this->build_vars['DCI_Container_Images'] as $image) {
       if (!($helper->containerExists($image['name']))) {
         // Error: No such container
         $container = $image['name'];
@@ -139,7 +139,7 @@ class SimpletestJob extends JobBase {
     // Start up any linked containers that need to be running, if they are not
     // running already.
     $output = '';
-    foreach ($this->build_vars['images'] as $image) {
+    foreach ($this->build_vars['DCI_Container_Images'] as $image) {
       if ($image['type'] == 'prereq') {
         // Start an instance of $image['name'].
         $helper = new ContainerHelper();
