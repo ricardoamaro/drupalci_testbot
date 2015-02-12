@@ -136,6 +136,10 @@ case $DCI_DRUPALVERSION in
 esac
 
 case $DCI_DBTYPE in
+  mongodb)
+    DBPORT="27017"
+    DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-mongodb-2.6"}
+  ;;
   pgsql)
      if [ -z ${DCI_DBVER+x} ];
        then
@@ -323,6 +327,14 @@ if [[ ${DCI_DBTYPE} = "sqlite" ]]
     DCI_DBLINK=""
 fi
 
+if [[ $DCI_DBTYPE = "mongodb" ]]
+  then
+    mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/drivers/lib/Drupal/Driver/Database/
+    cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/drivers/lib/Drupal/Driver/Database/
+    ln -s ../../../../../modules/mongodb/drivers/mongodb
+    DCI_DEPENDENCIES_GIT=$DCI_DEPENDENCIES${DCI_DEPENDENCIES+;}http://git.drupal.org/project/mongodb.git,8.x-1.x
+fi
+
 #DCI_DEPENDENCIES="module1,module2,module3"
 #Get the dependecies
 if [[ $DCI_DEPENDENCIES = "" ]]
@@ -347,6 +359,7 @@ if [[ $DCI_DEPENDENCIES_GIT = "" ]]
      ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
      mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
      cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
+     echo "${ARRAY}"
      for row in ${ARRAY[@]}
       do
       read gurl gbranch <<<$(echo "${row}" | tr "," " ");

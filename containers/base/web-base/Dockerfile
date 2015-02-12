@@ -9,6 +9,7 @@ RUN ln -sf /bin/true /sbin/initctl
 
 # Packages.
 RUN sed -i 's|http://http.debian.net/debian|ftp://ftp.debian.org/debian|g' /etc/apt/sources.list
+RUN echo deb http://http.debian.net/debian wheezy-backports main >> /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get -y install apache2 apache2-prefork-dev apt-utils bison \
     build-essential ccache curl drush freetds-dev git libapache2-mod-php5 \
@@ -21,6 +22,7 @@ RUN apt-get -y install apache2 apache2-prefork-dev apt-utils bison \
     make mysql-client mc nano ncurses-dev openssh-server php5-cli php5-curl \
     php5-gd php5-mysql php5-pgsql php5-sqlite php-apc php-codesniffer \
     php-pear postgresql-client pwgen python-setuptools php5-dev \
+    php5-mongo \
     re2c ruby ruby-dev sqlite3 sudo tidy time unixODBC-dev unzip vim
 
 RUN apt-get clean
@@ -73,6 +75,7 @@ RUN mkdir /var/run/sshd
 
 # Scripts.
 ADD ./conf/scripts/start.sh /start.sh
+ADD ./conf/mongodb.settings.php /mongodb.settings.php
 ADD ./conf/scripts/foreground.sh /etc/apache2/foreground.sh
 
 # Apache.
