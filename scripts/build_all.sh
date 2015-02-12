@@ -39,7 +39,7 @@ done
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1]} ]];
   then
   echo
-  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/build_all.sh <cleanup>/<update>/<refresh> <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>/<all>\e[39m "
+  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/build_all.sh <cleanup>/<update>/<refresh> <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>/<pgsql-9.3>/<all>\e[39m "
   echo
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
   echo
@@ -95,7 +95,7 @@ if [ "$2" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
     echo
     echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/build_all.sh <cleanup>/<update>/<refresh> <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-9.1>/<all>\e[39m "
     echo
-    echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.3, pgsql-9.1, or all."
+    echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.3, pgsql-9.1, pgsql-9.3, or all."
     echo
     echo -e " Example:\t\e[38;5;148msudo ./scripts/build_all.sh refresh mysql-5.5\e[39m "
     echo

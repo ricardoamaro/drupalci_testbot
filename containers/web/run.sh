@@ -146,6 +146,8 @@ case $DCI_DBTYPE in
            ;;
            9.1)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
            ;;
+           9.3)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.3"}
+           ;;
          esac
      fi
      DBPORT="5432"

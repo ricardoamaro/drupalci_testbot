@@ -33,11 +33,11 @@ BASEIFS="${IFS}"
 if [ "$1" = "-h" ] || [ "$1" = "--help" ];
   then
   echo
-  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/start_containers.sh <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>/<all>\e[39m "
+  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/start_containers.sh <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>/<pgsql-9.3><all>\e[39m "
   echo
   echo -e " Purpose:\tHelp start the testbot database containers and repos."
   echo
-  echo -e "\t\t<mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>: Defines the database type to start. "
+  echo -e "\t\t<mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>/<pgsql-9.3>: Defines the database type to start. "
   echo -e "\t\tall: Start all available database containers. "
   echo -e "\t\tNote: If you are offline use 'refresh', in order to keep cached data. "
   echo
@@ -74,7 +74,7 @@ if [ "$1" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
     echo
     echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/start_containers.sh <cleanup>/<update>/<refresh> <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-9.1>/<all>\e[39m "
     echo
-    echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.3, pgsql-9.1, or all."
+    echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.3, pgsql-9.1, pgsql-9.3, or all."
     echo
     echo -e " Example:\t\e[38;5;148msudo ./scripts/start_containers.sh refresh mysql-5.5\e[39m "
     echo
