@@ -100,7 +100,7 @@ class JobBase extends ContainerBase {
     $platform_args = $this->platform_defaults;
     $default_args = $this->default_arguments;
     if (!empty($default_args)) {
-      $this->output->writeln("<comment>Loading buid variables for this job type.</comment>");
+      $this->output->writeln("<comment>Loading build variables for this job type.</comment>");
     }
 
     // Load DrupalCI local config overrides
