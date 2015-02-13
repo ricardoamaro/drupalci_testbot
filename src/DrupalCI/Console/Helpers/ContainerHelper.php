@@ -69,7 +69,8 @@ class ContainerHelper extends DrupalCIHelperBase {
     $containers = $this->getAllContainers();
     $name = 'drupalci/' . explode('/', $container)[1];
     $dir = $containers[$name];
-    $process = new Process("cd " . $dir . " && ./run-server.sh");
+    $cmd = "cd " . $dir . " && sudo ./run-server.sh";
+    $process = new Process($cmd);
 
     try {
       $process->mustRun();

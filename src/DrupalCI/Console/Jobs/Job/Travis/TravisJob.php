@@ -67,7 +67,7 @@ class TravisJob extends JobBase {
   );
 
   protected $required_arguments = array(
-    'DCI_TravisFile',
+    'DCI_TravisFile' => 'build_vars:travis_filename',
   );
 
   public function build_steps() {

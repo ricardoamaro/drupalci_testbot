@@ -80,9 +80,9 @@ class SimpletestJob extends JobBase {
   protected $default_arguments = array();
 
   protected $required_arguments = array(
-    'DCI_DBTYPE',
-    'DCI_DBVER',
-    'DCI_PHPVERSION',
+    'DCI_DBTYPE' => 'environment:db',
+    'DCI_DBVER' => 'environment:db',
+    'DCI_PHPVERSION' => 'environment:php',
   );
 
   public function build_steps() {
@@ -92,6 +92,7 @@ class SimpletestJob extends JobBase {
       'setup',
       //'install',
       //'validate_install',
+      'compatibility_bridge',
       'execute',
       //'complete',
       //'success',
@@ -102,61 +103,62 @@ class SimpletestJob extends JobBase {
   protected $variables = array();
 
   public function environment() {
-    $this->output->writeln("<comment>Parsing environment variables to determine required containers.</comment>");
-    // Retrieve environment-related variables from the job arguments
-    $dbtype = $this->build_vars['DCI_DBTYPE'];
-    $dbver = $this->build_vars['DCI_DBVER'];
-    $phpversion = $this->build_vars['DCI_PHPVERSION'];
-
-    // Determine the web container name
-    $this->build_vars['DCI_Container_Images'][] = array(
-      'name' => 'drupalci/web-' . $phpversion,
-      'type' => 'execute',
-    );
-
-    // Determine the database container name
-    $this->build_vars['DCI_Container_Images'][] = array(
-      'name' => 'drupalci/' . $dbtype . '-' . $dbver,
-      'type' => 'prereq',
-    );
-
-    // Validate the environmental variables from the above list
-    // Verify that the appropriate container images exist
-    $helper = new ContainerHelper();
-    foreach ($this->build_vars['DCI_Container_Images'] as $image) {
-      if (!($helper->containerExists($image['name']))) {
-        // Error: No such container
-        $container = $image['name'];
-        $this->output->writeln("<error>FAIL:</error> <comment>Required container image <options=bold>'$container'</options=bold> does not exist.</comment>");
-        // TODO: Robust error handling.
-        return -1;
-      }
+    $this->build_container_names();
+    $containers = $this->build_vars["DCI_Container_Images"];
+    foreach ($containers['php'] as $phpversion => $container) {
+      // TODO: Fix this after moving to the new container stack
+      // $containers['php'][$phpversion] = $container . "-web";
+      $containers['php'][$phpversion] = "drupalci/web-" . $phpversion;
+    }
+    $this->build_vars["DCI_Container_Images"] = $containers;
+    if (!$this->validate_container_names()) {
+      return -1;
     }
     return;
   }
 
   public function setup() {
-    // Start up any linked containers that need to be running, if they are not
-    // running already.
+    // Start up any linked service containers that need to be running, if they
+    // are not running already.
     $output = '';
-    foreach ($this->build_vars['DCI_Container_Images'] as $image) {
-      if ($image['type'] == 'prereq') {
-        // Start an instance of $image['name'].
-        $helper = new ContainerHelper();
-        // TODO: Ensure container is not already running!
-        $helper->startContainer($image['name']);
-        $need_sleep = TRUE;
-      }
+    foreach ($this->build_vars['DCI_Container_Images']['db'] as $image) {
+      // Start an instance of $image['name'].
+      $helper = new ContainerHelper();
+      // TODO: Ensure container is not already running!
+      $helper->startContainer($image);
+      $need_sleep = TRUE;
     }
     // Pause to allow any container services (e.g. mysql) to start up.
     // TODO: This currently pauses even if the container was already found.  Do we need the
     // start_container.sh script to throw an error return code?
-    if ($need_sleep) {
+    if (!empty($need_sleep)) {
       echo "Sleeping 10 seconds to allow container services to start.\n";
       sleep(10);
     }
     return;
   }
+
+  public function compatibility_bridge() {
+    // Loads items from the job definition file into environment variables in
+    // order to remain compatible with the simpletest run.sh script.
+    // TODO: At some point, we should deprecate non "drupalci run simpletest"
+    // methods of kicking off execution of the script, which will allow us to
+    // remove the validation code from the bash script itself (in favor of
+    // validate step within the job classes.
+    if (empty($this->job_definition)) {
+      return;
+    }
+    $definition = $this->job_definition['environment'];
+    // We need to set a number of parameters on the command line in order to
+    // prevent the bash script from overriding them
+    $dbtype = explode("-", $definition['db'][0]);
+    $phpver = $definition['php'][0];
+    $cmd_prefix = "DCI_DBTYPE=" . $dbtype[0] . " DCI_DBVER=" . $dbtype[1] . " DCI_PHPVERSION=" . $phpver . " ";
+    $this->cmd_prefix = $cmd_prefix;
+
+  }
+
+  protected $cmd_prefix = "";
 
   public function install() {
     // Installation is handled by the bash script.
@@ -169,8 +171,9 @@ class SimpletestJob extends JobBase {
   }
 
   public function execute() {
+    $cmd = "sudo " . $this->cmd_prefix . "./containers/web/run.sh";
     // Execute the simpletest testing bash script
-    $this->shell_command('sudo ./containers/web/run.sh');
+    $this->shell_command($cmd);
     return;
   }
 

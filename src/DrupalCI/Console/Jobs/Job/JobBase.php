@@ -10,6 +10,7 @@ use DrupalCI\Console\Helpers\ConfigHelper;
 use Symfony\Component\Process\Process;
 use DrupalCI\Console\Jobs\ContainerBase;
 use DrupalCI\Console\Jobs\Definition\JobDefinition;
+use DrupalCI\Console\Helpers\ContainerHelper;
 
 class JobBase extends ContainerBase {
 
@@ -29,10 +30,18 @@ class JobBase extends ContainerBase {
   protected $default_arguments = array();
 
   // Defines the required arguments which are necessary for this job type
-  protected $required_arguments = array();
+  // Format:  array('ENV_VARIABLE_NAME' => 'CONFIG_FILE_LOCATION'), where
+  // CONFIG_FILE_LOCATION is a colon-separated nested location for the
+  // equivalent var in a job definition file.
+  protected $required_arguments = array(
+    // eg:   'DCI_DBTYPE' => 'environment:db'
+  );
 
   // Holds the compiled argument list for this particular job
   public $arguments;
+
+  // Placeholder which holds the parsed job definition file for this job
+  public $job_definition = NULL;
 
   // Retrieve the argument list for this job
   public function get_arguments() {
@@ -115,12 +124,6 @@ class JobBase extends ContainerBase {
       $this->output->writeln("<comment>Loading build variables from namespaced environment variable overrides.</comment>");
     }
 
-    // Load any build vars defined in the job definition file
-    // Retrieve test definition file
-    if (isset($source)) {
-      $config['explicit_source'] = $source;
-    }
-
     // Load command line arguments
     // TODO: Routine for loading command line arguments.
     // TODO: How do we pull arguments off the drupalci command, when in a job class?
@@ -132,6 +135,12 @@ class JobBase extends ContainerBase {
 
     // Create temporary config array to use in determining the definition file source
     $config = $cli_args + $environment_args + $local_args + $default_args + $platform_args;
+
+    // Load any build vars defined in the job definition file
+    // Retrieve test definition file
+    if (isset($source)) {
+      $config['explicit_source'] = $source;
+    }
 
     $definition_file = $this->getDefinitionFile($config);
 
@@ -151,8 +160,12 @@ class JobBase extends ContainerBase {
       $job_definition = $job->getParameters();
       if (empty($job_definition)) {
         $job_definition = array();
+        $definition_args = array();
       }
-      $definition_args = !empty($job_definition['build_vars']) ? $job_definition['build_vars'] : array();
+      else {
+        $definition_args = !empty($job_definition['build_vars']) ? $job_definition['build_vars'] : array();
+        $this->job_definition = $job_definition;
+      }
     }
 
     $config = $cli_args + $definition_args + $environment_args + $local_args + $default_args + $platform_args;
@@ -208,13 +221,37 @@ class JobBase extends ContainerBase {
   public function validate() {
     $this->output->write("<comment>Validating test parameters ... </comment>");
     // TODO: Ensure that all 'required' arguments are defined
-    foreach ($this->required_arguments as $arg) {
-      if (empty($this->build_vars[$arg])) {
-        $this->output->writeln("<error>FAILED</error>");
-        $this->output->writeln("<info>Required test parameter <options=bold>'$arg'</options=bold> not found.</info>");
-        // TODO: Graceful handling of failed exit states
-        return -1;
+    $definition = $this->job_definition;
+    $failflag = FALSE;
+    foreach ($this->required_arguments as $env_var => $yaml_loc) {
+      if (!empty($this->build_vars[$env_var])) {
+        continue;
       }
+      else {
+        // Look for the appropriate array structure in the job definition file
+        // eg: environment:db
+        $keys = explode(":", $yaml_loc);
+        $eval = $definition;
+        foreach ($keys as $key) {
+          if (!empty($eval[$key])) {
+            $eval=$eval[$key];
+          }
+          else {
+            // Missing a required key in the array key chain
+            $failflag = TRUE;
+            break;
+          }
+        }
+        if (!$failflag) {
+          continue;
+        }
+      }
+
+      // If processing gets to here, we're missing a required variable
+      $this->output->writeln("<error>FAILED</error>");
+      $this->output->writeln("<info>Required test parameter <options=bold>'$env_var'</options=bold> not found in environment variables, and <options=bold>'$yaml_loc'</options=bold> not found in job definition file.</info>");
+      // TODO: Graceful handling of failed exit states
+      return -1;
     }
     // TODO: Strip out arguments which are not defined in the 'Available' arguments array
     $this->output->writeln("<info>PASSED</info>");
@@ -408,11 +445,101 @@ class JobBase extends ContainerBase {
       return -1;
     }
     $this->output->writeln("<comment>Checkout directory populated.</comment>");
-
   }
 
   public function environment() {
-    return;
+    $this->build_container_names();
+    if (!($this->validate_container_names())) {
+      return -1;
+    }
+  }
+
+  protected function build_container_names() {
+    // Determine whether to use environment variables or definition file to determine what containers are needed
+    if (empty($this->job_definition['environment'])) {
+      $containers = $this->env_containers_from_env();
+    }
+    else {
+      $containers = $this->env_containers_from_file();
+    }
+    if (!empty($containers)) {
+      $this->build_vars['DCI_Container_Images'] = $containers;
+    }
+  }
+
+  protected function env_containers_from_env() {
+    $containers = array();
+    $this->output->writeln("<comment>Parsing environment variables to determine required containers.</comment>");
+    // Retrieve environment-related variables from the job arguments
+    $dbtype = $this->build_vars['DCI_DBTYPE'];
+    $dbver = $this->build_vars['DCI_DBVER'];
+    $phpversion = $this->build_vars['DCI_PHPVERSION'];
+    $containers['php'][$phpversion] = "drupalci/php-$phpversion";
+    $this->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+    $containers['db'][$dbtype . "-" . $dbver] = "drupalci/$dbtype-$dbver";
+    $this->output->writeln("<info>Adding container: <options=bold>drupalci/$dbtype-$dbver</options=bold></info>");
+    return $containers;
+  }
+
+  protected function env_containers_from_file() {
+    $config = $this->job_definition['environment'];
+    $this->output->writeln("<comment>Evaluating container requirements as defined in job definition file ...</comment>");
+    $containers = array();
+
+    // Determine required php containers
+    if (!empty($config['php'])) {
+      // May be a string if one version required, or array if multiple
+      if (is_array($config['php'])) {
+        foreach ($config['php'] as $phpversion) {
+          // TODO: Make the drupalci prefix a variable (overrideable to use custom containers)
+          $containers['php'][$phpversion] = "drupalci/php-$phpversion";
+          $this->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+        }
+      }
+      else {
+        $phpversion = $config['php'];
+        $containers['php'][$phpversion] = "drupalci/php-$phpversion";
+        $this->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+      }
+    }
+    else {
+      // We assume will always need at least one default PHP container
+      $containers['php']['5.5'] = "drupalci/php-5.5";
+    }
+
+    // Determine required database containers
+    if (!empty($config['db'])) {
+      // May be a string if one version required, or array if multiple
+      if (is_array($config['db'])) {
+        foreach ($config['db'] as $dbversion) {
+          $containers['db'][$dbversion] = "drupalci/$dbversion";
+          $this->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
+        }
+      }
+      else {
+        $dbversion = $config['db'];
+        $containers['db'][$dbversion] = "drupalci/$dbversion";
+        $this->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
+      }
+    }
+    return $containers;
+  }
+
+  protected function validate_container_names() {
+    // Verify that the appropriate container images exist
+    $this->output->writeln("<comment>Ensuring appropriate container images exist.</comment>");
+    $helper = new ContainerHelper();
+    foreach ($this->build_vars['DCI_Container_Images'] as $type) {
+      foreach ($type as $key => $image) {
+        if (!$helper->containerExists($image)) {
+          // Error: No such container image
+          $this->output->writeln("<error>FAIL:</error> <comment>Required container image <options=bold>'$image'</options=bold> does not exist.</comment>");
+          // TODO: Robust error handling.
+          return -1;
+        }
+      }
+    }
+    return TRUE;
   }
 
   public function setup() {
