@@ -54,9 +54,8 @@ class RunCommand extends DrupalCICommandBase {
 
     // Load the job definition, environment defaults, and any job-specific configuration steps which need to occur
     // TODO: If passed a job definition source file as a command argument, pass it in to the configure function
-    $result = $job->configure();
-
-    if ($result == -1) {
+    $job->configure();
+    if ($job->error_status != 0) {
       // Step returned an error.  Halt execution.
       // TODO: Graceful handling of early exit states.
       $output->writeln("<error>Job halted.</error>");
@@ -67,8 +66,8 @@ class RunCommand extends DrupalCICommandBase {
     $build_steps = $job->build_steps();
 
     foreach ($build_steps as $step) {
-      $result = $job->{$step}();
-      if ($result == -1) {
+      $job->{$step}();
+      if ($job->error_status != 0) {
         // Step returned an error.  Halt execution.
         // TODO: Graceful handling of early exit states.
         $output->writeln("<error>Job halted.</error>");
@@ -76,22 +75,6 @@ class RunCommand extends DrupalCICommandBase {
         break;
       }
     }
-
-    // @todo The rest is still todo.
-          // Get the container list for that job type
-          // Differentiate between mandatory and optional?
-
-            // Load the default build steps for that job type
-                // $buildsteps = $jobtype->buildsteps();
-                    // Options:
-                    // environment (env), pre-install (pre-install), install, pre-execute (pre-script), execute (script), post-success, post-fail, post-execute
-                        //  e.g. pre-install might contain container validation, install containing container creation, execute containing the docker command.
-                        // We could have a default drupalci_job class which has metadata and other info common to all job types.
-
-    // For each build step:
-        // Run $jobtype->buildstep
-    // Next
-
   }
 
   /**

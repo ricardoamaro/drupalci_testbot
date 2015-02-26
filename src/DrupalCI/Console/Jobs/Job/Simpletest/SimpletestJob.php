@@ -114,27 +114,7 @@ class SimpletestJob extends JobBase {
     if (!$this->validate_container_names()) {
       return -1;
     }
-    return;
-  }
-
-  public function setup() {
-    // Start up any linked service containers that need to be running, if they
-    // are not running already.
-    $output = '';
-    foreach ($this->build_vars['DCI_Container_Images']['db'] as $image) {
-      // Start an instance of $image['name'].
-      $helper = new ContainerHelper();
-      // TODO: Ensure container is not already running!
-      $helper->startContainer($image);
-      $need_sleep = TRUE;
-    }
-    // Pause to allow any container services (e.g. mysql) to start up.
-    // TODO: This currently pauses even if the container was already found.  Do we need the
-    // start_container.sh script to throw an error return code?
-    if (!empty($need_sleep)) {
-      echo "Sleeping 10 seconds to allow container services to start.\n";
-      sleep(10);
-    }
+    $this->start_service_containers();
     return;
   }
 
@@ -145,17 +125,25 @@ class SimpletestJob extends JobBase {
     // methods of kicking off execution of the script, which will allow us to
     // remove the validation code from the bash script itself (in favor of
     // validate step within the job classes.
+    // TODO: This presumes only one db type; but may need to be expanded for multiple.
     if (empty($this->job_definition)) {
       return;
     }
     $definition = $this->job_definition['environment'];
     // We need to set a number of parameters on the command line in order to
     // prevent the bash script from overriding them
-    $dbtype = explode("-", $definition['db'][0]);
-    $phpver = $definition['php'][0];
-    $cmd_prefix = "DCI_DBTYPE=" . $dbtype[0] . " DCI_DBVER=" . $dbtype[1] . " DCI_PHPVERSION=" . $phpver . " ";
+    $cmd_prefix = "";
+    if (!empty($definition['db'])) {
+      echo "Definition: " . print_r($definition['db'], TRUE);
+      $dbtype = explode("-", $definition['db'][0]);
+      $phpver = $definition['php'][0];
+      $cmd_prefix = "DCI_DBTYPE=" . $dbtype[0] . " DCI_DBVER=" . $dbtype[1];
+    }
+    else {
+      $cmd_prefix = "DCI_DBTYPE= DCI_DBVER= ";
+    }
+    $cmd_prefix .= (!empty($definition['php'])) ? " DCI_PHPVERSION=$phpver " : " DCI_PHPVERSION= ";
     $this->cmd_prefix = $cmd_prefix;
-
   }
 
   protected $cmd_prefix = "";

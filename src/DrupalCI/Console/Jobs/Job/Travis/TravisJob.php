@@ -73,12 +73,12 @@ class TravisJob extends JobBase {
   public function build_steps() {
     return array(
       'validate',
-      'checkout',
-      'environment',
-         //'setup',
+        //'checkout',
+        //'environment',
+      'setup',
       //'install',
       //'validate_install',
-      'execute',
+        //'execute',
       //'complete',
       //'success',
       //'failure'
@@ -141,17 +141,6 @@ class TravisJob extends JobBase {
         $this->script .= $line;
       }
     }
-  }
-
-  public function setup() {
-    // Generate a local copy of the codebase to be tested
-    // Check if we have an environment variable specifying the codebase location (Jenkins)
-    // Check if we have a DCI config variable specifying the test directory location
-    // Generate a copy of the codebase (either via git checkout, or local copy
-      // Do we need to have a variable that determines whether you operate on local codebase or not?
-      //
-
-
   }
 
   public function execute() {
