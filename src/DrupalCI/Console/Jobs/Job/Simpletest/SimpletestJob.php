@@ -48,7 +48,7 @@ class SimpletestJob extends JobBase {
    *  DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
    *  DCI_RUNSCRIPT:     Command to be executed
    */
-  protected $available_arguments = array(
+  public $available_arguments = array(
     'DCI_PATCH',
     'DCI_DEPENDENCIES',
     'DCI_DEPENDENCIES_GIT',
@@ -77,9 +77,9 @@ class SimpletestJob extends JobBase {
     'DCI_RUNSCRIPT',
   );
 
-  protected $default_arguments = array();
+  public $default_arguments = array();
 
-  protected $required_arguments = array(
+  public $required_arguments = array(
     'DCI_DBTYPE' => 'environment:db',
     'DCI_DBVER' => 'environment:db',
     'DCI_PHPVERSION' => 'environment:php',
@@ -134,7 +134,6 @@ class SimpletestJob extends JobBase {
     // prevent the bash script from overriding them
     $cmd_prefix = "";
     if (!empty($definition['db'])) {
-      echo "Definition: " . print_r($definition['db'], TRUE);
       $dbtype = explode("-", $definition['db'][0]);
       $phpver = $definition['php'][0];
       $cmd_prefix = "DCI_DBTYPE=" . $dbtype[0] . " DCI_DBVER=" . $dbtype[1];
@@ -148,37 +147,10 @@ class SimpletestJob extends JobBase {
 
   protected $cmd_prefix = "";
 
-  public function install() {
-    // Installation is handled by the bash script.
-    return;
-  }
-
-  public function validate_install() {
-    // Validate that any required linked containers are actually running.
-    return;
-  }
-
   public function execute() {
     $cmd = "sudo " . $this->cmd_prefix . "./containers/web/run.sh";
     // Execute the simpletest testing bash script
     $this->shell_command($cmd);
-    return;
-  }
-
-  public function complete() {
-    // Run any post-execute clean-up or notification scripts, as desired.
-    return;
-  }
-
-  public function success() {
-    // Run any post-execute clean-up or notification scripts, which are
-    // intended to be run only upon success.
-    return;
-  }
-
-  public function failure() {
-    // Run any post-execute clean-up or notification scripts, which are
-    // intended to be run only upon failure.
     return;
   }
 

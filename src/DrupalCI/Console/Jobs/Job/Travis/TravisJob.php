@@ -54,7 +54,7 @@ class TravisJob extends JobBase {
   // Placeholder to store the auto-generated bootstrap script
   protected $script = "";
 
-  protected $allowed_arguments = array(
+  public $allowed_arguments = array(
     'DCI_TravisFile',
     'DCI_Namespace',
     'DCI_TravisCommands',
@@ -62,11 +62,11 @@ class TravisJob extends JobBase {
     'DCI_Privileged',
   );
 
-  protected $default_arguments = array(
+  public $default_arguments = array(
     'DCI_TravisFile' => '.travis.yml',
   );
 
-  protected $required_arguments = array(
+  public $required_arguments = array(
     'DCI_TravisFile' => 'build_vars:travis_filename',
   );
 
@@ -126,7 +126,7 @@ class TravisJob extends JobBase {
       $permutation->setNamespace($namespace);
       $permutation->setLanguage($language . ':' . $language_version);
       $permutation->setCommand($command);
-      if (!empty($this->arguments['DCI_Privileged'])) {
+      if (!empty($this->build_vars['DCI_Privileged'])) {
         $permutation->setPrivileged(true);
       }
       $permutation->addServices($services);

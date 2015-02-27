@@ -6,10 +6,11 @@
 
 namespace DrupalCI\Console\Jobs\Job;
 
-use DrupalCI\Console\Helpers\ConfigHelper;
+
+use DrupalCI\Console\Jobs\Job\Component\Configurator;
+use DrupalCI\Console\Jobs\Job\Component\ParameterValidator;
 use Symfony\Component\Process\Process;
 use DrupalCI\Console\Jobs\ContainerBase;
-use DrupalCI\Console\Jobs\Definition\JobDefinition;
 use DrupalCI\Console\Helpers\ContainerHelper;
 
 class JobBase extends ContainerBase {
@@ -18,27 +19,24 @@ class JobBase extends ContainerBase {
   public $jobtype = 'base';
 
   // Defines argument variable names which are valid for this job type
-  protected $available_arguments = array();
+  public $available_arguments = array();
 
   // Defines platform defaults which apply for all jobs.  (Can still be overridden by per-job defaults)
-  protected $platform_defaults = array(
+  public $platform_defaults = array(
     "DCI_CodeBase" => "./",
     // DCI_CheckoutDir defaults to a random directory in the system temp directory.
   );
 
   // Defines the default arguments which are valid for this job type
-  protected $default_arguments = array();
+  public $default_arguments = array();
 
   // Defines the required arguments which are necessary for this job type
   // Format:  array('ENV_VARIABLE_NAME' => 'CONFIG_FILE_LOCATION'), where
   // CONFIG_FILE_LOCATION is a colon-separated nested location for the
   // equivalent var in a job definition file.
-  protected $required_arguments = array(
+  public $required_arguments = array(
     // eg:   'DCI_DBTYPE' => 'environment:db'
   );
-
-  // Holds the compiled argument list for this particular job
-  public $arguments;
 
   // Placeholder which holds the parsed job definition file for this job
   public $job_definition = NULL;
@@ -46,27 +44,11 @@ class JobBase extends ContainerBase {
   // Error status
   public $error_status = 0;
 
-  // Retrieve the argument list for this job
-  public function get_arguments() {
-    return $this->arguments;
-  }
-
-  // Set the argument list for this job
-  public function set_arguments($arguments) {
-    $this->arguments = $arguments;
-  }
-
-  // Merge the passed arguments into the existing argument list
-  public function merge_arguments($arguments) {
-    $existing = $this->arguments;
-    $this->arguments = $arguments + $existing;
-  }
-
   // Default working directory
   public $working_dir = "./";
 
   // Holds build variables which need to be persisted between build steps
-  protected $build_vars = array();
+  public $build_vars = array();
 
   // Retrieves the build variables for this job
   public function get_buildvars() {
@@ -89,121 +71,24 @@ class JobBase extends ContainerBase {
   }
 
   // Stores the calling command's output buffer
-  protected $output;
+  public $output;
 
   // Sets the output buffer
   public function setOutput($output) {
     $this->output = $output;
   }
 
-  // Individual functions for each build step
+  // Compile the complete job definition
+  // DrupalCI jobs are controlled via a hierarchy of configuration settings, which define the behaviour of the platform while running DrupalCI jobs.  This hierarchy is defined as follows, which each level overriding the previous:
+  // 1. Out-of-the-box DrupalCI defaults
+  // 2. Local overrides defined in ~/.drupalci/config
+  // 3. 'DCI_' namespaced environment variable overrides
+  // 4. Test-specific overrides passed inside a DrupalCI test definition (e.g. .drupalci.yml)
+  // 5. Custom overrides located inside a test definition defined via the $source variable when calling this function.
   public function configure($source = NULL) {
-    // Get and parse test definitions
-    // DrupalCI jobs are controlled via a hierarchy of configuration settings, which define the behaviour of the platform while running DrupalCI jobs.  This hierarchy is defined as follows, which each level overriding the previous:
-    // 1. Out-of-the-box DrupalCI defaults
-    // 2. Local overrides defined in ~/.drupalci/config
-    // 3. 'DCI_' namespaced environment variable overrides
-    // 4. Test-specific overrides passed inside a DrupalCI test definition (e.g. .drupalci.yml)
-    // 5. Custom overrides located inside a test definition defined via the $source variable when calling this function.
-
-    $confighelper = new ConfigHelper();
-
-    // Load job defaults
-    $platform_args = $this->platform_defaults;
-    $default_args = $this->default_arguments;
-    if (!empty($default_args)) {
-      $this->output->writeln("<comment>Loading build variables for this job type.</comment>");
-    }
-
-    // Load DrupalCI local config overrides
-    $local_args = $confighelper->getCurrentConfigSetParsed();
-    if (!empty($local_args)) {
-      $this->output->writeln("<comment>Loading build variables from DrupalCI local config overrides.</comment>");
-    }
-
-    // Load "DCI_ namespaced" environment variable overrides
-    $environment_args = $confighelper->getCurrentEnvVars();
-    if (!empty($environment_args)) {
-      $this->output->writeln("<comment>Loading build variables from namespaced environment variable overrides.</comment>");
-    }
-
-    // Load command line arguments
-    // TODO: Routine for loading command line arguments.
-    // TODO: How do we pull arguments off the drupalci command, when in a job class?
-    // $cli_args = $somehelper->loadCLIargs();
-    $cli_args = array();
-    if (!empty($cli_args)) {
-      $this->output->writeln("<comment>Loading test parameters from command line arguments.</comment>");
-    }
-
-    // Create temporary config array to use in determining the definition file source
-    $config = $cli_args + $environment_args + $local_args + $default_args + $platform_args;
-
-    // Load any build vars defined in the job definition file
-    // Retrieve test definition file
-    if (isset($source)) {
-      $config['explicit_source'] = $source;
-    }
-
-    $definition_file = $this->getDefinitionFile($config);
-
-    $definition_args = array();
-
-    // Load test definition file
-    if (!empty($definition_file)) {
-      $this->output->writeln("<comment>Loading test parameters from build file: </comment><info>$definition_file</info>");
-      $job = new JobDefinition();
-      $result = $job->load($definition_file);
-      if ($result == -1) {
-        // Error loading definition file.
-        $this->error_output("Failed", "Unable to parse build file.");
-        // TODO: Robust error handling
-        return;
-      };
-      $job_definition = $job->getParameters();
-      if (empty($job_definition)) {
-        $job_definition = array();
-        $definition_args = array();
-      }
-      else {
-        $definition_args = !empty($job_definition['build_vars']) ? $job_definition['build_vars'] : array();
-        $this->job_definition = $job_definition;
-      }
-    }
-
-    $config = $cli_args + $definition_args + $environment_args + $local_args + $default_args + $platform_args;
-
-    // Set initial build variables
-    $buildvars = $this->get_buildvars();
-    $this->set_buildvars($buildvars + $config);
-
-    // TODO: Remove the 'arguments' parameter.
-    $this->set_arguments($config);
-
-    return;
+    $configurator = new Configurator();
+    $configurator->configure($this, $source);
   }
-
-  protected function getDefinitionFile($config) {
-    $definition_file = "";
-
-    // DrupalCI file-based test definition overrides can come from a number of sources:
-    // 1. A file location explicitly passed into the config function
-    if (!empty($config['explicit_source'])) {
-      // TODO: Validate passed filename
-      $definition_file = $config['explicit_source'];
-    }
-    // 2. A .drupalci.yml file located in a local codebase directory
-    // TODO: file_exists throws warnings if passed a 'git' URL.
-    elseif (file_exists($config['DCI_CodeBase'] . ".drupalci.yml")) {
-      $definition_file = $config['DCI_CodeBase'] . ".drupalci.yml";
-    }
-    // 3. A file location stored in the 'DCI_BuildFile' environment variable
-    elseif (!empty($config['DCI_BuildFile'])) {
-      $definition_file = $config['DCI_BuildFile'];
-    }
-    return $definition_file;
-  }
-
 
   // Defines the default build_steps for this job type
   public function build_steps() {
@@ -223,129 +108,22 @@ class JobBase extends ContainerBase {
 
   public function validate() {
     $this->output->write("<comment>Validating test parameters ... </comment>");
-    // TODO: Ensure that all 'required' arguments are defined
-    $definition = $this->job_definition;
-    $failflag = FALSE;
-    foreach ($this->required_arguments as $env_var => $yaml_loc) {
-      if (!empty($this->build_vars[$env_var])) {
-        continue;
-      }
-      else {
-        // Look for the appropriate array structure in the job definition file
-        // eg: environment:db
-        $keys = explode(":", $yaml_loc);
-        $eval = $definition;
-        foreach ($keys as $key) {
-          if (!empty($eval[$key])) {
-            // Check if the next level contains a numeric [0] key, indicating a
-            // nested array of parameters.  If found, skip this level of the
-            // array.
-            if (isset($eval[$key][0])) {
-              $eval = $eval[$key][0];
-            }
-            else {
-              $eval=$eval[$key];
-            }
-          }
-          else {
-            // Missing a required key in the array key chain
-            $failflag = TRUE;
-            break;
-          }
-        }
-        if (!$failflag) {
-          continue;
-        }
-      }
-
-      // If processing gets to here, we're missing a required variable
+    $validator = new ParameterValidator();
+    $validator->load_values($this);
+    $result = $validator->validate();
+    if (!$result) {
       $this->error_output("Failed", "Required test parameter <options=bold>'$env_var'</options=bold> not found in environment variables, and <options=bold>'$yaml_loc'</options=bold> not found in job definition file.");
       // TODO: Graceful handling of failed exit states
       return;
     }
-    // TODO: Strip out arguments which are not defined in the 'Available' arguments array
-    $this->output->writeln("<info>PASSED</info>");
-    return;
-  }
-
-  public function checkout() {
-
-    // TODO: THIS ISN'T CALLED ANYMORE!
-
-
-    $arguments = $this->get_buildvars();
-    // Check if the source codebase directory has been specified
-    if (empty($arguments['DCI_CodeBase'])) {
-      // If no explicit codebase provided, assume we are using the code in the local directory.
-      $arguments['DCI_CodeBase'] = "./";
-      $this->set_buildvars($arguments);
-    }
-    // Check if the target working directory has been specified.
-    if (empty($arguments['DCI_CheckoutDir'])) {
-      // If no explicit working directory provided, we generate one in the system temporary directory.
-      $tmpdir = $this->create_tempdir(sys_get_temp_dir() . '/drupalci/', $this->jobtype . "-");
-      if (!$tmpdir) {
-        // Error creating checkout directory
-        $this->error_output("Error", "Failure encountered while attempting to create a local checkout directory");
-        return;
-      }
-      $this->output->writeln("<comment>Checkout directory created at <info>$tmpdir</info></comment>");
-      $arguments['DCI_CheckoutDir'] = $tmpdir;
-      $this->set_buildvars($arguments);
-    }
-    elseif ($arguments['DCI_CheckoutDir'] != $arguments['DCI_CodeBase']) {
-      // We ensure the checkout directory is within the system temporary directory, to ensure
-      // that we don't provide access to the entire file system.
-
-      // Create checkout directory
-      $result = $this->create_local_checkout_dir();
-      // Pass through any errors encountered while creating the directory
-      if ($result == -1) {
-        return -1;
-      }
-    }
-
-    // Update the checkout directory in the class object
-    $this->working_dir = $arguments['DCI_CheckoutDir'];
-
-    // Refresh our arguments list (may have changed in create_local_checkout_dir())
-    $arguments = $this->get_buildvars();
-
-    // Determine if local or remote codebase
-    $parsed_url = parse_url($arguments['DCI_CodeBase']);
-    if (empty($parsed_url['scheme'])) {
-      // Local directory
-      $dirname = $arguments['DCI_CodeBase'];
-      $this->output->writeln("<comment>Using local source codebase directory: <info>$dirname</info></comment>");
-      // Check if a checkout is necessary
-      // See if working directory is provided, and differs from the CodeBase directory.
-      if ($arguments['DCI_CheckoutDir'] == $arguments['DCI_CodeBase']) {
-        // No checkout required.
-        $this->output->writeln("<info>Using original code base for the working directory.</info>");
-        return;
-      }
-      $checkoutdir = $arguments['DCI_CheckoutDir'];
-      // Create the local checkout directory and copy the code.
-      $this->output->writeln("<comment>Using local checkout directory: <info>$checkoutdir</info></comment>");
-      $this->checkout_local_to_working();
-      return;
-    }
-    elseif (in_array($parsed_url['scheme'], array('http', 'https', 'git')) && substr($parsed_url['path'], -4) == ".git") {
-      // Remote codebase
-      $repository = $arguments['DCI_CodeBase'];
-      $this->output->writeln("<comment>Using remote source repository: <info>$repository</info></comment>");
-      $checkoutdir = $arguments['DCI_CheckoutDir'];
-      $this->output->writeln("<comment>Using local checkout directory: <info>$checkoutdir</info></comment>");
-      $this->checkout_git_to_working();
-      return;
-    }
     else {
-      // Unsupported format in DCI_CodeBase
-      // TODO: Add support for zipped files referenced with an http:// url
-      $this->error_output("Error", "Unable to determine source codebase directory or URL.");
+      $this->output->writeln("<info>PASSED</info>");
       return;
     }
   }
+
+
+
 
   protected function create_tempdir($dir=NULL,$prefix=NULL) {
     // PHP seems to have trouble creating temporary unique directories with the appropriate permissions,
@@ -471,6 +249,9 @@ class JobBase extends ContainerBase {
   }
 
   public function environment() {
+    // The 'environment' step determines which containers are going to be
+    // required, validates that the appropriate container images exist, and
+    // starts any required service containers.
     $this->build_container_names();
     $this->validate_container_names();
     $this->start_service_containers();
@@ -591,7 +372,6 @@ class JobBase extends ContainerBase {
    * - Perform checkouts (setup_checkout)
    * - Perform fetches  (setup_fetch)
    * - Apply patches  (setup_patch)
-
    */
   public function setup() {
     // Setup codebase and working directories
@@ -855,7 +635,9 @@ class JobBase extends ContainerBase {
 
   }
 
+
   public function validate_install() {
+    // Validate that any required linked containers are actually running.
     return;
   }
 
@@ -864,14 +646,19 @@ class JobBase extends ContainerBase {
   }
 
   public function complete() {
+    // Run any post-execute clean-up or notification scripts, as desired.
     return;
   }
 
   public function success() {
+    // Run any post-execute clean-up or notification scripts, which are
+    // intended to be run only upon success.
     return;
   }
 
   public function failure() {
+    // Run any post-execute clean-up or notification scripts, which are
+    // intended to be run only upon failure.
     return;
   }
 
