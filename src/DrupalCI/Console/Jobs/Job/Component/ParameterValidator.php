@@ -57,7 +57,9 @@ class ParameterValidator {
         }
       }
       // If processing gets to here, we're missing a required variable
-      return FALSE;
+      $this->error_output("Failed", "Required test parameter <options=bold>'$env_var'</options=bold> not found in environment variables, and <options=bold>'$yaml_loc'</options=bold> not found in job definition file.");
+      // TODO: Graceful handling of failed exit states
+      return;
     }
     // TODO: Strip out arguments which are not defined in the 'Available' arguments array
     return TRUE;
