@@ -8,7 +8,9 @@ namespace DrupalCI\Console\Jobs\Job;
 
 
 use DrupalCI\Console\Jobs\Job\Component\Configurator;
+use DrupalCI\Console\Jobs\Job\Component\EnvironmentValidator;
 use DrupalCI\Console\Jobs\Job\Component\ParameterValidator;
+use DrupalCI\Console\Jobs\Job\Component\SetupDirectoriesComponent;
 use Symfony\Component\Process\Process;
 use DrupalCI\Console\Jobs\ContainerBase;
 use DrupalCI\Console\Helpers\ContainerHelper;
@@ -78,18 +80,6 @@ class JobBase extends ContainerBase {
     $this->output = $output;
   }
 
-  // Compile the complete job definition
-  // DrupalCI jobs are controlled via a hierarchy of configuration settings, which define the behaviour of the platform while running DrupalCI jobs.  This hierarchy is defined as follows, which each level overriding the previous:
-  // 1. Out-of-the-box DrupalCI defaults
-  // 2. Local overrides defined in ~/.drupalci/config
-  // 3. 'DCI_' namespaced environment variable overrides
-  // 4. Test-specific overrides passed inside a DrupalCI test definition (e.g. .drupalci.yml)
-  // 5. Custom overrides located inside a test definition defined via the $source variable when calling this function.
-  public function configure($source = NULL) {
-    $configurator = new Configurator();
-    $configurator->configure($this, $source);
-  }
-
   // Defines the default build_steps for this job type
   public function build_steps() {
     return array(
@@ -106,96 +96,81 @@ class JobBase extends ContainerBase {
     );
   }
 
+  // Compile the complete job definition
+  // DrupalCI jobs are controlled via a hierarchy of configuration settings, which define the behaviour of the platform while running DrupalCI jobs.  This hierarchy is defined as follows, which each level overriding the previous:
+  // 1. Out-of-the-box DrupalCI defaults
+  // 2. Local overrides defined in ~/.drupalci/config
+  // 3. 'DCI_' namespaced environment variable overrides
+  // 4. Test-specific overrides passed inside a DrupalCI test definition (e.g. .drupalci.yml)
+  // 5. Custom overrides located inside a test definition defined via the $source variable when calling this function.
+  public function configure($source = NULL) {
+    $configurator = new Configurator();
+    $configurator->configure($this, $source);
+  }
+
   public function validate() {
     $this->output->write("<comment>Validating test parameters ... </comment>");
     $validator = new ParameterValidator();
-    $validator->load_values($this);
-    $result = $validator->validate();
+    $result = $validator->validate($this);
     if ($result) {
       $this->output->writeln("<info>PASSED</info>");
     }
     return;
   }
 
+  public function environment() {
+    $this->output->writeln("<comment>Validating environment parameters ...</comment>");
+    // The 'environment' step determines which containers are going to be
+    // required, validates that the appropriate container images exist, and
+    // starts any required service containers.
+    $validator = new EnvironmentValidator();
+    $validator->build_container_names($this);
+    $validator->validate_container_names($this);
+    $validator->start_service_containers($this);
+  }
 
-
-
-  protected function create_tempdir($dir=NULL,$prefix=NULL) {
-    // PHP seems to have trouble creating temporary unique directories with the appropriate permissions,
-    // So we create a temp file to get the unique filename, then mkdir a directory in it's place.
-    $prefix = empty($prefix) ? "drupalci-" : $prefix;
-    $tmpdir = ($dir && is_dir($dir)) ? $dir : sys_get_temp_dir();
-    $tempname = tempnam($tmpdir, $prefix);
-    if (empty($tempname)) {
-      // Unable to create temp filename
-      $this->error_output("Error", "Unable to create temporary directory inside of $tmpdir.");
+  /*
+   *  The setup stage will be responsible for:
+   * - Perform checkouts (setup_checkout)
+   * - Perform fetches  (setup_fetch)
+   * - Apply patches  (setup_patch)
+   */
+  public function setup() {
+    // Setup codebase and working directories
+    $setup = new SetupDirectoriesComponent();
+    $setup->setup_codebase($this);
+    $setup->setup_working_dir($this);
+    // Bail if we don't have a setup stage in the job definition.
+    if (empty($this->job_definition['setup'])) {
       return;
     }
-    $tempdir = $tempname;
-    unlink($tempname);
-    if (mkdir($tempdir)) {
-      return $tempdir;
-    }
-    else {
-      // Unable to create temp directory
-      $this->error_output("Error", "Error encountered while attempting to create temporary directory $tempdir.");
-      return;
-    }
+    // Run through the job definition file setup stages.
+    $this->do_setup();
   }
 
-  protected function create_local_checkout_dir() {
-    $arguments = $this->get_buildvars();
-    $directory = $arguments['DCI_CheckoutDir'];
-    $tempdir = sys_get_temp_dir();
-
-    // Prefix the system temp dir on the DCI_CheckoutDir variable if needed
-    if (strpos($directory, $tempdir) !== 0) {
-      // If not, prefix the system temp directory on the variable.
-      if ($directory[0] != "/") {
-        $directory = "/" . $directory;
+  public function do_setup() {
+    $setup = $this->job_definition['setup'];
+    foreach ($setup as $step => $details) {
+      $func = "setup_" . $step;
+      if (!isset($details[0])) {
+        // Non-numeric array found ... assume we have only one iteration.
+        // We wrap this in an array in order to handle both singletons and
+        // arrays with the same code.
+        $details = array($details);
       }
-      $arguments['DCI_CheckoutDir'] = $tempdir . $directory;
-      $this->set_buildvars($arguments);
-    }
-
-    // Check if the DCI_CheckoutDir exists within the /tmp directory, or create it if not
-    $path = realpath($arguments['DCI_CheckoutDir']);
-    if ($path !== FALSE) {
-      // Directory exists.  Check that we're still in /tmp
-      if (!$this->validate_checkout_dir()) {
-        // Something bad happened.  Attempt to transverse out of the /tmp dir, perhaps?
-        $this->error_output("Error", "Detected an invalid local checkout directory.  The checkout directory must reside somewhere within the system temporary file directory.");
-        return;
-      }
-      else {
-        // Directory is within the system temp dir.
-        $this->output->writeln("<comment>Found existing local checkout directory <info>$path</info></comment>");
-        return;
+      foreach ($details as $iteration => $detail) {
+        $this->$func($detail);
+        // Handle errors encountered during sub-function execution.
+        if ($this->error_status != 0) {
+          echo "Received failed return code from function $func.";
+          return;
+        }
       }
     }
-    elseif ($path === FALSE) {
-      // Directory doesn't exist, so create it.
-      $directory = $arguments['DCI_CheckoutDir'];
-      mkdir($directory, 0777, true);
-      $this->output->writeln("<comment>Checkout Directory created at <info>$directory</info>");
-      // Ensure we are under the system temp dir
-      if (!$this->validate_checkout_dir()) {
-        // Something bad happened.  Attempt to transverse out of the /tmp dir, perhaps?
-        $this->error_output("Error", "DCI_CheckoutDir must reside somewhere within the system temporary file directory. You may wish to manually remove the directory created above.");
-        return;
-      }
-    }
+    return;
   }
 
-  protected function validate_checkout_dir() {
-    $arguments = $this->get_buildvars();
-    $path = realpath($arguments['DCI_CheckoutDir']);
-    $tmpdir = sys_get_temp_dir();
-    if (strpos($path, $tmpdir) === 0) {
-      return TRUE;
-    }
-    return FALSE;
-  }
+
 
   protected function checkout_local_to_working() {
     // Load arguments
@@ -243,206 +218,6 @@ class JobBase extends ContainerBase {
     $this->output->writeln("<comment>Checkout directory populated.</comment>");
   }
 
-  public function environment() {
-    // The 'environment' step determines which containers are going to be
-    // required, validates that the appropriate container images exist, and
-    // starts any required service containers.
-    $this->build_container_names();
-    $this->validate_container_names();
-    $this->start_service_containers();
-  }
-
-  protected function build_container_names() {
-    // Determine whether to use environment variables or definition file to determine what containers are needed
-    if (empty($this->job_definition['environment'])) {
-      $containers = $this->env_containers_from_env();
-    }
-    else {
-      $containers = $this->env_containers_from_file();
-    }
-    if (!empty($containers)) {
-      $this->build_vars['DCI_Container_Images'] = $containers;
-    }
-  }
-
-  protected function env_containers_from_env() {
-    $containers = array();
-    $this->output->writeln("<comment>Parsing environment variables to determine required containers.</comment>");
-    // Retrieve environment-related variables from the job arguments
-    $dbtype = $this->build_vars['DCI_DBTYPE'];
-    $dbver = $this->build_vars['DCI_DBVER'];
-    $phpversion = $this->build_vars['DCI_PHPVERSION'];
-    $containers['php'][$phpversion] = "drupalci/php-$phpversion";
-    $this->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
-    $containers['db'][$dbtype . "-" . $dbver] = "drupalci/$dbtype-$dbver";
-    $this->output->writeln("<info>Adding container: <options=bold>drupalci/$dbtype-$dbver</options=bold></info>");
-    return $containers;
-  }
-
-  protected function env_containers_from_file() {
-    $config = $this->job_definition['environment'];
-    $this->output->writeln("<comment>Evaluating container requirements as defined in job definition file ...</comment>");
-    $containers = array();
-
-    // Determine required php containers
-    if (!empty($config['php'])) {
-      // May be a string if one version required, or array if multiple
-      if (is_array($config['php'])) {
-        foreach ($config['php'] as $phpversion) {
-          // TODO: Make the drupalci prefix a variable (overrideable to use custom containers)
-          $containers['php']["$phpversion"] = "drupalci/php-$phpversion";
-          $this->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
-        }
-      }
-      else {
-        $phpversion = $config['php'];
-        $containers['php']["$phpversion"] = "drupalci/php-$phpversion";
-        $this->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
-      }
-    }
-    else {
-      // We assume will always need at least one default PHP container
-      $containers['php']['5.5'] = "drupalci/php-5.5";
-    }
-
-    // Determine required database containers
-    if (!empty($config['db'])) {
-      // May be a string if one version required, or array if multiple
-      if (is_array($config['db'])) {
-        foreach ($config['db'] as $dbversion) {
-          $containers['db']["$dbversion"] = "drupalci/$dbversion";
-          $this->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
-        }
-      }
-      else {
-        $dbversion = $config['db'];
-        $containers['db']["$dbversion"] = "drupalci/$dbversion";
-        $this->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
-      }
-    }
-    return $containers;
-  }
-
-  protected function validate_container_names() {
-    // Verify that the appropriate container images exist
-    $this->output->writeln("<comment>Ensuring appropriate container images exist.</comment>");
-    $helper = new ContainerHelper();
-    foreach ($this->build_vars['DCI_Container_Images'] as $type => $containers) {
-      foreach ($containers as $key => $image) {
-        if (!$helper->containerExists($image)) {
-          // Error: No such container image
-          $this->error_output("Failed", "Required container image <options=bold>'$image'</options=bold> does not exist.");
-          // TODO: Robust error handling.
-          return;
-        }
-      }
-    }
-    return TRUE;
-  }
-
-  protected function start_service_containers() {
-    // We need to ensure that any service containers are started.
-    $helper = new ContainerHelper();
-    if (empty($this->build_vars['DCI_Container_Images']['db'])) {
-      // No service containers required.
-      return;
-    }
-    foreach ($this->build_vars['DCI_Container_Images']['db'] as $image) {
-      // Start an instance of $image.
-      // TODO: Ensure container is not already running!
-      $helper->startContainer($image);
-      $need_sleep = TRUE;
-    }
-    // Pause to allow any container services (e.g. mysql) to start up.
-    // TODO: This currently pauses even if the container was already found.  Do we need the
-    // start_container.sh script to throw an error return code?
-    if (!empty($need_sleep)) {
-      echo "Sleeping 10 seconds to allow container services to start.\n";
-      sleep(10);
-    }
-  }
-
-  /*
-   *  The setup stage will be responsible for:
-   * - Perform checkouts (setup_checkout)
-   * - Perform fetches  (setup_fetch)
-   * - Apply patches  (setup_patch)
-   */
-  public function setup() {
-    // Setup codebase and working directories
-    $this->setup_codebase();
-    $this->setup_working_dir();
-
-    // Bail if we don't have a setup stage in the job definition.
-    if (empty($this->job_definition['setup'])) {
-      return;
-    }
-
-    // Run through the job definition file setup stages.
-    $this->do_setup();
-  }
-
-  function setup_codebase() {
-    $arguments = $this->get_buildvars();
-    // Check if the source codebase directory has been specified
-    if (empty($arguments['DCI_CodeBase'])) {
-      // If no explicit codebase provided, assume we are using the code in the local directory.
-      $arguments['DCI_CodeBase'] = "./";
-      $this->set_buildvars($arguments);
-    }
-  }
-
-  function setup_working_dir() {
-    // Check if the target working directory has been specified.
-    if (empty($arguments['DCI_CheckoutDir'])) {
-      // If no explicit working directory provided, we generate one in the system temporary directory.
-      $tmpdir = $this->create_tempdir(sys_get_temp_dir() . '/drupalci/', $this->jobtype . "-");
-      if (!$tmpdir) {
-        // Error creating checkout directory
-        $this->error_output("Error", "Failure encountered while attempting to create a local checkout directory");
-        return;
-      }
-      $this->output->writeln("<comment>Checkout directory created at <info>$tmpdir</info></comment>");
-      $arguments['DCI_CheckoutDir'] = $tmpdir;
-      $this->set_buildvars($arguments);
-    }
-    elseif ($arguments['DCI_CheckoutDir'] != $arguments['DCI_CodeBase']) {
-      // We ensure the checkout directory is within the system temporary directory, to ensure
-      // that we don't provide access to the entire file system.
-
-      // Create checkout directory
-      $result = $this->create_local_checkout_dir();
-      // Pass through any errors encountered while creating the directory
-      if ($result == -1) {
-        return -1;
-      }
-    }
-    // Update the checkout directory in the class object
-    $this->working_dir = $arguments['DCI_CheckoutDir'];
-  }
-
-
-  public function do_setup() {
-    $setup = $this->job_definition['setup'];
-    foreach ($setup as $step => $details) {
-      $func = "setup_" . $step;
-      if (!isset($details[0])) {
-        // Non-numeric array found ... assume we have only one iteration.
-        // We wrap this in an array in order to handle both singletons and
-        // arrays with the same code.
-        $details = array($details);
-      }
-      foreach ($details as $iteration => $detail) {
-        $this->$func($detail);
-        // Handle errors encountered during sub-function execution.
-        if ($this->error_status != 0) {
-          echo "Received failed return code from function $func.";
-          return;
-        }
-      }
-    }
-    return;
-  }
 
   protected function setup_checkout($details) {
     $this->output->writeln("<info>Entering setup_checkout().</info>");

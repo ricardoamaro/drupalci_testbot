@@ -8,6 +8,7 @@
 namespace DrupalCI\Console\Jobs\Job\Simpletest;
 
 use DrupalCI\Console\Helpers\ContainerHelper;
+use DrupalCI\Console\Jobs\Job\Component\EnvironmentValidator;
 use DrupalCI\Console\Jobs\Job\JobBase;
 use Symfony\Component\Finder\Tests\Iterator\DateRangeFilterIteratorTest;
 
@@ -103,18 +104,25 @@ class SimpletestJob extends JobBase {
   protected $variables = array();
 
   public function environment() {
-    $this->build_container_names();
+    $this->output->write("<comment>Validating environment parameters ...</comment>");
+    // The 'environment' step determines which containers are going to be
+    // required, validates that the appropriate container images exist, and
+    // starts any required service containers.
+    $validator = new EnvironmentValidator();
+    $validator->build_container_names($this);
+
     $containers = $this->build_vars["DCI_Container_Images"];
+
     foreach ($containers['php'] as $phpversion => $container) {
       // TODO: Fix this after moving to the new container stack
       // $containers['php'][$phpversion] = $container . "-web";
       $containers['php'][$phpversion] = "drupalci/web-" . $phpversion;
     }
     $this->build_vars["DCI_Container_Images"] = $containers;
-    if (!$this->validate_container_names()) {
+    if (!$validator->validate_container_names($this)) {
       return -1;
     }
-    $this->start_service_containers();
+    $validator->start_service_containers($this);
     return;
   }
 
@@ -135,13 +143,15 @@ class SimpletestJob extends JobBase {
     $cmd_prefix = "";
     if (!empty($definition['db'])) {
       $dbtype = explode("-", $definition['db'][0]);
-      $phpver = $definition['php'][0];
       $cmd_prefix = "DCI_DBTYPE=" . $dbtype[0] . " DCI_DBVER=" . $dbtype[1];
     }
     else {
       $cmd_prefix = "DCI_DBTYPE= DCI_DBVER= ";
     }
-    $cmd_prefix .= (!empty($definition['php'])) ? " DCI_PHPVERSION=$phpver " : " DCI_PHPVERSION= ";
+
+    $phpver = (!empty($definition['php'])) ? $definition['php'][0] : "";
+
+    $cmd_prefix .= (!empty($phpver)) ? " DCI_PHPVERSION=$phpver " : " DCI_PHPVERSION= ";
     $this->cmd_prefix = $cmd_prefix;
   }
 

@@ -11,22 +11,12 @@ namespace DrupalCI\Console\Jobs\Job\Component;
 
 class ParameterValidator {
 
-  public $job_definition;
-  public $required_arguments;
-  public $build_vars;
-
-  public function load_values($job) {
-    $this->job_definition = $job->job_definition;
-    $this->required_arguments = $job->required_arguments;
-    $this->build_vars = $job->build_vars;
-  }
-
-  public function validate() {
+  public function validate($job) {
     // TODO: Ensure that all 'required' arguments are defined
-    $definition = $this->job_definition;
+    $definition = $job->job_definition;
     $failflag = FALSE;
-    foreach ($this->required_arguments as $env_var => $yaml_loc) {
-      if (!empty($this->build_vars[$env_var])) {
+    foreach ($job->required_arguments as $env_var => $yaml_loc) {
+      if (!empty($job->build_vars[$env_var])) {
         continue;
       }
       else {
@@ -57,7 +47,7 @@ class ParameterValidator {
         }
       }
       // If processing gets to here, we're missing a required variable
-      $this->error_output("Failed", "Required test parameter <options=bold>'$env_var'</options=bold> not found in environment variables, and <options=bold>'$yaml_loc'</options=bold> not found in job definition file.");
+      $job->error_output("Failed", "Required test parameter <options=bold>'$env_var'</options=bold> not found in environment variables, and <options=bold>'$yaml_loc'</options=bold> not found in job definition file.");
       // TODO: Graceful handling of failed exit states
       return;
     }
