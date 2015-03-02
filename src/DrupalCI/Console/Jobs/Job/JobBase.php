@@ -111,15 +111,10 @@ class JobBase extends ContainerBase {
     $validator = new ParameterValidator();
     $validator->load_values($this);
     $result = $validator->validate();
-    if (!$result) {
-      $this->error_output("Failed", "Required test parameter <options=bold>'$env_var'</options=bold> not found in environment variables, and <options=bold>'$yaml_loc'</options=bold> not found in job definition file.");
-      // TODO: Graceful handling of failed exit states
-      return;
-    }
-    else {
+    if ($result) {
       $this->output->writeln("<info>PASSED</info>");
-      return;
     }
+    return;
   }
 
 
@@ -457,6 +452,27 @@ class JobBase extends ContainerBase {
     return $this->$func($details);
   }
 
+  protected function setup_checkout_local($details) {
+    $this->output->writeln("<info>Entering setup_checkout_local().</info>");
+    $srcdir = isset($details['srcdir']) ? $details['srcdir'] : './';
+    $workingdir = $this->working_dir;
+    $checkoutdir = isset($details['checkout_dir']) ? $details['checkout_dir'] : $workingdir;
+    // TODO: Ensure we don't end up with double slashes
+    // Validate target directory.  Must be within workingdir.
+    if (!($directory = $this->validate_directory($checkoutdir))) {
+      // Invalidate checkout directory
+      $this->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
+      return;
+    }
+    $this->output->write("<comment>Copying files from <options=bold>$srcdir</options=bold> to the local checkout directory <options=bold>$directory</options=bold> ... </comment>");
+    exec("cp -r $srcdir/* $directory", $cmdoutput, $result);
+    if (is_null($result)) {
+      $this->error_output("Failed", "Error encountered while attempting to copy code to the local checkout directory.");
+      return;
+    }
+    $this->output->writeln("<comment>DONE</comment>");
+  }
+
   protected function setup_checkout_git($details) {
     $this->output->writeln("<info>Entering setup_checkout_git().</info>");
     $repo = isset($details['repo']) ? $details['repo'] : 'git://drupalcode.org/project/drupal.git';
@@ -472,7 +488,6 @@ class JobBase extends ContainerBase {
       $this->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
       return;
     }
-
     $this->output->writeln("<comment>Performing git checkout of $repo $gitbranch branch to $directory.</comment>");
 
     $cmd = "git clone -b $gitbranch $repo $directory";
@@ -634,7 +649,6 @@ class JobBase extends ContainerBase {
   protected function install_command($details) {
 
   }
-
 
   public function validate_install() {
     // Validate that any required linked containers are actually running.
