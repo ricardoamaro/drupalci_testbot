@@ -152,6 +152,14 @@ class SimpletestJob extends JobBase {
     $phpver = (!empty($definition['php'])) ? $definition['php'][0] : "";
 
     $cmd_prefix .= (!empty($phpver)) ? " DCI_PHPVERSION=$phpver " : " DCI_PHPVERSION= ";
+
+    if (!empty($this->job_definition['variables'])) {
+      $buildvars = $this->job_definition['variables'];
+      foreach ($buildvars as $key => $value) {
+        $cmd_prefix .= "$key=$value ";
+      }
+    }
+
     $this->cmd_prefix = $cmd_prefix;
   }
 
