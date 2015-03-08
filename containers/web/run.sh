@@ -350,24 +350,26 @@ if [[ $DCI_DEPENDENCIES = "" ]]
     echo ""
 fi
 
+
 #DCI_DEPENDENCIES_GIT="gitrepo1,branch;gitrepo2,branch"
 #Get the git dependecies
-if [[ $DCI_DEPENDENCIES_GIT = "" ]]
-  then
-    echo -e "NOTICE: \$DCI_DEPENDENCIES_GIT has nothing declared...\n"
-  else
-     ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
-     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
-     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
-     echo "${ARRAY}"
-     for row in ${ARRAY[@]}
-      do
-      read gurl gbranch <<<$(echo "${row}" | tr "," " ");
-      echo "Git URL: $gurl Branch: $gbranch "
-      git clone --branch $gbranch $gurl
-    done
-    echo ""
-fi
+### REMOVED, as checkout functionality now supported in drupalci console app
+#if [[ $DCI_DEPENDENCIES_GIT = "" ]]
+#  then
+#    echo -e "NOTICE: \$DCI_DEPENDENCIES_GIT has nothing declared...\n"
+#  else
+#     ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
+#     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
+#     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
+#     echo "${ARRAY}"
+#     for row in ${ARRAY[@]}
+#      do
+#      read gurl gbranch <<<$(echo "${row}" | tr "," " ");
+#      echo "Git URL: $gurl Branch: $gbranch "
+#      git clone --branch $gbranch $gurl
+#    done
+#    echo ""
+#fi
 
 #DCI_DEPENDENCIES_TGZ="module1_url.tgz,module1_url.tgz,module1_url.tgz"
 #Get the tgz dependecies
