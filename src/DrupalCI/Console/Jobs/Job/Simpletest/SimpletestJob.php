@@ -160,7 +160,15 @@ class SimpletestJob extends JobBase {
       }
     }
 
+    // Set working directory
+    if (!empty($this->working_dir)) {
+      $cmd_prefix .= " DCI_WORKSPACE=" . $this->working_dir . " ";
+    }
+
     $this->cmd_prefix = $cmd_prefix;
+
+
+
   }
 
   protected $cmd_prefix = "";
