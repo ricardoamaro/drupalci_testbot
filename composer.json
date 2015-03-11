@@ -30,7 +30,8 @@
         "phpunit/phpunit": "~3",
         "herrera-io/phar-update": "~1.0",
         "kherge/box": "~2.4",
-        "satooshi/php-coveralls": "v0.6.1"
+        "satooshi/php-coveralls": "v0.6.1",
+        "stage1/docker-php": "@dev"
     },
     "prefer-stable": true
 }
