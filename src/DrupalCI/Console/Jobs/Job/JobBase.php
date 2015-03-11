@@ -331,14 +331,19 @@ class JobBase extends ContainerBase {
     if (!isset($this->plugins[$type][$plugin_id])) {
       if (isset($this->pluginDefinitions[$type][$plugin_id])) {
         $plugin_definition = $this->pluginDefinitions[$type][$plugin_id];
-        $this->plugins[$type][$plugin_id] = new $plugin_definition['class']($configuration, $plugin_id, $plugin_definition);
+      }
+      elseif (isset($this->pluginDefinitions['generic'][$plugin_id])) {
+        $plugin_definition = $this->pluginDefinitions['generic'][$plugin_id];
       }
       else {
         throw new PluginNotFoundException("Plugin type $type plugin id $plugin_id not found.");
       }
+      $this->plugins[$type][$plugin_id] = new $plugin_definition['class']($configuration, $plugin_id, $plugin_definition);
     }
     return $this->plugins[$type][$plugin_id];
   }
+
+
 
   public function runCheckout($config) {
     $this->getPlugin('setup', 'checkout')->run($config);
