@@ -7,6 +7,8 @@
 namespace DrupalCI\Console\Jobs\Job;
 
 
+use Drupal\Component\Annotation\Plugin\Discovery\AnnotatedClassDiscovery;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use DrupalCI\Console\Jobs\Job\Component\Configurator;
 use DrupalCI\Console\Jobs\Job\Component\EnvironmentValidator;
 use DrupalCI\Console\Jobs\Job\Component\ParameterValidator;
@@ -49,6 +51,17 @@ class JobBase extends ContainerBase {
 
   // Default working directory
   public $working_dir = "./";
+
+  /**
+   * @var array
+   */
+  protected $pluginDefinitions;
+
+  /**
+   * @var array
+   */
+  protected $plugins;
+
 
   // Holds build variables which need to be persisted between build steps
   public $build_vars = array();
@@ -294,4 +307,40 @@ class JobBase extends ContainerBase {
     });
    }
 
+  protected function discoverPlugins() {
+    $dir = 'src/DrupalCI/Plugin';
+    $plugin_definitions = [];
+    foreach (new \DirectoryIterator($dir) as $file) {
+      if ($file->isDir() && !$file->isDot()) {
+        $plugin_type = $file->getFilename();
+        $plugin_namespaces = ["DrupalCI\\Plugin\\$plugin_type" => ["$dir/$plugin_type"]];
+        $discovery  = new AnnotatedClassDiscovery($plugin_namespaces, 'Drupal\Component\Annotation\PluginID');
+        $plugin_definitions[$plugin_type] = $discovery->getDefinitions();
+      }
+    }
+    return $plugin_definitions;
+  }
+
+  /**
+   * @return \DrupalCI\Plugin\PluginBase
+   */
+  protected function getPlugin($type, $plugin_id, $configuration = []) {
+    if (!isset($this->pluginDefinitions)) {
+      $this->pluginDefinitions = $this->discoverPlugins();
+    }
+    if (!isset($this->plugins[$type][$plugin_id])) {
+      if (isset($this->pluginDefinitions[$type][$plugin_id])) {
+        $plugin_definition = $this->pluginDefinitions[$type][$plugin_id];
+        $this->plugins[$type][$plugin_id] = new $plugin_definition['class']($configuration, $plugin_id, $plugin_definition);
+      }
+      else {
+        throw new PluginNotFoundException("Plugin type $type plugin id $plugin_id not found.");
+      }
+    }
+    return $this->plugins[$type][$plugin_id];
+  }
+
+  public function runCheckout($config) {
+    $this->getPlugin('setup', 'checkout')->run($config);
+  }
 }
