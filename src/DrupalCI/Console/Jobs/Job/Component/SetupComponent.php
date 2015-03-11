@@ -14,12 +14,10 @@ class SetupComponent {
   protected $working_dir;
 
   public function execute($job) {
-    // If we don't have a setup stage in the job definition, build it based on
-    // values in the $job->build_vars array.
-    $this->setup_load_buildvars($job);
-
-    echo "setup: " . print_r($job->job_definition, TRUE);
-
+    // If no setup definition, we bail
+    if (empty($job->job_definition['setup'])) {
+      return;
+    }
     $setup = $job->job_definition['setup'];
     foreach ($setup as $step => $details) {
       $func = "setup_" . $step;
@@ -39,60 +37,6 @@ class SetupComponent {
       }
     }
     return;
-  }
-
-  protected function setup_load_buildvars($job) {
-    $buildvars = $job->get_buildvars();
-    $job_definition = $job->job_definition;
-
-    // Process GIT dependencies
-    if (!empty($buildvars['DCI_DEPENDENCIES_GIT'])) {
-      // Format: gitrepo1,branch;gitrepo2,branch;
-      $dependencies = explode(';', trim($buildvars['DCI_DEPENDENCIES_GIT'], '"'));
-      foreach ($dependencies as $dependency) {
-        if (!empty($dependency)) {
-          list($repo, $branch) = explode(',', $dependency);
-          // TODO: Remove this hardcoded drupalism!!!
-          $directory = 'sites/all/modules/' . basename(parse_url($repo, PHP_URL_PATH), ".git");
-          $job_definition['setup']['checkout'][] = array('protocol' => 'git', 'repo' => $repo, 'branch' => $branch, 'checkout_dir' => $directory);
-        }
-      }
-    }
-
-    $job->job_definition = $job_definition;
-    /*
-### ./run.sh Options
-# Any valid Drupal branch or tag, like 8.0.x, 7.x or 7.30:
-DCI_DrupalBRANCH="8.0.x"
-
-# The identifier used by jenkins to name the Drupal docroot where all is stored:
-DCI_IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
-
-# The place where Drupal repos and DrupalDocRoot identifiers are kept:
-DCI_REPODIR="$HOME/testbotdata"
-
-# Request the runner to update the Drupal local repo before local cloning:
-DCI_UPDATEREPO="false"  # true to force repos update
-
-# By default we put the Drupal repo and docroots on the same place, but you can have BUILDSDIR elsewhere:
-DCI_BUILDSDIR="$DCI_REPODIR"
-
-# Same for the workspace:
-DCI_WORKSPACE="$DCI_BUILDSDIR/$DCI_IDENTIFIER/"
-
-# Install modules:
-DCI_DEPENDENCIES=""     # module1,module2,module2...
-
-# Git clone sandboxes:
-DCI_DEPENDENCIES_GIT="" # gitrepo1,branch;gitrepo2,branch;...
-
-# Download tgz modules:
-DCI_DEPENDENCIES_TGZ="" # module1_url.tgz,module1_url.tgz,...
-
-# Download and patch one or several patches:
-DCI_PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
-
-*/
   }
 
   protected function setup_checkout($details, $job) {

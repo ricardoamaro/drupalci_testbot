@@ -93,6 +93,11 @@ class Configurator {
     $buildvars = $job->get_buildvars();
     $job->set_buildvars($buildvars + $config);
 
+    // Map relevant build variables into the job definition array
+    $this->buildvarsToDefinition($job);
+
+
+
     return;
   }
 
@@ -116,5 +121,76 @@ class Configurator {
     }
     return $definition_file;
   }
+
+
+
+
+  protected function buildvarsToDefinition($job) {
+    $buildvars = $job->get_buildvars();
+    $job_definition = $job->job_definition;
+
+    // Process dependencies
+    if (!empty($buildvars['DCI_DEPENDENCIES'])) {
+      // Format: module1,module2,module3
+      $dependencies = explode(',', trim($buildvars['DCI_DEPENDENCIES'], '"'));
+      foreach ($dependencies as $dependency) {
+        // TODO: Remove the hardcoded git.drupal.org!!!
+        // Perhaps we extend this with a DrupalConfigurator class?
+        $directory = 'sites/all/modules';
+        // TODO: We can't assume a branch here. Need to determine the Drupal version earlier!
+        $job_definition['setup']['checkout'][] = array('protocol' => 'git', 'repo' => "git://git.drupal.org/project/$dependency.git", 'branch' => 'master', 'checkout_dir' => $directory, );
+      }
+    }
+
+    // Process GIT dependencies
+    if (!empty($buildvars['DCI_DEPENDENCIES_GIT'])) {
+      // Format: gitrepo1,branch;gitrepo2,branch;
+      $dependencies = explode(';', trim($buildvars['DCI_DEPENDENCIES_GIT'], '"'));
+      foreach ($dependencies as $dependency) {
+        if (!empty($dependency)) {
+          list($repo, $branch) = explode(',', $dependency);
+          // TODO: Remove this hardcoded drupalism!!!
+          $directory = 'sites/all/modules/' . basename(parse_url($repo, PHP_URL_PATH), ".git");
+          $job_definition['setup']['checkout'][] = array('protocol' => 'git', 'repo' => $repo, 'branch' => $branch, 'checkout_dir' => $directory);
+        }
+      }
+    }
+
+    $job->job_definition = $job_definition;
+    /*
+### ./run.sh Options
+# Any valid Drupal branch or tag, like 8.0.x, 7.x or 7.30:
+DCI_DrupalBRANCH="8.0.x"
+
+# The identifier used by jenkins to name the Drupal docroot where all is stored:
+DCI_IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
+
+# The place where Drupal repos and DrupalDocRoot identifiers are kept:
+DCI_REPODIR="$HOME/testbotdata"
+
+# Request the runner to update the Drupal local repo before local cloning:
+DCI_UPDATEREPO="false"  # true to force repos update
+
+# By default we put the Drupal repo and docroots on the same place, but you can have BUILDSDIR elsewhere:
+DCI_BUILDSDIR="$DCI_REPODIR"
+
+# Same for the workspace:
+DCI_WORKSPACE="$DCI_BUILDSDIR/$DCI_IDENTIFIER/"
+
+# Install modules:
+DCI_DEPENDENCIES=""     # module1,module2,module2...
+
+# Git clone sandboxes:
+DCI_DEPENDENCIES_GIT="" # gitrepo1,branch;gitrepo2,branch;...
+
+# Download tgz modules:
+DCI_DEPENDENCIES_TGZ="" # module1_url.tgz,module1_url.tgz,...
+
+# Download and patch one or several patches:
+DCI_PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
+
+*/
+  }
+
 
 } 
