@@ -4,16 +4,15 @@
  * Base Job class for DrupalCI.
  */
 
-namespace DrupalCI\Console\Jobs\Job;
-
+namespace DrupalCI\Jobs;
 
 use Drupal\Component\Annotation\Plugin\Discovery\AnnotatedClassDiscovery;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use DrupalCI\Console\Jobs\Job\Component\Configurator;
-use DrupalCI\Console\Jobs\Job\Component\EnvironmentValidator;
-use DrupalCI\Console\Jobs\Job\Component\ParameterValidator;
-use DrupalCI\Console\Jobs\Job\Component\SetupComponent;
-use DrupalCI\Console\Jobs\Job\Component\SetupDirectoriesComponent;
+use DrupalCI\Jobs\Component\Configurator;
+use DrupalCI\Jobs\Component\EnvironmentValidator;
+use DrupalCI\Jobs\Component\ParameterValidator;
+use DrupalCI\Jobs\Component\SetupComponent;
+use DrupalCI\Jobs\Component\SetupDirectoriesComponent;
 use Symfony\Component\Process\Process;
 use DrupalCI\Console\Jobs\ContainerBase;
 use DrupalCI\Console\Helpers\ContainerHelper;

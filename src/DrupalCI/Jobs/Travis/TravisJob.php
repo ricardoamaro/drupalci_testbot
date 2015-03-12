@@ -4,13 +4,19 @@
  * Job class for PrivateTravis jobs on DrupalCI.
  */
 
-namespace DrupalCI\Console\Jobs\Job\Travis;
+namespace DrupalCI\Jobs\Travis;
 
 use DrupalCI\Console\Jobs\Job\JobBase;
 use DrupalCI\Console\Jobs\Definition\JobDefinition;
 use PrivateTravis\Permutation;
+use DrupalCI\Plugin\PluginBase;
+
+/**
+ * @PluginID("travis")
+ */
 
 class TravisJob extends JobBase {
+
 
   protected $namespace = "privatetravis";
 

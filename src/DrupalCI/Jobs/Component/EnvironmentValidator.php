@@ -6,7 +6,7 @@
  * Time: 11:05 PM
  */
 
-namespace DrupalCI\Console\Jobs\Job\Component;
+namespace DrupalCI\Jobs\Component;
 
 
 use DrupalCI\Console\Helpers\ContainerHelper;

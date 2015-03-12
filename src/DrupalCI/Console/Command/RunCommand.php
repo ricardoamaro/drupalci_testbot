@@ -79,11 +79,21 @@ class RunCommand extends DrupalCICommandBase {
 
   /**
    * Discovers the list of available jobs.
-   *
-   * @return \Symfony\Component\Console\Command\Command[]
-   *   An array of job commands.
    */
   protected function discoverJobs() {
+    $dir = 'src/DrupalCI/Jobs';
+    $job_definitions = [];
+    foreach (new \DirectoryIterator($dir) as $file) {
+      if ($file->isDir() && !$file->isDot()) {
+        $job_type = $file->getFilename();
+        $job_namespaces = ["DrupalCI\\Jobs\\$job_type" => ["$dir/$job_type"]];
+        $discovery  = new AnnotatedClassDiscovery($job_namespaces, 'Drupal\Component\Annotation\PluginID');
+        $job_definitions[$job_type] = $discovery->getDefinitions();
+      }
+    }
+    return $job_definitions;
+
+    /* Original discovery code
     $path = __DIR__ . '/../Jobs';
     // RecursiveDirectoryIterator recurses into directories and returns an
     // iterator for each directory. RecursiveIteratorIterator then iterates over
@@ -110,6 +120,7 @@ class RunCommand extends DrupalCICommandBase {
       }
     }
     return $jobs;
+    */
   }
 
 }

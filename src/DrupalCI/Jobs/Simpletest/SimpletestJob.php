@@ -5,12 +5,17 @@
  * Job class for SimpleTest jobs on DrupalCI.
  */
 
-namespace DrupalCI\Console\Jobs\Job\Simpletest;
+namespace DrupalCI\Jobs\Simpletest;
 
 use DrupalCI\Console\Helpers\ContainerHelper;
 use DrupalCI\Console\Jobs\Job\Component\EnvironmentValidator;
 use DrupalCI\Console\Jobs\Job\JobBase;
 use Symfony\Component\Finder\Tests\Iterator\DateRangeFilterIteratorTest;
+use DrupalCI\Plugin\PluginBase;
+
+/**
+ * @PluginID("simpletest")
+ */
 
 class SimpletestJob extends JobBase {
 

@@ -6,7 +6,7 @@
  * Time: 10:22 PM
  */
 
-namespace DrupalCI\Console\Jobs\Job\Component;
+namespace DrupalCI\Jobs\Component;
 
 use DrupalCI\Console\Helpers\ConfigHelper;
 use DrupalCI\Console\Jobs\Definition\JobDefinition;

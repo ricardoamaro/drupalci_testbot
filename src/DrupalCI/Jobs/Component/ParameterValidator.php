@@ -6,7 +6,7 @@
  * Time: 9:56 PM
  */
 
-namespace DrupalCI\Console\Jobs\Job\Component;
+namespace DrupalCI\Jobs\Component;
 
 
 class ParameterValidator {
