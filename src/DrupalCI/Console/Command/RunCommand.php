@@ -11,6 +11,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Yaml\Yaml;
+use Drupal\Component\Annotation\Plugin\Discovery\AnnotatedClassDiscovery;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 
 class RunCommand extends DrupalCICommandBase {
 
@@ -41,13 +43,14 @@ class RunCommand extends DrupalCICommandBase {
 
     // Get the list of job types.
     $jobs = $this->discoverJobs();
+
     // Validate the passed job type.
     if (!isset($jobs[$job_type])) {
       $output->writeln("The job type '$job_type' does not exist.");
       return;
     }
 
-    $job = $jobs[$job_type];
+    $job = $this->getJob($job_type, $job_type);
 
     // Link the job to our $output variable, so that jobs can display their work.
     $job->setOutput($output);
@@ -92,35 +95,28 @@ class RunCommand extends DrupalCICommandBase {
       }
     }
     return $job_definitions;
+  }
 
-    /* Original discovery code
-    $path = __DIR__ . '/../Jobs';
-    // RecursiveDirectoryIterator recurses into directories and returns an
-    // iterator for each directory. RecursiveIteratorIterator then iterates over
-    // each of the directory iterators, which consecutively return the files in
-    // each directory.
-    $directory = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS));
-
-    $jobs = [];
-    foreach ($directory as $file) {
-      if (!$file->isDir() && $file->isReadable() && $file->getExtension() === 'yml') {
-        $job_type = $file->getBasename('.yml');
-        // Get the job type definition.
-        $job_type_definition = Yaml::parse(file_get_contents($file->getPathname()));
-
-        if (!isset($job_type_definition['class'])) {
-          // This does not mean the caller did something wrong, but there is a
-          // misconfiguration so throwing an exception seems fine?!
-          throw new \Exception("The $job_type definition must specify a class in {$file->getPathname()}");
-        }
-
-        // Instantiate the job type class.
-        // Pass the job definition to the job constructor.
-        $jobs[$job_type] = new $job_type_definition['class']($job_type_definition);
-      }
+  /**
+   * @return \DrupalCI\Plugin\PluginBase
+   */
+  protected function getJob($type, $plugin_id, $configuration = []) {
+    if (!isset($this->pluginDefinitions)) {
+      $this->pluginDefinitions = $this->discoverJobs();
     }
-    return $jobs;
-    */
+    if (!isset($this->plugins[$type][$plugin_id])) {
+      if (isset($this->pluginDefinitions[$type][$plugin_id])) {
+        $plugin_definition = $this->pluginDefinitions[$type][$plugin_id];
+      }
+      elseif (isset($this->pluginDefinitions['generic'][$plugin_id])) {
+        $plugin_definition = $this->pluginDefinitions['generic'][$plugin_id];
+      }
+      else {
+        throw new PluginNotFoundException("Plugin type $type plugin id $plugin_id not found.");
+      }
+      $this->plugins[$type][$plugin_id] = new $plugin_definition['class']($configuration, $plugin_id, $plugin_definition);
+    }
+    return $this->plugins[$type][$plugin_id];
   }
 
 }

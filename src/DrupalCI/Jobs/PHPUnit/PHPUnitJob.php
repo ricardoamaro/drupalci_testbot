@@ -6,7 +6,7 @@
 
 namespace DrupalCI\Jobs\PHPUnit;
 
-use DrupalCI\Console\Jobs\Job\JobBase;
+use DrupalCI\Jobs\JobBase;
 use DrupalCI\Plugin\PluginBase;
 
 /**

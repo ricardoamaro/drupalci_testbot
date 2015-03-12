@@ -6,7 +6,7 @@
 
 namespace DrupalCI\Jobs\Travis;
 
-use DrupalCI\Console\Jobs\Job\JobBase;
+use DrupalCI\Jobs\JobBase;
 use DrupalCI\Console\Jobs\Definition\JobDefinition;
 use PrivateTravis\Permutation;
 use DrupalCI\Plugin\PluginBase;

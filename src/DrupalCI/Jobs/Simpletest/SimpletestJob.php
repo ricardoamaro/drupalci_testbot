@@ -8,8 +8,8 @@
 namespace DrupalCI\Jobs\Simpletest;
 
 use DrupalCI\Console\Helpers\ContainerHelper;
-use DrupalCI\Console\Jobs\Job\Component\EnvironmentValidator;
-use DrupalCI\Console\Jobs\Job\JobBase;
+use DrupalCI\Jobs\Component\EnvironmentValidator;
+use DrupalCI\Jobs\JobBase;
 use Symfony\Component\Finder\Tests\Iterator\DateRangeFilterIteratorTest;
 use DrupalCI\Plugin\PluginBase;
 
