@@ -8,18 +8,18 @@
  * appropriate execution container for communication back to JobBase.
  */
 
-namespace DrupalCI\Plugin\setup;
+namespace DrupalCI\Plugin\environment;
 use DrupalCI\Plugin\PluginBase;
 
 /**
- * @PluginID("php_environment")
+ * @PluginID("php")
  */
-class PhpEnvironment extends PluginBase {
+class PhpEnvironment extends EnvironmentBase {
 
   /**
    * {@inheritdoc}
    */
-  public function run() {
+  public function run($job, $data=NULL) {
     echo 'run php_environment';
   }
 

@@ -8,13 +8,13 @@
  * appropriate execution container for communication back to JobBase.
  */
 
-namespace DrupalCI\Plugin\setup;
+namespace DrupalCI\Plugin\environment;
 use DrupalCI\Plugin\PluginBase;
 
 /**
- * @PluginID("web_environment")
+ * @PluginID("web")
  */
-class WebEnvironment extends PluginBase {
+class WebEnvironment extends EnvironmentBase {
   // TODO: Do we want to extend PHPEnvironment here?
 
   /**

@@ -8,20 +8,149 @@
  * database service containers as required.
  */
 
-namespace DrupalCI\Plugin\setup;
+namespace DrupalCI\Plugin\environment;
 use DrupalCI\Plugin\PluginBase;
+use DrupalCI\Plugin\environment\EnvironmentBase;
+use Docker\Container;
 
 /**
- * @PluginID("db_environment")
+ * @PluginID("db")
  */
-class DbEnvironment extends PluginBase {
+class DbEnvironment extends EnvironmentBase {
 
   /**
    * {@inheritdoc}
    */
-  public function run() {
-    echo 'run db_environment';
+  public function run($job, $data) {
+    // Data format: 'mysql-5.5' or array('mysql-5.5', 'pgsql-9.3')
+    // $data May be a string if one version required, or array if multiple
+    // Normalize data to the array format, if necessary
+    $data = is_array($data) ? $data : [$data];
+    $containers = $this->buildContainerNames($data, $job);
+    // TODO: Pass along $containers, and refactor so that not all containers are validated on each call.
+    $valid = $this->validateContainerNames($containers, $job);
+    if ($valid) {
+      $job->service_containers['db'] = $containers;
+      foreach ($containers as $container) {
+        $instance = $this->generateContainer($job, $container);
+        // TODO: Configure container
+        // $this->configureContainer($instance, $context);
+        // TODO: Run container
+        // $this->runContainer($instance);
+      }
+    }
   }
 
+  public function buildContainerNames($data, $job) {
+    $db_containers = array();
+    foreach ($data as $key => $db_version) {
+      $containers["$db_version"] = "drupalci/$db_version";
+      $job->output->writeln("<info>Adding container: <options=bold>drupalci/$db_version</options=bold></info>");
+    }
+    return $containers;
+  }
+
+
+
+  public function build_db_container_names($job) {
+
+    // Determine whether to use environment variables or definition file to determine what containers are needed
+    if (empty($job->job_definition['environment'])) {
+      $containers = $this->env_containers_from_env($job);
+    }
+    else {
+      $containers = $this->env_containers_from_file($job);
+    }
+    if (!empty($containers)) {
+      $job->build_vars['DCI_Container_Images'] = $containers;
+    }
+  }
+
+
+
+
+
+  protected function env_containers_from_file($job) {
+    $config = $job->job_definition['environment'];
+    $job->output->writeln("<comment>Evaluating container requirements as defined in job definition file ...</comment>");
+    $containers = array();
+
+    // Determine required php containers
+    if (!empty($config['php'])) {
+      // May be a string if one version required, or array if multiple
+      if (is_array($config['php'])) {
+        foreach ($config['php'] as $phpversion) {
+          // TODO: Make the drupalci prefix a variable (overrideable to use custom containers)
+          $containers['php']["$phpversion"] = "drupalci/php-$phpversion";
+          $job->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+        }
+      }
+      else {
+        $phpversion = $config['php'];
+        $containers['php']["$phpversion"] = "drupalci/php-$phpversion";
+        $job->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+      }
+    }
+    else {
+      // We assume will always need at least one default PHP container
+      $containers['php']['5.5'] = "drupalci/php-5.5";
+    }
+
+    // Determine required database containers
+    if (!empty($config['db'])) {
+      // May be a string if one version required, or array if multiple
+      if (is_array($config['db'])) {
+        foreach ($config['db'] as $dbversion) {
+          $containers['db']["$dbversion"] = "drupalci/$dbversion";
+          $job->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
+        }
+      }
+      else {
+        $dbversion = $config['db'];
+        $containers['db']["$dbversion"] = "drupalci/$dbversion";
+        $job->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
+      }
+    }
+    return $containers;
+  }
+
+  public function validate_container_names($job) {
+    // Verify that the appropriate container images exist
+    $job->output->writeln("<comment>Ensuring appropriate container images exist.</comment>");
+    $helper = new ContainerHelper();
+    foreach ($job->build_vars['DCI_Container_Images'] as $type => $containers) {
+      foreach ($containers as $key => $image) {
+        if (!$helper->containerExists($image)) {
+          // Error: No such container image
+          $job->error_output("Failed", "Required container image <options=bold>'$image'</options=bold> does not exist.");
+          // TODO: Robust error handling.
+          return;
+        }
+      }
+    }
+    return TRUE;
+  }
+
+  public function start_service_containers($job) {
+    // We need to ensure that any service containers are started.
+    $helper = new ContainerHelper();
+    if (empty($job->build_vars['DCI_Container_Images']['db'])) {
+      // No service containers required.
+      return;
+    }
+    foreach ($job->build_vars['DCI_Container_Images']['db'] as $image) {
+      // Start an instance of $image.
+      // TODO: Ensure container is not already running!
+      $helper->startContainer($image);
+      $need_sleep = TRUE;
+    }
+    // Pause to allow any container services (e.g. mysql) to start up.
+    // TODO: This currently pauses even if the container was already found.  Do we need the
+    // start_container.sh script to throw an error return code?
+    if (!empty($need_sleep)) {
+      echo "Sleeping 10 seconds to allow container services to start.\n";
+      sleep(10);
+    }
+  }
   // TODO: Grab checkout source code from DrupalCI/Console/Job/Component/EnvironmentValidator.php
 }

@@ -17,7 +17,7 @@ class TravisToDrupalCIDefinition extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function run() {
+  public function run($job) {
     echo 'run configure travis_to_drupalci_definition';
   }
 }

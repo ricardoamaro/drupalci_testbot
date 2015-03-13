@@ -55,5 +55,5 @@ abstract class PluginBase {
     $this->pluginDefinition = $plugin_definition;
   }
 
-  abstract public function run();
+  abstract public function run($job, $data);
 }

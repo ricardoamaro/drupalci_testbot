@@ -35,6 +35,7 @@ class DrupalCIConsoleApp extends Application {
    *
    * We just add our commands here. We don't do any discovery or a container/
    * service model for simplicity.
+   * TODO: Add a container/service model.
    */
   public function __construct($name = 'UNKNOWN', $version = 'UNKNOWN') {
     parent::__construct($name, $version);

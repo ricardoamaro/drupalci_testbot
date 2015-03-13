@@ -16,6 +16,8 @@ use DrupalCI\Jobs\Component\SetupDirectoriesComponent;
 use Symfony\Component\Process\Process;
 use DrupalCI\Console\Jobs\ContainerBase;
 use DrupalCI\Console\Helpers\ContainerHelper;
+use Docker\Docker;
+use Docker\Http\DockerClient as Client;
 
 class JobBase extends ContainerBase {
 
@@ -61,6 +63,11 @@ class JobBase extends ContainerBase {
    */
   protected $plugins;
 
+  // Holds the name of service containers which need to be started.
+  public $service_containers;
+
+  // Holds our Docker container manager
+  private $docker;
 
   // Holds build variables which need to be persisted between build steps
   public $build_vars = array();
@@ -340,6 +347,16 @@ class JobBase extends ContainerBase {
       $this->plugins[$type][$plugin_id] = new $plugin_definition['class']($configuration, $plugin_id, $plugin_definition);
     }
     return $this->plugins[$type][$plugin_id];
+  }
+
+
+  public function getDocker()
+  {
+    $client = Client::createWithEnv();
+    if (null === $this->docker) {
+      $this->docker = new Docker($client);
+    }
+    return $this->docker;
   }
 
 
