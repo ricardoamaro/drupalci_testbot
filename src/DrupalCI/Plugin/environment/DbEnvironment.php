@@ -26,31 +26,25 @@ class DbEnvironment extends EnvironmentBase {
     // $data May be a string if one version required, or array if multiple
     // Normalize data to the array format, if necessary
     $data = is_array($data) ? $data : [$data];
-    $containers = $this->buildContainerNames($data, $job);
-    // TODO: Pass along $containers, and refactor so that not all containers are validated on each call.
-    $valid = $this->validateContainerNames($containers, $job);
-    if ($valid) {
+    $job->output->writeln("<comment>Parsing required container image names ...</comment>");
+    $containers = $this->buildImageNames($data, $job);
+    $valid = $this->validateImageNames($containers, $job);
+    if (!empty($valid)) {
       $job->service_containers['db'] = $containers;
-      foreach ($containers as $container) {
-        $instance = $this->generateContainer($job, $container);
-        // TODO: Configure container
-        // $this->configureContainer($instance, $context);
-        // TODO: Run container
-        // $this->runContainer($instance);
-      }
+      $this->startServiceContainerDaemons('db', $job);
     }
   }
 
-  public function buildContainerNames($data, $job) {
+  public function buildImageNames($data, $job) {
     $db_containers = array();
     foreach ($data as $key => $db_version) {
-      $containers["$db_version"] = "drupalci/$db_version";
-      $job->output->writeln("<info>Adding container: <options=bold>drupalci/$db_version</options=bold></info>");
+      $images["db-$db_version"]['image'] = "drupalci/db-$db_version";
+      $job->output->writeln("<info>Adding image: <options=bold>drupalci/db-$db_version</options=bold></info>");
     }
-    return $containers;
+    return $images;
   }
 
-
+/*
 
   public function build_db_container_names($job) {
 
@@ -65,10 +59,6 @@ class DbEnvironment extends EnvironmentBase {
       $job->build_vars['DCI_Container_Images'] = $containers;
     }
   }
-
-
-
-
 
   protected function env_containers_from_file($job) {
     $config = $job->job_definition['environment'];
@@ -114,23 +104,6 @@ class DbEnvironment extends EnvironmentBase {
     return $containers;
   }
 
-  public function validate_container_names($job) {
-    // Verify that the appropriate container images exist
-    $job->output->writeln("<comment>Ensuring appropriate container images exist.</comment>");
-    $helper = new ContainerHelper();
-    foreach ($job->build_vars['DCI_Container_Images'] as $type => $containers) {
-      foreach ($containers as $key => $image) {
-        if (!$helper->containerExists($image)) {
-          // Error: No such container image
-          $job->error_output("Failed", "Required container image <options=bold>'$image'</options=bold> does not exist.");
-          // TODO: Robust error handling.
-          return;
-        }
-      }
-    }
-    return TRUE;
-  }
-
   public function start_service_containers($job) {
     // We need to ensure that any service containers are started.
     $helper = new ContainerHelper();
@@ -153,4 +126,6 @@ class DbEnvironment extends EnvironmentBase {
     }
   }
   // TODO: Grab checkout source code from DrupalCI/Console/Job/Component/EnvironmentValidator.php
+
+  */
 }
