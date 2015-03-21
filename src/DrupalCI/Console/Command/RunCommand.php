@@ -47,11 +47,11 @@ class RunCommand extends DrupalCICommandBase {
     // We'll need this if we want to (as an example) convert travisci
     // definitions to drupalci definitions.
     // Load the job definition, environment defaults, and any job-specific configuration steps which need to occur
-    foreach (['compile_definition', 'validate_definition'] as $step) {
+    foreach (['compile_definition', 'validate_definition', 'setup_directories'] as $step) {
       $this->getPlugin('configure', $step)->run($job, NULL);
     }
     if ($job->error_status != 0) {
-      $output->writeln("<error>Job halted due to an error while parsing the job definition file.</error>");
+      $output->writeln("<error>Job halted due to an error while configuring job.</error>");
       return;
     }
     // The job should now have a fully merged job definition file, including

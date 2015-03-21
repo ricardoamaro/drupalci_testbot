@@ -74,7 +74,6 @@ class CompileDefinition extends PluginBase {
     }
 
     $definition_file = $this->getDefinitionFile($config);
-
     $definition_args = array();
 
     // Load test definition file
@@ -113,7 +112,6 @@ class CompileDefinition extends PluginBase {
 
   protected function getDefinitionFile($config) {
     $definition_file = "";
-
     // DrupalCI file-based test definition overrides can come from a number of sources:
     // 1. A file location explicitly passed into the config function
     if (!empty($config['explicit_source'])) {
