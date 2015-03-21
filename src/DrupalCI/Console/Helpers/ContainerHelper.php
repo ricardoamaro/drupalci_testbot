@@ -29,7 +29,7 @@ class ContainerHelper extends DrupalCIHelperBase {
    * {@inheritdoc}
    */
   public function getAllContainers() {
-    $options = $this->getDBContainers() + $this->getWebContainers() + $this->getBaseContainers();
+    $options = $this->getDBContainers() + $this->getWebContainers() + $this->getPhpContainers() + $this->getBaseContainers();
     return $options;
   }
 
@@ -45,6 +45,13 @@ class ContainerHelper extends DrupalCIHelperBase {
    */
   public function getWebContainers() {
     return $this->getContainers('web');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPhpContainers() {
+    return $this->getContainers('php');
   }
 
   /**

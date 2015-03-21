@@ -14,15 +14,32 @@ use DrupalCI\Plugin\PluginBase;
 /**
  * @PluginID("web")
  */
-class WebEnvironment extends EnvironmentBase {
-  // TODO: Do we want to extend PHPEnvironment here?
+class WebEnvironment extends PhpEnvironment {
 
   /**
    * {@inheritdoc}
    */
-  public function run() {
-    echo 'run web_environment';
+  public function run($job, $data) {
+    // Data format: '5.5' or array('5.4', '5.5')
+    // $data May be a string if one version required, or array if multiple
+    // Normalize data to the array format, if necessary
+    $data = is_array($data) ? $data : [$data];
+    $job->output->writeln("<comment>Parsing required container image names ...</comment>");
+    $containers = $this->buildImageNames($data, $job);
+    $valid = $this->validateImageNames($containers, $job);
+    if (!empty($valid)) {
+      $job->executable_containers['web'] = $containers;
+      // Actual creation and configuration of the executable containers will occur in the 'execute' plugin.
+    }
   }
 
-  // TODO: Grab checkout source code from DrupalCI/Console/Job/Component/EnvironmentValidator.php and SimpletestJob.php
+  public function buildImageNames($data, $job) {
+    $php_containers = array();
+    foreach ($data as $key => $php_version) {
+      $images["web-$php_version"]['image'] = "drupalci/web-$php_version";
+      $job->output->writeln("<info>Adding image: <options=bold>drupalci/web-$php_version</options=bold></info>");
+    }
+    return $images;
+  }
+
 }
