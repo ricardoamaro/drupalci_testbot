@@ -14,9 +14,6 @@ use DrupalCI\Plugin\setup\SetupBase;
  */
 class Checkout extends SetupBase {
 
-
-  // TODO: Grab checkout source code from DrupalCI/Console/Job/Component/SetupComponent.php
-
   /**
    * {@inheritdoc}
    */
@@ -98,6 +95,5 @@ class Checkout extends SetupBase {
     }
     $job->output->writeln("<comment>Checkout complete.</comment>");
   }
-
 
 }
