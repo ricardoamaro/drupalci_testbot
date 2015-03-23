@@ -10,4 +10,4 @@ RUN sudo chown -R root:root $HOME/.phpenv
 RUN phpenv rehash
 RUN phpenv global 5.3.29
 
-ENTRYPOINT ["travis", "run", "--skip-version-check", "--skip-completion-check"]
+#ENTRYPOINT ["travis", "run", "--skip-version-check", "--skip-completion-check"]

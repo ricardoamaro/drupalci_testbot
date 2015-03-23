@@ -31,7 +31,7 @@ class DbEnvironment extends EnvironmentBase {
     $valid = $this->validateImageNames($containers, $job);
     if (!empty($valid)) {
       $job->service_containers['db'] = $containers;
-      $this->startServiceContainerDaemons('db', $job);
+      $job->startServiceContainerDaemons('db');
     }
   }
 

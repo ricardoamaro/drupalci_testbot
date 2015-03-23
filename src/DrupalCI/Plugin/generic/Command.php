@@ -22,8 +22,44 @@ class Command extends PluginBase {
     // $data May be a string if one version required, or array if multiple
     // Normalize data to the array format, if necessary
     $data = is_array($data) ? $data : [$data];
+    $docker = $job->getDocker();
+    $manager = $docker->getContainerManager();
+
     foreach ($data as $key => $details) {
       // TODO: Validation and security checks
+      // Check that we have a container to execute on
+      $configs = $job->getExecContainers();
+      foreach ($configs as $type => $containers) {
+        foreach ($containers as $key => $container) {
+          $id = $container['id'];
+          $instance = $manager->find($id);
+          $type = 1;
+          $output = "";
+          $manager->start($instance);
+          $execId = $manager->exec($instance, ['/bin/bash', '-c', $details]);
+          $response = $manager->execstart($execId, function ($log, $stdtype) use (&$type, &$output) {
+            $type = $stdtype;
+            $output = $log;
+          });
+
+          $response->getBody()->__toString();
+
+
+          $job->output->writeln("Output: $output");
+          $job->output->writeln("Response: $response");
+
+
+          //$execid = $manager->exec($container, ["/bin/bash", "-c", $details]);
+          //$response = $manager->execstart($execid);
+
+          //print_r("Result= <" . $response->getBody()->__toString() . ">\n");
+        }
+      }
+
+    }
+
+    // echo "Run: Containers: " . print_r($containers, true);
+/*
       $cmd = $details;
       exec($cmd, $cmdoutput, $result);
       if ($result !==0) {
@@ -42,5 +78,6 @@ class Command extends PluginBase {
         $job->output->writeln($cmdoutput);
       }
     }
+*/
   }
 }

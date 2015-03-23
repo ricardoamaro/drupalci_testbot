@@ -66,7 +66,7 @@ class RunCommand extends DrupalCICommandBase {
           // TODO: Graceful handling of early exit states.
           $output->writeln("<error>Job halted.</error>");
           $output->writeln("<comment>Exiting job due to an invalid return code during job build step: <options=bold>'$build_step=>$plugin'</options=bold></comment>");
-          break;
+          break 2;
         }
       }
     }

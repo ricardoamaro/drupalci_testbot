@@ -18,6 +18,9 @@ use DrupalCI\Console\Jobs\ContainerBase;
 use DrupalCI\Console\Helpers\ContainerHelper;
 use Docker\Docker;
 use Docker\Http\DockerClient as Client;
+use Symfony\Component\Yaml\Yaml;
+use Docker\Container;
+use Docker\PortCollection;
 
 class JobBase extends ContainerBase {
 
@@ -63,8 +66,43 @@ class JobBase extends ContainerBase {
    */
   protected $plugins;
 
-  // Holds the name of service containers which need to be started.
+  // Holds the name and Docker IDs of our service containers.
   public $service_containers;
+
+  /**
+   * @param mixed $service_containers
+   */
+  public function setServiceContainers($service_containers)
+  {
+    $this->service_containers = $service_containers;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getServiceContainers()
+  {
+    return $this->service_containers;
+  }
+
+  /**
+   * @param mixed $executable_containers
+   */
+  public function setExecutableContainers($executable_containers)
+  {
+    $this->executable_containers = $executable_containers;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getExecutableContainers()
+  {
+    return $this->executable_containers;
+  }
+
+  // Holds the name and Docker IDs of our executable containers.
+  public $executable_containers;
 
   // Holds our Docker container manager
   private $docker;
@@ -359,9 +397,162 @@ class JobBase extends ContainerBase {
     return $this->docker;
   }
 
-
-
-  public function runCheckout($config) {
-    $this->getPlugin('setup', 'checkout')->run($config);
+  public function getExecContainers() {
+    $configs = $this->executable_containers;
+    foreach ($configs as $type => $containers) {
+      foreach ($containers as $key => $container) {
+        // Check if container is created.  If not, create it
+        if (empty($container['created'])) {
+          $this->startContainer($container);
+          $this->executable_containers[$type][$key] = $container;
+        }
+      }
+    }
+    return $this->executable_containers;
   }
+
+  public function startContainer(&$container) {
+    $docker = $this->getDocker();
+    $manager = $docker->getContainerManager();
+    // Get container configuration, which defines parameters such as exposed ports, etc.
+    $configs = $this->getContainerConfiguration($container['image']);
+    $config = $configs[$container['image']];
+    // TODO: Allow classes to modify the default configuration before processing
+    // Add service container links
+    $links = $this->createContainerLinks();
+    if (!empty($links)) {
+      $existing = (!empty($config['HostConfig']['Links'])) ? $config['HostConfig']['Links'] : array();
+      $config['HostConfig']['Links'] = $existing + $links;
+    }
+    // Add volumes
+    $volumes = $this->createContainerVolumes();
+    if (!empty($volumes)) {
+      foreach ($volumes as $dir => $volume) {
+        $config['Volumes']["$dir"] = $volume;
+      }
+    }
+    $instance = new Container($config);
+    // $instance->setCmd(['/bin/true']);
+    $instance->setCmd(['/bin/bash', '-c', 'ls /tmp/test']);
+    $manager->create($instance);
+    $manager->run($instance);
+    $container['id'] = $instance->getID();
+    $container['name'] = $instance->getName();
+    $container['created'] = TRUE;
+    $short_id = substr($container['id'], 0, 8);
+    $this->output->writeln("<comment>Container <options=bold>${container['name']}</options=bold> created from image <options=bold>${container['image']}</options=bold> with ID <options=bold>$short_id</options=bold></comment>");
+
+    /*
+    $type = 0;
+    $output = "";
+
+    $response = $manager->attach($container, function ($log, $stdtype) use (&$type, &$output) {
+      $type = $stdtype;
+      $output = $log;
+    });
+
+    $manager->start($container);
+    $manager->wait($container);
+    */
+
+  }
+
+  private function createContainerLinks() {
+    if (empty($this->service_containers)) { return; }
+    $links = array();
+    $config = $this->service_containers;
+    foreach ($config as $type => $containers) {
+      foreach ($containers as $key => $container) {
+        $links[] = "${container['name']}:${container['name']}";
+      }
+    }
+    return $links;
+  }
+
+  private function createContainerVolumes() {
+    $volumes = array();
+    // Map working directory
+    $working = $this->working_dir;
+    $volumes[$working] = array();
+    // TODO: Map results directory
+    return $volumes;
+  }
+
+  public function getContainerConfiguration($image = NULL) {
+    $path = __DIR__ . '/../Containers';
+    // RecursiveDirectoryIterator recurses into directories and returns an
+    // iterator for each directory. RecursiveIteratorIterator then iterates over
+    // each of the directory iterators, which consecutively return the files in
+    // each directory.
+    $directory = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS));
+    $configs = [];
+    foreach ($directory as $file) {
+      if (!$file->isDir() && $file->isReadable() && $file->getExtension() === 'yml') {
+        $image_name = 'drupalci/' . $file->getBasename('.yml');
+        if (!empty($image) && $image_name != $image) {
+          continue;
+        }
+        // Get the default configuration.
+        $container_config = Yaml::parse(file_get_contents($file->getPathname()));
+        $configs[$image_name] = $container_config;
+      }
+    }
+    return $configs;
+  }
+
+  public function startServiceContainerDaemons($type) {
+    $docker = $this->getDocker();
+    $manager = $docker->getContainerManager();
+    $instances = array();
+    foreach ($manager->findAll() as $running) {
+      $repo = $running->getImage()->getRepository();
+      $id = substr($running->getID(), 0, 8);
+      $instances[$repo] = $id;
+    };
+    foreach ($this->service_containers[$type] as $key => $image) {
+      if (in_array($image['image'], array_keys($instances))) {
+        // TODO: Determine service container ports, id, etc, and save it to the job.
+        $this->output->writeln("<comment>Found existing <options=bold>${image['image']}</options=bold> service container instance.</comment>");
+        // TODO: Load up container parameters
+        $container = $manager->find($instances[$image['image']]);
+        $container_id = $container->getID();
+        $container_name = $container->getName();
+        $this->service_containers[$type][$key]['id'] = $container_id;
+        $this->service_containers[$type][$key]['name'] = $container_name;
+        continue;
+      }
+      // Container not running, so we'll need to create it.
+      $this->output->writeln("<comment>No active <options=bold>${image['image']}</options=bold> service container instances found. Generating new service container.</comment>");
+      // Instantiate container
+      $container = new Container(['Image' => $image['image']]);
+      // Get container configuration, which defines parameters such as exposed ports, etc.
+      $config = $this->getContainerConfiguration($image['image']);
+      // TODO: Allow classes to modify the default configuration before processing
+      // Configure the container
+      $this->configureContainer($container, $config[$image['image']]);
+      // Create the docker container instance, running as a daemon.
+      // TODO: Ensure there are no stopped containers with the same name (currently throws fatal)
+      $manager->run($container, function($output, $type) {
+        fputs($type === 1 ? STDOUT : STDERR, $output);
+      }, [], true);
+      $container_id = $container->getID();
+      $container_name = $container->getName();
+      $this->service_containers[$type][$key]['id'] = $container_id;
+      $this->service_containers[$type][$key]['name'] = $container_name;
+      $short_id = substr($container_id, 0, 8);
+      $this->output->writeln("<comment>Created new <options=bold>${image['image']}</options=bold> container instance with ID <options=bold>$short_id</options=bold></comment>");
+    }
+  }
+
+  protected function configureContainer($container, $config) {
+    if (!empty($config['name'])) {
+      $container->setName($config['name']);
+    }
+    if (!empty($config['exposed_ports'])) {
+      $ports = new PortCollection($config['exposed_ports']);
+      $container->setExposedPorts($ports);
+    }
+    // TODO: Process Tmpfs configuration
+  }
+
 }

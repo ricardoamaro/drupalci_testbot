@@ -37,18 +37,26 @@ abstract class EnvironmentBase extends PluginBase {
     }
     return TRUE;
   }
-
-  protected function startServiceContainerDaemons($type, $job) {
+/*
+  protected function startServiceContainerDaemons($type, &$job) {
     $docker = $job->getDocker();
     $manager = $docker->getContainerManager();
     $instances = array();
     foreach ($manager->findAll() as $running) {
-      $instances[] = $running->getImage()->getRepository();
+      $repo = $running->getImage()->getRepository();
+      $id = substr($running->getID(), 0, 8);
+      $instances[$repo] = $id;
     };
     foreach ($job->service_containers[$type] as $key => $image) {
-      if (in_array($image['image'], $instances)) {
+      if (in_array($image['image'], array_keys($instances))) {
         // TODO: Determine service container ports, id, etc, and save it to the job.
         $job->output->writeln("<comment>Found existing <options=bold>${image['image']}</options=bold> service container instance.</comment>");
+        // TODO: Load up container parameters
+        $container = $manager->find($instances[$image['image']]);
+        $container_id = $container->getID();
+        $container_name = $container->getName();
+        $job->service_containers[$type][$key]['id'] = $container_id;
+        $job->service_containers[$type][$key]['name'] = $container_name;
         continue;
       }
       // Container not running, so we'll need to create it.
@@ -56,7 +64,7 @@ abstract class EnvironmentBase extends PluginBase {
       // Instantiate container
       $container = new Container(['Image' => $image['image']]);
       // Get container configuration, which defines parameters such as exposed ports, etc.
-      $config = $this->getContainerConfiguration($image['image']);
+      $config = $job->getContainerConfiguration($image['image']);
       // TODO: Allow classes to modify the default configuration before processing
       // Configure the container
       $this->configureContainer($container, $config[$image['image']]);
@@ -66,41 +74,23 @@ abstract class EnvironmentBase extends PluginBase {
           fputs($type === 1 ? STDOUT : STDERR, $output);
       }, [], true);
       $container_id = $container->getID();
+      $container_name = $container->getName();
       $job->service_containers[$type][$key]['id'] = $container_id;
+      $job->service_containers[$type][$key]['name'] = $container_name;
       $short_id = substr($container_id, 0, 8);
       $job->output->writeln("<comment>Created new <options=bold>${image['image']}</options=bold> container instance with ID <options=bold>$short_id</options=bold></comment>");
     }
   }
 
-  private function getContainerConfiguration($image = NULL) {
-    $path = __DIR__ . '/../../Containers';
-   // RecursiveDirectoryIterator recurses into directories and returns an
-    // iterator for each directory. RecursiveIteratorIterator then iterates over
-    // each of the directory iterators, which consecutively return the files in
-    // each directory.
-    $directory = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS));
-    $configs = [];
-    foreach ($directory as $file) {
-      if (!$file->isDir() && $file->isReadable() && $file->getExtension() === 'yml') {
-        $image_name = 'drupalci/' . $file->getBasename('.yml');
-        if (!empty($image) && $image_name != $image) {
-          continue;
-        }
-        // Get the default configuration.
-        $container_config = Yaml::parse(file_get_contents($file->getPathname()));
-        $configs[$image_name] = $container_config;
-      }
-    }
-    return $configs;
-  }
-
   protected function configureContainer($container, $config) {
-    $container->setName($config['name']);
+    if (!empty($config['name'])) {
+      $container->setName($config['name']);
+    }
     if (!empty($config['exposed_ports'])) {
       $ports = new PortCollection($config['exposed_ports']);
       $container->setExposedPorts($ports);
     }
     // TODO: Process Tmpfs configuration
   }
-
+  */
 }
