@@ -1,28 +1,33 @@
-FROM       ubuntu:12.04
+FROM ubuntu:14.04.1
 MAINTAINER nick_schuch
-
 ##
 # Base.
 ##
-
 ENV DEBIAN_FRONTEND noninteractive
-
+##
+# Use a local mirror
+##
+RUN sed -i 's/archive.ubuntu.com/mirror.pnl.gov/g' /etc/apt/sources.list
+##
+# Pull fresh repo list
+##
 RUN apt-get clean && apt-get update
-RUN apt-get install -y build-essential software-properties-common byobu curl git htop man unzip vim wget python-software-properties
-
+##
+# install needed packages
+##
+RUN apt-get install -y build-essential git unzip wget
+##
+# DEBUG packages
+##
+#RUN apt-get install -y htop man vim curl byobu
 ##
 # Ruby.
 ##
-
-RUN apt-add-repository ppa:brightbox/ruby-ng
-RUN apt-get update
-RUN apt-get install -y ruby2.0 ruby2.0-dev ruby2.0-doc
-RUN rm -rf /var/lib/apt/lists/*
-
+RUN echo "gem: --no-rdoc --no-ri " > /etc/gemrc
+RUN apt-get install -y ruby ruby-dev make
 ##
 # Serverspec.
 ##
-
 RUN gem install bundler -v 1.6.3
 RUN gem install net-ssh -v 2.9.1
 RUN gem install rspec-core -v 2.99.2
@@ -35,6 +40,7 @@ RUN gem install highline -v 1.6.21
 RUN gem install specinfra -v 1.27.3
 RUN gem install serverspec -v 1.16.0
 RUN gem install rake
-
-
-RUN apt-get clean && apt-get autoremove -y
+##
+# Remove unecessary packages and clean
+##
+RUN apt-get autoremove -y && apt-get clean
