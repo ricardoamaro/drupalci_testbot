@@ -1,3 +1,5 @@
 FROM drupalci/web-base
 
-CMD ["/bin/bash", "/start.sh"]
+COPY daemon.sh /
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["/daemon.sh"]

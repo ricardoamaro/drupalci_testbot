@@ -69,38 +69,6 @@ class JobBase extends ContainerBase {
   // Holds the name and Docker IDs of our service containers.
   public $service_containers;
 
-  /**
-   * @param mixed $service_containers
-   */
-  public function setServiceContainers($service_containers)
-  {
-    $this->service_containers = $service_containers;
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getServiceContainers()
-  {
-    return $this->service_containers;
-  }
-
-  /**
-   * @param mixed $executable_containers
-   */
-  public function setExecutableContainers($executable_containers)
-  {
-    $this->executable_containers = $executable_containers;
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getExecutableContainers()
-  {
-    return $this->executable_containers;
-  }
-
   // Holds the name and Docker IDs of our executable containers.
   public $executable_containers;
 
@@ -152,184 +120,6 @@ class JobBase extends ContainerBase {
       //'success',
       //'failure'
     );
-  }
-
-  // Compile the complete job definition
-  // DrupalCI jobs are controlled via a hierarchy of configuration settings, which define the behaviour of the platform while running DrupalCI jobs.  This hierarchy is defined as follows, which each level overriding the previous:
-  // 1. Out-of-the-box DrupalCI defaults
-  // 2. Local overrides defined in ~/.drupalci/config
-  // 3. 'DCI_' namespaced environment variable overrides
-  // 4. Test-specific overrides passed inside a DrupalCI test definition (e.g. .drupalci.yml)
-  // 5. Custom overrides located inside a test definition defined via the $source variable when calling this function.
-  public function configure($source = NULL) {
-    $configurator = new Configurator();
-    $configurator->configure($this, $source);
-  }
-
-  public function validate() {
-    $this->output->write("<comment>Validating test parameters ... </comment>");
-    $validator = new ParameterValidator();
-    $result = $validator->validate($this);
-    if ($result) {
-      $this->output->writeln("<info>PASSED</info>");
-    }
-    return;
-  }
-
-  public function environment() {
-    $this->output->writeln("<comment>Validating environment parameters ...</comment>");
-    // The 'environment' step determines which containers are going to be
-    // required, validates that the appropriate container images exist, and
-    // starts any required service containers.
-    $validator = new EnvironmentValidator();
-    $validator->build_container_names($this);
-    $validator->validate_container_names($this);
-    $validator->start_service_containers($this);
-  }
-
-  /*
-   *  The setup stage will be responsible for:
-   * - Perform checkouts (setup_checkout)
-   * - Perform fetches  (setup_fetch)
-   * - Apply patches  (setup_patch)
-   */
-  public function setup() {
-    // Setup codebase and working directories
-    $presetup = new SetupDirectoriesComponent();
-    $presetup->setup_codebase($this);
-    $presetup->setup_working_dir($this);
-    // Run through the job definition file setup stages.
-    $setup = new SetupComponent();
-    $setup->execute($this);
-  }
-
-  protected function checkout_local_to_working() {
-    // Load arguments
-    $arguments = $this->get_buildvars();
-    $srcdir = $arguments['DCI_CodeBase'];
-    $targetdir = $arguments['DCI_CheckoutDir'];
-    // TODO: Prompt for confirmation.
-    // TODO: Should we restrict the Working/Checkout variables to local use only?
-    // TODO: Additional validation
-
-    $this->output->write("<comment>Copying files to the local checkout directory ... </comment>");
-    $result = exec("cp -r $srcdir $targetdir");
-    if (is_null($result)) {
-      $this->error_output("Failed", "Error encountered while attempting to copy code to the local checkout directory.");
-      return;
-    }
-    $this->output->writeln("<comment>DONE</comment>");
-  }
-
-  protected function checkout_git_to_working() {
-    // Load arguments
-    $arguments = $this->get_buildvars();
-
-    // See if a specific branch has been supplied.  If not, default to 'master'.
-    if (empty($arguments['DCI_GitBranch'])) {
-      $arguments['DCI_GitBranch'] = "master";
-      $this->set_buildvars($arguments);
-    }
-
-    $repodir = $arguments['DCI_CodeBase'];
-    $targetdir = $arguments['DCI_CheckoutDir'];
-    $branch = $arguments['DCI_GitBranch'];
-
-    // TODO: Sanitize the directory and branch parameters to prevent people from adding to the clone command.
-
-    $cmd = "git clone -b $branch $repodir $targetdir";
-
-    $this->output->writeln("<comment>Cloning repository from <info>$repodir</info> ... </comment>");
-    exec($cmd, $cmdout, $result);
-
-    if ($result !== 0) {
-      $this->error_output("Failed", "Error encountered while attempting to clone remote repository.  Git return code: <info>$result</info>");
-      return;
-    }
-    $this->output->writeln("<comment>Checkout directory populated.</comment>");
-  }
-
-
-
-
-
-  // Note:  After setup has run, the rest of these need to happen on the container ... so instead of
-  // executing directly, we store as instructions for the container to execute.  Perhaps we can have the
-  // container parse these out of the .drupalci.yml file directly???
-
-  public function install() {
-/*
-  install:
-    command: pre_install_script.php
-    composer:
-        action: install
-    drupal_install:
-        action: install
-    command: post_install_script.php
-*/
-    // TODO: Do these go in a scripts directory passed into each container?
-    // TODO: Figure out how we can get these executed on the container directly.
-    // Change logic to build out a list of instructions on the container side.
-    // Essentially, we need to build the contents of start.sh dynamically!
-
-
-    /*
-    // Bail if we don't have an install stage in the job definition.
-    if (empty($this->job_definition['install'])) {
-      return;
-    }
-
-    $install = $this->job_definition['install'];
-    foreach ($install as $step => $details) {
-      $func = "install_" . $step;
-      if (!isset($details[0])) {
-        // Non-numeric array found ... assume we have only one iteration.
-        // We wrap this in an array in order to handle both singletons and
-        // arrays with the same code.
-        $details = array($details);
-      }
-      foreach ($details as $iteration => $detail) {
-        //$result = $this->$func($detail);
-        $this->$func($detail);
-        // Handle errors encountered during sub-function execution.
-        if ($this->error_status != 0) {
-          echo "Received failed return code from function $func.";
-          return;
-        }
-      }
-    }
-    */
-    return;
-  }
-
-  protected function install_command($details) {
-
-  }
-
-  public function validate_install() {
-    // Validate that any required linked containers are actually running.
-    return;
-  }
-
-  public function execute() {
-    return;
-  }
-
-  public function complete() {
-    // Run any post-execute clean-up or notification scripts, as desired.
-    return;
-  }
-
-  public function success() {
-    // Run any post-execute clean-up or notification scripts, which are
-    // intended to be run only upon success.
-    return;
-  }
-
-  public function failure() {
-    // Run any post-execute clean-up or notification scripts, which are
-    // intended to be run only upon failure.
-    return;
   }
 
   public function error_output($type = 'Error', $message = 'DrupalCI has encountered an error.') {
@@ -387,7 +177,6 @@ class JobBase extends ContainerBase {
     return $this->plugins[$type][$plugin_id];
   }
 
-
   public function getDocker()
   {
     $client = Client::createWithEnv();
@@ -432,29 +221,17 @@ class JobBase extends ContainerBase {
       }
     }
     $instance = new Container($config);
-    // $instance->setCmd(['/bin/true']);
-    $instance->setCmd(['/bin/bash', '-c', 'ls /tmp/test']);
     $manager->create($instance);
-    $manager->run($instance);
+
+    $manager->run($instance, function($output, $type) {
+      fputs($type === 1 ? STDOUT : STDERR, $output);
+    }, [], true);
+
     $container['id'] = $instance->getID();
     $container['name'] = $instance->getName();
     $container['created'] = TRUE;
     $short_id = substr($container['id'], 0, 8);
     $this->output->writeln("<comment>Container <options=bold>${container['name']}</options=bold> created from image <options=bold>${container['image']}</options=bold> with ID <options=bold>$short_id</options=bold></comment>");
-
-    /*
-    $type = 0;
-    $output = "";
-
-    $response = $manager->attach($container, function ($log, $stdtype) use (&$type, &$output) {
-      $type = $stdtype;
-      $output = $log;
-    });
-
-    $manager->start($container);
-    $manager->wait($container);
-    */
-
   }
 
   private function createContainerLinks() {

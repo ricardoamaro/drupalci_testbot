@@ -8,5 +8,7 @@ RUN sudo chown -R root:root $HOME/.phpenv
 RUN phpenv rehash
 RUN phpenv global 5.4.31
 #ENTRYPOINT ["travis", "run", "--skip-version-check", "--skip-completion-check"]
-ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["tail /var/log/mysql/error.log > /dev/null"]
+
+COPY daemon.sh /
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["/daemon.sh"]

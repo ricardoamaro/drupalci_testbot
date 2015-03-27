@@ -1,0 +1,37 @@
+# SAMPLE .drupal.ci.yml job definition
+# To use:
+# - Drupal checkout in /tmp/drupal
+# - drupalci config:load blank
+# - drupalci config:set DCI_CodeBase=/tmp/drupal
+# - drupalci run simpletest
+# Must have php-5.4 container image
+environment:
+  db:
+  - mysql-5.5
+  php:
+  - 5.4
+#  - 5.5
+#  web:
+#  - 5.4
+#variables:
+#  DCI_TESTGROUPS: ban
+setup:
+  checkout:
+    - protocol: local
+      srcdir: /tmp/drupal
+      branch: 8.0.x
+#    - protocol: git
+#      repo: git://drupalcode.org/project/token.git
+#      branch: 8.x-1.x
+#      depth: 1
+#      checkout_dir: sites/all/modules/token/
+#  fetch:
+#    - url: https://www.drupal.org/files/issues/2438723-token-help.patch
+#      fetch_dir: sites/all/modules/token/ 
+#  patch:
+#    - patch_file: 2438723-token-help.patch
+#      patch_dir: sites/all/modules/token/
+install:
+    command: 
+      - /usr/local/bin/composer global require drush/drush:dev-master 
+      - /root/.composer/vendor/bin/drush --version

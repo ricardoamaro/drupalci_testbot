@@ -25,8 +25,7 @@ class Command extends PluginBase {
     $docker = $job->getDocker();
     $manager = $docker->getContainerManager();
 
-    foreach ($data as $key => $details) {
-      // TODO: Validation and security checks
+    if (!empty($data)) {
       // Check that we have a container to execute on
       $configs = $job->getExecContainers();
       foreach ($configs as $type => $containers) {
@@ -35,49 +34,23 @@ class Command extends PluginBase {
           $instance = $manager->find($id);
           $type = 1;
           $output = "";
-          $manager->start($instance);
-          $execId = $manager->exec($instance, ['/bin/bash', '-c', $details]);
-          $response = $manager->execstart($execId, function ($log, $stdtype) use (&$type, &$output) {
-            $type = $stdtype;
-            $output = $log;
-          });
-
-          $response->getBody()->__toString();
-
-
-          $job->output->writeln("Output: $output");
-          $job->output->writeln("Response: $response");
-
-
-          //$execid = $manager->exec($container, ["/bin/bash", "-c", $details]);
-          //$response = $manager->execstart($execid);
-
-          //print_r("Result= <" . $response->getBody()->__toString() . ">\n");
+          $short_id = substr($id, 0, 8);
+          $job->output->writeln("<info>Executing on container instance $short_id:</info>");
+          foreach ($data as $cmd) {
+            $job->output->writeln("<fg=magenta>$cmd</fg=magenta>");
+            $exec = explode(" ", $cmd);
+            $exec_id = $manager->exec($instance, $exec, TRUE, TRUE, TRUE, TRUE);
+            $job->output->writeln("<info>Command created as exec id " . substr($exec_id, 0, 8) . "</info>");
+            $result=$manager->execstart($exec_id, function($output, $type) {
+              fputs($type === 1 ? STDOUT : STDERR, $output);
+            });
+            $job->output->writeln($output);
+            //Response stream is never read you need to simulate a wait in order to get output
+            $result->getBody()->getContents();
+            $job->output->writeln($result->__toString());
+          }
         }
       }
-
     }
-
-    // echo "Run: Containers: " . print_r($containers, true);
-/*
-      $cmd = $details;
-      exec($cmd, $cmdoutput, $result);
-      if ($result !==0) {
-        // The command threw an error.
-        $job->error_output("Command failed", "The command returned a non-zero result code.");
-        $job->output->writeln("<comment>Attempted command: <options=bold>$cmd</options=bold></comment>");
-        $job->output->writeln("<comment>Result code: <options=bold>$result</options=bold></comment>");
-        $job->output->writeln("<comment>Command output:</comment>");
-        $job->output->writeln($cmdoutput);
-        // TODO: Pass on the actual return value for the patch attempt
-        return;
-      }
-      $job->output->writeln("<comment>Command <options=bold>$cmd</options=bold> complete.</comment>");
-      if (!empty($cmdoutput)) {
-        $job->output->writeln("<comment>Command Output:</comment>");
-        $job->output->writeln($cmdoutput);
-      }
-    }
-*/
   }
 }
