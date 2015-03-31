@@ -3,7 +3,7 @@ FROM drupalci/db-base
 # Packages.
 RUN apt-get -qq update
 RUN apt-get -qq -y install locales debconf wget software-properties-common && \
-    add-apt-repository 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main'
+    add-apt-repository 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
 
 # Set a default language, so that PostgreSQL can use UTF-8 encoding (required)
 RUN localedef -i en_US -c -f UTF-8 en_US.UTF-8

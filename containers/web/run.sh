@@ -146,7 +146,7 @@ case $DCI_DBTYPE in
          DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
        else
          case $DCI_DBVER in
-           8.3)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-8.3"}
+           8.4)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-8.4"}
            ;;
            9.1)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
            ;;
@@ -290,7 +290,7 @@ if [ -f ${DCI_REPODIR}/vendor/drush/drush/drush ];
 	${DCI_REPODIR}/composer.phar -d="${DCI_REPODIR}" global require drush/drush:dev-master
 fi
 
-# Update Drupal repo 
+# Update Drupal repo
 if [[ $DCI_UPDATEREPO = "true" ]]
   then
     echo "Updating Drupal git..."
@@ -460,9 +460,9 @@ VERBO=\"${VERBO}\"
 echo "------------------------ STARTING DOCKER CONTAINER ---------------------------"
 [ ! -z "$DCI_CMD" ] && echo "-------- Interactive mode activated! Use: /start.sh to run tests -------------"
 DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}"
-/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t ${DCI_ENTRYPOINT} drupalci/web-${DCI_PHPVERSION} ${DCI_CMD} 
+/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t ${DCI_ENTRYPOINT} drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}
 
-echo 
+echo
 echo "Saving image ${DCI_IDENTIFIER} at $(date -u):"
 docker commit ${DCI_IDENTIFIER} drupal/${DCI_IDENTIFIER}
 # echo "If you need to debug this container run:"

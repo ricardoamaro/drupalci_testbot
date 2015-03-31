@@ -33,11 +33,11 @@ BASEIFS="${IFS}"
 if [ "$1" = "-h" ] || [ "$1" = "--help" ];
   then
   echo
-  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/start_containers.sh <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>/<pgsql-9.3><all>\e[39m "
+  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/start_containers.sh <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.4>/<pgsql-9.1>/<pgsql-9.3><all>\e[39m "
   echo
   echo -e " Purpose:\tHelp start the testbot database containers and repos."
   echo
-  echo -e "\t\t<mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>/<pgsql-9.3>: Defines the database type to start. "
+  echo -e "\t\t<mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.4>/<pgsql-9.1>/<pgsql-9.3>: Defines the database type to start. "
   echo -e "\t\tall: Start all available database containers. "
   echo -e "\t\tNote: If you are offline use 'refresh', in order to keep cached data. "
   echo
@@ -48,7 +48,7 @@ fi
 declare -A secondarg
 declare -A dbtypes
 DCI_ARRKEY=0
-# Check for all database containers available to build  
+# Check for all database containers available to build
 for constant in $(ls -d ./containers/database/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');
 do
   secondarg["$constant"]=1
@@ -59,7 +59,7 @@ do
     if [ "$1" != "all" ];
     then
       DCI_DBTYPE=$(awk -F- '{print $1}' <<< "$1")
-      DCI_DBVER=$(awk -F- '{print $2}' <<< "$1")  
+      DCI_DBVER=$(awk -F- '{print $2}' <<< "$1")
     fi
   fi
 done
@@ -74,7 +74,7 @@ if [ "$1" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
     echo
     echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/start_containers.sh <cleanup>/<update>/<refresh> <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-9.1>/<all>\e[39m "
     echo
-    echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.3, pgsql-9.1, pgsql-9.3, or all."
+    echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.4, pgsql-9.1, pgsql-9.3, or all."
     echo
     echo -e " Example:\t\e[38;5;148msudo ./scripts/start_containers.sh refresh mysql-5.5\e[39m "
     echo
@@ -192,7 +192,7 @@ for DB_BUILD in "${dbtypes[@]}";
   cd "${BASEDIR}"
 done
 
-# Set to base 
+# Set to base
 cd "${BASEDIR}"
 
 docker ps

@@ -39,7 +39,7 @@ done
 if [ "$1" = "" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] || [[ ! ${firstarg[$1]} ]];
   then
   echo
-  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/build_all.sh <cleanup>/<update>/<refresh> <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.3>/<pgsql-9.1>/<pgsql-9.3>/<all>\e[39m "
+  echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/build_all.sh <cleanup>/<update>/<refresh> <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-8.4>/<pgsql-9.1>/<pgsql-9.3>/<all>\e[39m "
   echo
   echo -e " Purpose:\tHelp Build/rebuild/clean/update the testbot containers and repos."
   echo
@@ -58,7 +58,7 @@ fi
 BASECONTAINERS=$(ls -d ./containers/base/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');
 
 # Build all webcontainers present on web directory or only the default
-case "$2" in 
+case "$2" in
   all)
     WEBCONTAINERS=$(ls -d ./containers/web/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');;
   *)
@@ -69,7 +69,7 @@ esac
 declare -A secondarg
 declare -A dbtypes
 DCI_ARRKEY=0
-# Check for all database containers available to build  
+# Check for all database containers available to build
 for constant in $(ls -d ./containers/database/*/ | awk -F/ '{print $(NF-1)}'| tr '\n' ' ');
 do
   secondarg["$constant"]=1
@@ -80,7 +80,7 @@ do
     if [ "$2" != "all" ];
     then
       DCI_DBTYPE=$(awk -F- '{print $1}' <<< "$2")
-      DCI_DBVER=$(awk -F- '{print $2}' <<< "$2")  
+      DCI_DBVER=$(awk -F- '{print $2}' <<< "$2")
     fi
   fi
 done
@@ -95,7 +95,7 @@ if [ "$2" != "" ] && [ ${#dbtypes[@]} -eq 0 ];
     echo
     echo -e " Usage:\t\t\e[38;5;148msudo ./scripts/build_all.sh <cleanup>/<update>/<refresh> <mysql-5.5>/<mariadb-5.5>/<mariadb-10.0>/<pgsql-9.1>/<all>\e[39m "
     echo
-    echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.3, pgsql-9.1, pgsql-9.3, or all."
+    echo -e " Invalid Database type.  Please choose from mysql-5.5, mariadb-5.5, mariadb-10.0, pgsql-8.4, pgsql-9.1, pgsql-9.3, or all."
     echo
     echo -e " Example:\t\e[38;5;148msudo ./scripts/build_all.sh refresh mysql-5.5\e[39m "
     echo
@@ -257,7 +257,7 @@ done
 IFS="${BASEIFS}"
 for WEBDIR in ${WEBCONTAINERS};
   do
-  echo 
+  echo
   echo "Building PHP ${WEBDIR} container"
   echo "----------------------------------------------------------------------"
   cd "${BASEDIR}"
@@ -267,7 +267,7 @@ done
 echo "----------------------------------------------------------------------"
 echo -e "\tContainer images (re)built: \nBASE:\t${BASECONTAINERS}\n  DB:\t${dbtypes[@]} \n WEB:\t${WEBCONTAINERS}\n"
 
-# Set to base 
+# Set to base
 cd "${BASEDIR}"
 # Do a test run to collect test list and update repos
 #if [ "$1" != "refresh" ];

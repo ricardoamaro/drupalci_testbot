@@ -86,9 +86,9 @@ sudo ./build.sh
 ```
 ### 6- RUN EXAMPLES:
 
-**Results will be available at:**  
-**{USERHOME}/testbotdata/BUILD_{DATE}/results**  
-**and at the live running terminal**  
+**Results will be available at:**
+**{USERHOME}/testbotdata/BUILD_{DATE}/results**
+**and at the live running terminal**
 
 Run 'search_api' module tests, with one patch against D8 and git sandbox:
 ```
@@ -154,7 +154,7 @@ DCI_IDENTIFIER="build_$(date +%Y_%m_%d_%H%M%S)" # Only [a-z0-9-_.] allowed
 # The place where Drupal repos and DrupalDocRoot indentifiers are kept:
 DCI_REPODIR="$HOME/testbotdata"
 
-# Request the runner to update the Drupal local repo before local cloning:  
+# Request the runner to update the Drupal local repo before local cloning:
 DCI_UPDATEREPO="false"  # true to force repos update
 
 # By default we put the Drupal repo and docroots on the same place, but you can have BUILDSDIR elsewhere:
@@ -194,7 +194,7 @@ DCI_DBLINK="--link=drupaltestbot-db-mysql-5.5:db"
 DCI_INSTALLER="none"
 
 # Executes other funcionality in the container prepending CMD.
-DCI_ENTRYPOINT=""  
+DCI_ENTRYPOINT=""
 
 # Debug container shell with DCI_CMD="/bin/bash"
 DCI_CMD=""
@@ -220,7 +220,7 @@ The runner can use one config per run instead of env variables.
   While the config file just has the bash variables per line
   the config.yml follows the yaml format, like this example:
 
-```  
+```
 DCI_DBTYPE 	: mysql
 DCI_DBVER	: 5.5
 DCI_PHPVERSION	: 5.6
@@ -229,7 +229,7 @@ DCI_DRUPALBRANCH : 8.0.x
 DCI_RUNSCRIPT : php ./core/scripts/run-tests.sh --php /usr/bin/php --url 'http://localhost' --color --concurrency 4  --xml '/var/workspace/results'
 DCI_PATCH : https://www.drupal.org/files/issues/remove-language_list-2328293-9.patch,.
 DCI_CMD		: /bin/bash /start.sh
-```  
+```
   Only one file type can be use per run.
 
 
@@ -316,7 +316,7 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 │   │   │   └── conf
 │   │   ├── mysql-5.5
 │   │   │   └── conf
-│   │   ├── pgsql-8.3
+│   │   ├── pgsql-8.4
 │   │   │   └── conf
 │   │   └── pgsql-9.1
 │   │       └── conf
