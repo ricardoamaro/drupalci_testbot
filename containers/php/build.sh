@@ -14,4 +14,7 @@ then
   fi
 fi
 
-docker build --rm=${DCI_REMOVEINTCONTAINERS} -t drupalci/php-5.4 .
+docker build -t drupalci/php-5.3 .
+docker build -t drupalci/php-5.4 .
+docker build -t drupalci/php-5.5 .
+docker build -t drupalci/php-5.6 .
