@@ -9,7 +9,7 @@
 namespace DrupalCI\Plugin\JobTypes\Component;
 
 use DrupalCI\Console\Helpers\ConfigHelper;
-use DrupalCI\Console\Plugin\JobTypes\Definition\JobDefinition;
+use DrupalCI\Console\Jobs\Definition\JobDefinition;
 
 class Configurator {
 
@@ -193,4 +193,4 @@ DCI_PATCH=""            # patch_url,apply_dir;patch_url,apply_dir;...
   }
 
 
-} 
+}
