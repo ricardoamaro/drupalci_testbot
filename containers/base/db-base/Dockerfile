@@ -1,8 +1,5 @@
-FROM debian:wheezy
+FROM drupalci/base
+MAINTAINER drupalci
 
-ENV DEBIAN_FRONTEND noninteractive
-
-# Packages.
-RUN sed -i 's|http://http.debian.net/debian|ftp://ftp.debian.org/debian|g' /etc/apt/sources.list
-RUN apt-get -y update
+# No Packages right now
 
