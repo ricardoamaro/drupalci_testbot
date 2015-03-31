@@ -17,7 +17,7 @@ class RunCommand extends DrupalCICommandBase {
   /**
    * @var \DrupalCI\Plugin\PluginManagerInterface
    */
-  protected $pluginManager;
+  protected $buildStepsPluginManager;
 
   /**
    * @var \DrupalCI\Plugin\PluginManagerInterface
@@ -58,7 +58,7 @@ class RunCommand extends DrupalCICommandBase {
     // definitions to drupalci definitions.
     // Load the job definition, environment defaults, and any job-specific configuration steps which need to occur
     foreach (['compile_definition', 'validate_definition', 'setup_directories'] as $step) {
-      $this->pluginManager()->getPlugin('configure', $step)->run($job, NULL);
+      $this->buildstepsPluginManager()->getPlugin('configure', $step)->run($job, NULL);
     }
     if ($job->error_status != 0) {
       $output->writeln("<error>Job halted due to an error while configuring job.</error>");
@@ -70,7 +70,7 @@ class RunCommand extends DrupalCICommandBase {
     $definition = $job->job_definition;
     foreach ($definition as $build_step => $step) {
       foreach ($step as $plugin => $data) {
-        $this->pluginManager()->getPlugin($build_step, $plugin)->run($job, $data);
+        $this->buildstepsPluginManager()->getPlugin($build_step, $plugin)->run($job, $data);
         if ($job->error_status != 0) {
           // Step returned an error.  Halt execution.
           // TODO: Graceful handling of early exit states.
@@ -85,11 +85,11 @@ class RunCommand extends DrupalCICommandBase {
   /**
    * @return \DrupalCI\Plugin\PluginManagerInterface
    */
-  protected function pluginManager() {
-    if (!isset($this->pluginManager)) {
-      $this->pluginManager = new PluginManager();
+  protected function buildstepsPluginManager() {
+    if (!isset($this->buildStepsPluginManager)) {
+      $this->buildStepsPluginManager = new PluginManager('BuildSteps');
     }
-    return $this->pluginManager;
+    return $this->buildStepsPluginManager;
   }
 
     /**
@@ -99,7 +99,7 @@ class RunCommand extends DrupalCICommandBase {
     if (!isset($this->jobPluginManager)) {
       $this->jobPluginManager = new PluginManager('Jobs');
     }
-    return $this->pluginManager;
+    return $this->jobPluginManager;
   }
 
 }
