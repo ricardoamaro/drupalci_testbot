@@ -2,8 +2,7 @@ FROM drupalci/db-base
 
 # Packages.
 RUN apt-get -qq update
-RUN apt-get -qq -y install locales debconf wget
-RUN apt-get -y install python-software-properties && \
+RUN apt-get -qq -y install locales debconf wget software-properties-common && \
     add-apt-repository 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main'
 
 # Set a default language, so that PostgreSQL can use UTF-8 encoding (required)
@@ -25,9 +24,7 @@ RUN wget -O - http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | apt-key add
 RUN apt-get -y update && \
     apt-get -y install postgresql-8.3
 
-RUN apt-get clean
-RUN apt-get autoclean
-RUN apt-get -y autoremove
+RUN apt-get clean && apt-get autoclean && apt-get -y autoremove
 
 # Adjust PostgreSQL configuration so that remote connections to the database are possible.
 RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/8.3/main/pg_hba.conf
