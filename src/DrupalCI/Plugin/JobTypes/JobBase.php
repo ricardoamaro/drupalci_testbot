@@ -16,33 +16,33 @@ use Symfony\Component\Yaml\Yaml;
 use Docker\Container;
 use Docker\PortCollection;
 
-class JobBase extends ContainerBase {
+class JobBase extends ContainerBase implements JobInterface {
 
   // Defines the job type
   public $jobtype = 'base';
 
   // Defines argument variable names which are valid for this job type
-  public $available_arguments = array();
+  public $availableArguments = array();
 
   // Defines platform defaults which apply for all jobs.  (Can still be overridden by per-job defaults)
-  public $platform_defaults = array(
+  public $platformDefaults = array(
     "DCI_CodeBase" => "./",
     // DCI_CheckoutDir defaults to a random directory in the system temp directory.
   );
 
   // Defines the default arguments which are valid for this job type
-  public $default_arguments = array();
+  public $defaultArguments = array();
 
   // Defines the required arguments which are necessary for this job type
   // Format:  array('ENV_VARIABLE_NAME' => 'CONFIG_FILE_LOCATION'), where
   // CONFIG_FILE_LOCATION is a colon-separated nested location for the
   // equivalent var in a job definition file.
-  public $required_arguments = array(
+  public $requiredArguments = array(
     // eg:   'DCI_DBTYPE' => 'environment:db'
   );
 
   // Placeholder which holds the parsed job definition file for this job
-  public $job_definition = NULL;
+  public $jobDefinition = NULL;
 
   // Error status
   public $errorStatus = 0;
@@ -61,47 +61,54 @@ class JobBase extends ContainerBase {
   protected $plugins;
 
   // Holds the name and Docker IDs of our service containers.
-  public $service_containers;
+  public $serviceContainers;
 
   // Holds the name and Docker IDs of our executable containers.
-  public $executable_containers;
+  public $executableContainers;
 
   // Holds our Docker container manager
   protected $docker;
 
   // Holds build variables which need to be persisted between build steps
-  public $build_vars = array();
+  public $buildVars = array();
 
-  // Retrieves the build variables for this job
-  public function get_buildvars() {
-    return $this->build_vars;
+  /**
+   * Stores the calling command's output buffer
+   *
+   * @var \Symfony\Component\Console\Output\OutputInterface
+   */
+  public $output;
+
+  public function getBuildVars() {
+    return $this->buildVars;
   }
 
   // Sets the build variables for this job
-  public function set_buildvars($build_vars) {
-    $this->build_vars = $build_vars;
+  public function setBuildVars($build_vars) {
+    $this->buildVars = $build_vars;
   }
 
   // Retrieves a single build variable for this job
-  public function get_buildvar($build_var) {
-    return $this->build_vars[$build_var];
+  public function getBuildvar($build_var) {
+    return $this->buildVars[$build_var];
   }
 
   // Sets a single build variable for this job
-  public function set_buildvar($build_var, $value) {
-    $this->build_vars[$build_var] = $value;
+  public function setBuildVar($build_var, $value) {
+    $this->buildVars[$build_var] = $value;
   }
-
-  // Stores the calling command's output buffer
-  public $output;
 
   // Sets the output buffer
   public function setOutput($output) {
     $this->output = $output;
   }
 
+  public function getDefinition() {
+    return $this->jobDefinition;
+  }
+
   // Defines the default build_steps for this job type
-  public function build_steps() {
+  public function buildSteps() {
     return array(
       'validate',
       'checkout',
@@ -116,7 +123,7 @@ class JobBase extends ContainerBase {
     );
   }
 
-  public function error_output($type = 'Error', $message = 'DrupalCI has encountered an error.') {
+  public function errorOutput($type = 'Error', $message = 'DrupalCI has encountered an error.') {
     if (!empty($type)) {
       $this->output->writeln("<error>$type</error>");
     }
@@ -126,7 +133,7 @@ class JobBase extends ContainerBase {
     $this->errorStatus = -1;
   }
 
-  public function shell_command($cmd) {
+  public function shellCommand($cmd) {
     $process = new Process($cmd);
     $process->setTimeout(3600*6);
     $process->setIdleTimeout(3600);
@@ -181,17 +188,17 @@ class JobBase extends ContainerBase {
   }
 
   public function getExecContainers() {
-    $configs = $this->executable_containers;
+    $configs = $this->executableContainers;
     foreach ($configs as $type => $containers) {
       foreach ($containers as $key => $container) {
         // Check if container is created.  If not, create it
         if (empty($container['created'])) {
           $this->startContainer($container);
-          $this->executable_containers[$type][$key] = $container;
+          $this->executableContainers[$type][$key] = $container;
         }
       }
     }
-    return $this->executable_containers;
+    return $this->executableContainers;
   }
 
   public function startContainer(&$container) {
@@ -229,9 +236,11 @@ class JobBase extends ContainerBase {
   }
 
   protected function createContainerLinks() {
-    if (empty($this->service_containers)) { return; }
     $links = array();
-    $config = $this->service_containers;
+    if (empty($this->serviceContainers)) {
+      return $links;
+    }
+    $config = $this->serviceContainers;
     foreach ($config as $type => $containers) {
       foreach ($containers as $key => $container) {
         $links[] = "${container['name']}:${container['name']}";
@@ -280,7 +289,7 @@ class JobBase extends ContainerBase {
       $id = substr($running->getID(), 0, 8);
       $instances[$repo] = $id;
     };
-    foreach ($this->service_containers[$type] as $key => $image) {
+    foreach ($this->serviceContainers[$type] as $key => $image) {
       if (in_array($image['image'], array_keys($instances))) {
         // TODO: Determine service container ports, id, etc, and save it to the job.
         $this->output->writeln("<comment>Found existing <options=bold>${image['image']}</options=bold> service container instance.</comment>");
@@ -288,8 +297,8 @@ class JobBase extends ContainerBase {
         $container = $manager->find($instances[$image['image']]);
         $container_id = $container->getID();
         $container_name = $container->getName();
-        $this->service_containers[$type][$key]['id'] = $container_id;
-        $this->service_containers[$type][$key]['name'] = $container_name;
+        $this->serviceContainers[$type][$key]['id'] = $container_id;
+        $this->serviceContainers[$type][$key]['name'] = $container_name;
         continue;
       }
       // Container not running, so we'll need to create it.
@@ -308,14 +317,14 @@ class JobBase extends ContainerBase {
       }, [], true);
       $container_id = $container->getID();
       $container_name = $container->getName();
-      $this->service_containers[$type][$key]['id'] = $container_id;
-      $this->service_containers[$type][$key]['name'] = $container_name;
+      $this->serviceContainers[$type][$key]['id'] = $container_id;
+      $this->serviceContainers[$type][$key]['name'] = $container_name;
       $short_id = substr($container_id, 0, 8);
       $this->output->writeln("<comment>Created new <options=bold>${image['image']}</options=bold> container instance with ID <options=bold>$short_id</options=bold></comment>");
     }
   }
 
-  protected function configureContainer($container, $config) {
+  protected function configureContainer(Container $container, array $config) {
     if (!empty($config['name'])) {
       $container->setName($config['name']);
     }

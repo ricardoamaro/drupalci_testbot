@@ -54,7 +54,7 @@ class SimpletestJob extends JobBase {
    *  DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
    *  DCI_RUNSCRIPT:     Command to be executed
    */
-  public $available_arguments = array(
+  public $availableArguments = array(
     'DCI_PATCH',
     'DCI_DEPENDENCIES',
     'DCI_DEPENDENCIES_GIT',
@@ -83,15 +83,15 @@ class SimpletestJob extends JobBase {
     'DCI_RUNSCRIPT',
   );
 
-  public $default_arguments = array();
+  public $defaultArguments = array();
 
-  public $required_arguments = array(
+  public $requiredArguments = array(
     'DCI_DBTYPE' => 'environment:db',
     'DCI_DBVER' => 'environment:db',
     'DCI_PHPVERSION' => 'environment:php',
   );
 
-  public function build_steps() {
+  public function buildSteps() {
     return array(
       'validate',
       'environment',
@@ -116,14 +116,14 @@ class SimpletestJob extends JobBase {
     $validator = new EnvironmentValidator();
     $validator->build_container_names($this);
 
-    $containers = $this->build_vars["DCI_Container_Images"];
+    $containers = $this->buildVars["DCI_Container_Images"];
 
     foreach ($containers['php'] as $phpversion => $container) {
       // TODO: Fix this after moving to the new container stack
       // $containers['php'][$phpversion] = $container . "-web";
       $containers['php'][$phpversion] = "drupalci/web-" . $phpversion;
     }
-    $this->build_vars["DCI_Container_Images"] = $containers;
+    $this->buildVars["DCI_Container_Images"] = $containers;
     if (!$validator->validate_container_names($this)) {
       return -1;
     }
@@ -139,10 +139,10 @@ class SimpletestJob extends JobBase {
     // remove the validation code from the bash script itself (in favor of
     // validate step within the job classes.
     // TODO: This presumes only one db type; but may need to be expanded for multiple.
-    if (empty($this->job_definition)) {
+    if (empty($this->jobDefinition)) {
       return;
     }
-    $definition = $this->job_definition['environment'];
+    $definition = $this->jobDefinition['environment'];
     // We need to set a number of parameters on the command line in order to
     // prevent the bash script from overriding them
     $cmd_prefix = "";
@@ -158,8 +158,8 @@ class SimpletestJob extends JobBase {
 
     $cmd_prefix .= (!empty($phpver)) ? " DCI_PHPVERSION=$phpver " : " DCI_PHPVERSION= ";
 
-    if (!empty($this->job_definition['variables'])) {
-      $buildvars = $this->job_definition['variables'];
+    if (!empty($this->jobDefinition['variables'])) {
+      $buildvars = $this->jobDefinition['variables'];
       foreach ($buildvars as $key => $value) {
         $cmd_prefix .= "$key=$value ";
       }
@@ -181,7 +181,7 @@ class SimpletestJob extends JobBase {
   public function execute() {
     $cmd = "sudo " . $this->cmd_prefix . "./containers/web/run.sh";
     // Execute the simpletest testing bash script
-    $this->shell_command($cmd);
+    $this->shellCommand($cmd);
     return;
   }
 

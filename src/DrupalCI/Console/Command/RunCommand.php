@@ -49,7 +49,7 @@ class RunCommand extends DrupalCICommandBase {
     // Determine what job type is being run.
     $job_type = $input->getArgument('job');
 
-    /** @var $job \DrupalCI\Plugin\JobTypes\JobBase */
+    /** @var $job \DrupalCI\Plugin\JobTypes\JobInterface */
     $job = $this->jobPluginManager()->getPlugin($job_type, $job_type);
     // Link our $output variable to the job, so that jobs can display their work.
     $job->setOutput($output);
@@ -67,7 +67,7 @@ class RunCommand extends DrupalCICommandBase {
     // The job should now have a fully merged job definition file, including
     // any local or drupalci defaults not otherwise defined in the passed job
     // definition, located in $job->job_definition
-    $definition = $job->job_definition;
+    $definition = $job->getDefinition();
     foreach ($definition as $build_step => $step) {
       foreach ($step as $plugin => $data) {
         $this->buildstepsPluginManager()->getPlugin($build_step, $plugin)->run($job, $data);

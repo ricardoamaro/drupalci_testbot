@@ -67,15 +67,15 @@ class TravisJob extends JobBase {
     'DCI_Privileged',
   );
 
-  public $default_arguments = array(
+  public $defaultArguments = array(
     'DCI_TravisFile' => '.travis.yml',
   );
 
-  public $required_arguments = array(
+  public $requiredArguments = array(
     'DCI_TravisFile' => 'build_vars:travis_filename',
   );
 
-  public function build_steps() {
+  public function buildSteps() {
     return array(
       'validate',
         //'checkout',
@@ -93,7 +93,7 @@ class TravisJob extends JobBase {
   public function environment() {
 
     // Load and parse travis file
-    $travis_file = $this->build_vars['DCI_TravisFile'];
+    $travis_file = $this->buildVars['DCI_TravisFile'];
     $this->output->writeln("<comment>Loading test build parameters from travis file: </comment><info>$travis_file</info>");
     $build = new JobDefinition();
     $directory = trim($this->working_dir);
@@ -131,7 +131,7 @@ class TravisJob extends JobBase {
       $permutation->setNamespace($namespace);
       $permutation->setLanguage($language . ':' . $language_version);
       $permutation->setCommand($command);
-      if (!empty($this->build_vars['DCI_Privileged'])) {
+      if (!empty($this->buildVars['DCI_Privileged'])) {
         $permutation->setPrivileged(true);
       }
       $permutation->addServices($services);
@@ -156,7 +156,7 @@ class TravisJob extends JobBase {
     $dir = trim($this->working_dir);
     $cmd = "cd $dir && " . $this->script;
     echo "Script Cmd: " . $cmd;
-    $this->shell_command($cmd);
+    $this->shellCommand($cmd);
     //}
   }
 
