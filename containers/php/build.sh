@@ -14,7 +14,8 @@ then
   fi
 fi
 
-docker build -t drupalci/php-5.3 .
-docker build -t drupalci/php-5.4 .
-docker build -t drupalci/php-5.5 .
-docker build -t drupalci/php-5.6 .
+docker build -t drupalci/php-5.3 php-5.3/.
+docker build -t drupalci/php-5.4 php-5.4/.
+docker build -t drupalci/php-5.5 php-5.5/.
+docker build -t drupalci/php-5.6 php-5.6/.
+
