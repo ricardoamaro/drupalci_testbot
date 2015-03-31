@@ -29,12 +29,7 @@ RUN apt-get clean && apt-get update
 # install needed packages
 ##
 
-RUN apt-get install -y build-essential git unzip wget curl
-
-##
-# DEBUG packages
-##
-RUN apt-get install -y htop vim-tiny
+RUN apt-get install -y unzip vim-tiny wget
 
 ##
 # Remove unecessary packages and clean
