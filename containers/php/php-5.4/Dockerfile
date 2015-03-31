@@ -1,5 +1,5 @@
 FROM drupalci/php-base
-MAINTAINER nick_schuch
+MAINTAINER drupalci
 ##
 # PHP.
 ##
