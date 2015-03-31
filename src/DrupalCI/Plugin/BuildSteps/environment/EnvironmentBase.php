@@ -1,16 +1,13 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\environment\EnvironmentBase
+ * Contains \DrupalCI\Plugin\Buildsteps\environment\EnvironmentBase
  */
 
-namespace DrupalCI\Plugin\environment;
-use Docker\Container;
+namespace DrupalCI\Plugin\Buildsteps\environment;
+
 use Docker\Exception\ImageNotFoundException;
-use Docker\PortCollection;
 use DrupalCI\Plugin\PluginBase;
-use DrupalCI\Console\Helpers\ContainerHelper;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Base class for 'environment' plugins.

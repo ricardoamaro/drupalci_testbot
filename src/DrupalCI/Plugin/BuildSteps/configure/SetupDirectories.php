@@ -6,7 +6,7 @@
  * Time: 10:10 PM
  */
 
-namespace DrupalCI\Plugin\configure;
+namespace DrupalCI\Plugin\Buildsteps\configure;
 
 /**
  * @PluginID("setup_directories")

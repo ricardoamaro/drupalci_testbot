@@ -1,14 +1,14 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\configure\ValidateDefinition
+ * Contains \DrupalCI\Plugin\Buildsteps\configure\ValidateDefinition
  *
  * Validates a compiled job definition against the job type definition:
  * 1. Verifies all 'mandatory' parameters present
  * 2. (TODO) Strips out any parameters not specified in the 'allowed' list for that job type
  */
 
-namespace DrupalCI\Plugin\configure;
+namespace DrupalCI\Plugin\Buildsteps\configure;
 use DrupalCI\Plugin\PluginBase;
 
 /**

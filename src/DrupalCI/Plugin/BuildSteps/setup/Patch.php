@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\setup\Patch
+ * Contains \DrupalCI\Plugin\Buildsteps\setup\Patch
  *
  * Processes "setup: patch:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\setup;
+namespace DrupalCI\Plugin\Buildsteps\setup;
 use DrupalCI\Plugin\PluginBase;
 
 /**

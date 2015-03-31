@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\configure\TravisToDrupalCIDefinition
+ * Contains \DrupalCI\Plugin\Buildsteps\configure\TravisToDrupalCIDefinition
  *
  * Given a travisCI job definition file, generates the DrupalCI equivalent.
  */
 
-namespace DrupalCI\Plugin\configure;
+namespace DrupalCI\Plugin\Buildsteps\configure;
 use DrupalCI\Plugin\PluginBase;
 
 /**

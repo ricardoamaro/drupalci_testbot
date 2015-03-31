@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\configure\CompileDefinition
+ * Contains \DrupalCI\Plugin\Buildsteps\configure\CompileDefinition
  *
  * Compiles a complete job definition from a hierarchy of sources.
  * This hierarchy is defined as follows, which each level overriding the previous:
@@ -12,7 +12,8 @@
  * 5. Custom overrides located inside a test definition defined via the $source variable when calling this function.
  */
 
-namespace DrupalCI\Plugin\configure;
+namespace DrupalCI\Plugin\Buildsteps\configure;
+
 use DrupalCI\Plugin\PluginBase;
 use DrupalCI\Console\Helpers\ConfigHelper;
 use DrupalCI\Console\Jobs\Definition\JobDefinition;

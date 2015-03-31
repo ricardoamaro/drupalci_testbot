@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\generic\Command
+ * Contains \DrupalCI\Plugin\Buildsteps\generic\Command
  *
  * Processes "[build_step]: command:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\generic;
+namespace DrupalCI\Plugin\Buildsteps\generic;
 use DrupalCI\Plugin\PluginBase;
 
 /**

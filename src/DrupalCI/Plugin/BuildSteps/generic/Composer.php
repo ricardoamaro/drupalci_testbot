@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\generic\Composer
+ * Contains \DrupalCI\Plugin\Buildsteps\generic\Composer
  *
  * Processes "[build_step]: composer:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\generic;
+namespace DrupalCI\Plugin\Buildsteps\generic;
 use DrupalCI\Plugin\PluginBase;
 
 /**

@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\setup\Fetch
+ * Contains \DrupalCI\Plugin\Buildsteps\setup\Fetch
  *
  * Processes "setup: fetch:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\setup;
-use DrupalCI\Plugin\setup\SetupBase;
+namespace DrupalCI\Plugin\Buildsteps\setup;
+use DrupalCI\Plugin\Buildsteps\setup\SetupBase;
 
 /**
  * @PluginID("fetch")

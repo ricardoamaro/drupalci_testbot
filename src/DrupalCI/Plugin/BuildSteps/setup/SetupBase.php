@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\setup\Checkout
+ * Contains \DrupalCI\Plugin\Buildsteps\setup\Checkout
  *
  * Processes "setup: checkout:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\setup;
+namespace DrupalCI\Plugin\Buildsteps\setup;
 use DrupalCI\Plugin\PluginBase;
 
 abstract class SetupBase extends PluginBase {

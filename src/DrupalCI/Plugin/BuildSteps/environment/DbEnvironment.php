@@ -1,16 +1,16 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\environment\DbEnvironment
+ * Contains \DrupalCI\Plugin\Buildsteps\environment\DbEnvironment
  *
  * Processes "environment: db:" parameters from within a job definition,
  * ensures appropriate Docker container images exist, and launches any new
  * database service containers as required.
  */
 
-namespace DrupalCI\Plugin\environment;
+namespace DrupalCI\Plugin\Buildsteps\environment;
 use DrupalCI\Plugin\PluginBase;
-use DrupalCI\Plugin\environment\EnvironmentBase;
+use DrupalCI\Plugin\Buildsteps\environment\EnvironmentBase;
 use Docker\Container;
 
 /**
