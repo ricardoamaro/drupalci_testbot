@@ -11,8 +11,8 @@ then
   fi
 fi
 
-TAG="drupalci/db-pgsql-8.3"
-NAME="drupaltestbot-db-pgsql-8.3"
+TAG="drupalci/db-pgsql-8.4"
+NAME="drupaltestbot-db-pgsql-8.4"
 STALLED=$(docker ps -a | grep ${TAG} | grep Exit | awk '{print $1}')
 RUNNING=$(docker ps | grep ${TAG} | grep 5432 | awk '{print $1}')
 
@@ -26,7 +26,7 @@ if [[ ${RUNNING} != "" ]]
     then
     echo "Found old container $STALLED. Removing..."
     docker rm $STALLED
-    DCI_SQLCONT=(/tmp/tmp.*"pgsql-8.3")
+    DCI_SQLCONT=(/tmp/tmp.*"pgsql-8.4")
     if ( ls -d "$DCI_SQLCONT" > /dev/null ); then
       umount -f "$DCI_SQLCONT" || /bin/true
       rm -fr "$DCI_SQLCONT" || /bin/true

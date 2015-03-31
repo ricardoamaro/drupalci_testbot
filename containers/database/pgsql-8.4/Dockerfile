@@ -2,9 +2,8 @@ FROM drupalci/db-base
 
 # Packages.
 RUN apt-get -qq update
-RUN apt-get -qq -y install locales debconf wget
-RUN apt-get -y install python-software-properties && \
-    add-apt-repository 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main'
+RUN apt-get -qq -y install locales debconf wget software-properties-common && \
+    add-apt-repository 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
 
 # Set a default language, so that PostgreSQL can use UTF-8 encoding (required)
 RUN localedef -i en_US -c -f UTF-8 en_US.UTF-8
@@ -23,15 +22,13 @@ ENV LC_ALL en_US.UTF-8
 # update the apt cache and install our needed packages
 RUN wget -O - http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | apt-key add -
 RUN apt-get -y update && \
-    apt-get -y install postgresql-8.3
+    apt-get -y install postgresql-8.4
 
-RUN apt-get clean
-RUN apt-get autoclean
-RUN apt-get -y autoremove
+RUN apt-get clean && apt-get autoclean && apt-get -y autoremove
 
 # Adjust PostgreSQL configuration so that remote connections to the database are possible.
-RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/8.3/main/pg_hba.conf
-RUN echo "listen_addresses='*'" >> /etc/postgresql/8.3/main/postgresql.conf
+RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/8.4/main/pg_hba.conf
+RUN echo "listen_addresses='*'" >> /etc/postgresql/8.4/main/postgresql.conf
 
 # Expose the PostgreSQL port
 EXPOSE 5432
