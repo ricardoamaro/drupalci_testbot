@@ -67,7 +67,7 @@ class JobBase extends ContainerBase {
   public $executable_containers;
 
   // Holds our Docker container manager
-  private $docker;
+  protected $docker;
 
   // Holds build variables which need to be persisted between build steps
   public $build_vars = array();
@@ -228,7 +228,7 @@ class JobBase extends ContainerBase {
     $this->output->writeln("<comment>Container <options=bold>${container['name']}</options=bold> created from image <options=bold>${container['image']}</options=bold> with ID <options=bold>$short_id</options=bold></comment>");
   }
 
-  private function createContainerLinks() {
+  protected function createContainerLinks() {
     if (empty($this->service_containers)) { return; }
     $links = array();
     $config = $this->service_containers;
@@ -240,7 +240,7 @@ class JobBase extends ContainerBase {
     return $links;
   }
 
-  private function createContainerVolumes() {
+  protected function createContainerVolumes() {
     $volumes = array();
     // Map working directory
     $working = $this->working_dir;

@@ -7,7 +7,6 @@
  */
 
 namespace DrupalCI\Plugin\Buildsteps\setup;
-use DrupalCI\Plugin\Buildsteps\setup\SetupBase;
 
 /**
  * @PluginID("fetch")
