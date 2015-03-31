@@ -4,12 +4,11 @@
  * Job class for PrivateTravis jobs on DrupalCI.
  */
 
-namespace DrupalCI\Jobs\Travis;
+namespace DrupalCI\Plugin\JobTypes\Travis;
 
-use DrupalCI\Jobs\JobBase;
+use DrupalCI\Plugin\JobTypes\JobBase;
 use DrupalCI\Console\Jobs\Definition\JobDefinition;
 use PrivateTravis\Permutation;
-use DrupalCI\Plugin\PluginBase;
 
 /**
  * @PluginID("travis")

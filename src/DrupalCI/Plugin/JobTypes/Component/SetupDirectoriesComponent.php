@@ -6,7 +6,7 @@
  * Time: 11:50 PM
  */
 
-namespace DrupalCI\Jobs\Component;
+namespace DrupalCI\Plugin\JobTypes\Component;
 
 
 class SetupDirectoriesComponent {

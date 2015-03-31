@@ -4,9 +4,9 @@
  * Job class for PHPUnit jobs on DrupalCI
  */
 
-namespace DrupalCI\Jobs\PHPUnit;
+namespace DrupalCI\Plugin\JobTypes\PHPUnit;
 
-use DrupalCI\Jobs\JobBase;
+use DrupalCI\Plugin\JobTypes\JobBase;
 use DrupalCI\Plugin\PluginBase;
 
 /**

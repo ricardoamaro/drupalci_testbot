@@ -6,7 +6,7 @@
  * Time: 11:42 AM
  */
 
-namespace DrupalCI\Jobs\Component;
+namespace DrupalCI\Plugin\JobTypes\Component;
 
 
 class SetupComponent {

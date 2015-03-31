@@ -6,10 +6,10 @@
  * Time: 10:22 PM
  */
 
-namespace DrupalCI\Jobs\Component;
+namespace DrupalCI\Plugin\JobTypes\Component;
 
 use DrupalCI\Console\Helpers\ConfigHelper;
-use DrupalCI\Console\Jobs\Definition\JobDefinition;
+use DrupalCI\Console\Plugin\JobTypes\Definition\JobDefinition;
 
 class Configurator {
 
