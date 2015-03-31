@@ -49,7 +49,7 @@ class RunCommand extends DrupalCICommandBase {
     // Determine what job type is being run.
     $job_type = $input->getArgument('job');
 
-    /** @var $job \DrupalCI\Jobs\JobBase */
+    /** @var $job \DrupalCI\Plugin\JobTypes\JobBase */
     $job = $this->jobPluginManager()->getPlugin($job_type, $job_type);
     // Link our $output variable to the job, so that jobs can display their work.
     $job->setOutput($output);
@@ -60,7 +60,7 @@ class RunCommand extends DrupalCICommandBase {
     foreach (['compile_definition', 'validate_definition', 'setup_directories'] as $step) {
       $this->buildstepsPluginManager()->getPlugin('configure', $step)->run($job, NULL);
     }
-    if ($job->error_status != 0) {
+    if ($job->getErrorState()) {
       $output->writeln("<error>Job halted due to an error while configuring job.</error>");
       return;
     }
@@ -71,7 +71,7 @@ class RunCommand extends DrupalCICommandBase {
     foreach ($definition as $build_step => $step) {
       foreach ($step as $plugin => $data) {
         $this->buildstepsPluginManager()->getPlugin($build_step, $plugin)->run($job, $data);
-        if ($job->error_status != 0) {
+        if ($job->getErrorState()) {
           // Step returned an error.  Halt execution.
           // TODO: Graceful handling of early exit states.
           $output->writeln("<error>Job halted.</error>");

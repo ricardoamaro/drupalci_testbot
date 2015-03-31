@@ -45,7 +45,7 @@ class JobBase extends ContainerBase {
   public $job_definition = NULL;
 
   // Error status
-  public $error_status = 0;
+  public $errorStatus = 0;
 
   // Default working directory
   public $working_dir = "./";
@@ -123,7 +123,7 @@ class JobBase extends ContainerBase {
     if (!empty($message)) {
       $this->output->writeln("<comment>$message</comment>");
     }
-    $this->error_status = -1;
+    $this->errorStatus = -1;
   }
 
   public function shell_command($cmd) {
@@ -326,4 +326,7 @@ class JobBase extends ContainerBase {
     // TODO: Process Tmpfs configuration
   }
 
+  public function getErrorState() {
+    return $this->errorStatus;
+  }
 }
