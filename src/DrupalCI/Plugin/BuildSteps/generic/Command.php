@@ -31,7 +31,7 @@ class Command extends PluginBase {
       // Check that we have a container to execute on
       $configs = $job->getExecContainers();
       foreach ($configs as $type => $containers) {
-        foreach ($containers as $key => $container) {
+        foreach ($containers as $container) {
           $id = $container['id'];
           $instance = $manager->find($id);
           $output = "";
@@ -42,7 +42,7 @@ class Command extends PluginBase {
             $exec = explode(" ", $cmd);
             $exec_id = $manager->exec($instance, $exec, TRUE, TRUE, TRUE, TRUE);
             $job->getOutput()->writeln("<info>Command created as exec id " . substr($exec_id, 0, 8) . "</info>");
-            $result=$manager->execstart($exec_id, function($output, $type) {
+            $result = $manager->execstart($exec_id, function($output, $type) {
               fputs($type === 1 ? STDOUT : STDERR, $output);
             });
             $job->getOutput()->writeln($output);
