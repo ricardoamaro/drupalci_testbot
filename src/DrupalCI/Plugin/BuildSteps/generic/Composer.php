@@ -12,7 +12,7 @@ use DrupalCI\Plugin\PluginBase;
 /**
  * @PluginID("composer")
  */
-class Composer extends Command {
+class Composer extends ContainerCommand {
 
   /**
    * {@inheritdoc}

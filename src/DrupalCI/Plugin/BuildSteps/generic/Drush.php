@@ -12,7 +12,7 @@ use DrupalCI\Plugin\PluginBase;
 /**
  * @PluginID("drush")
  */
-class Drush extends Command {
+class Drush extends ContainerCommand {
 
   /**
    * {@inheritdoc}

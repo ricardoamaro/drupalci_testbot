@@ -14,7 +14,7 @@ use DrupalCI\Plugin\PluginBase;
 /**
  * @PluginID("command")
  */
-class Command extends PluginBase {
+class ContainerCommand extends PluginBase {
 
   /**
    * {@inheritdoc}

@@ -10,7 +10,7 @@ namespace DrupalCI\Tests\Plugin\BuildSteps\generic;
 
 use Docker\Container;
 use Docker\Docker;
-use DrupalCI\Plugin\BuildSteps\generic\Command;
+use DrupalCI\Plugin\BuildSteps\generic\ContainerCommand;
 
 class CommandTest extends \PHPUnit_Framework_TestCase {
 
@@ -59,7 +59,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase {
       ->method('getOutput')
       ->will($this->returnValue($output));
 
-    $command = new Command([], 'command', []);
+    $command = new ContainerCommand([], 'command', []);
     $command->run($job, [implode(' ', $cmd)]);
   }
 }
