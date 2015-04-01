@@ -5,6 +5,7 @@
  */
 
 namespace DrupalCI\Plugin;
+use DrupalCI\Plugin\JobTypes\JobInterface;
 
 /**
  * Base class for plugins.
@@ -55,5 +56,5 @@ abstract class PluginBase {
     $this->pluginDefinition = $plugin_definition;
   }
 
-  abstract public function run($job, $data);
+  abstract public function run(JobInterface $job, $data);
 }

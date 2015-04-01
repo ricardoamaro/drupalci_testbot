@@ -7,6 +7,7 @@
  */
 
 namespace DrupalCI\Plugin\Buildsteps\configure;
+use DrupalCI\Plugin\JobTypes\JobInterface;
 
 /**
  * @PluginID("setup_directories")
@@ -26,21 +27,21 @@ class SetupDirectories {
     $this->setupWorkingDir($job);
   }
 
-  public function setupCodebase($job) {
-    $arguments = $job->get_buildvars();
+  public function setupCodebase(JobInterface $job) {
+    $arguments = $job->getBuildVars();
     // Check if the source codebase directory has been specified
     if (empty($arguments['DCI_CodeBase'])) {
       // If no explicit codebase provided, assume we are using the code in the local directory.
       $arguments['DCI_CodeBase'] = "./";
-      $job->set_buildvars($arguments);
+      $job->setBuildVars($arguments);
     }
     else {
       $job->output->writeln("<comment>Using codebase directory defined in DCI_CodeBase: <options=bold>${arguments['DCI_CodeBase']}</options=bold></comment>");
     }
   }
 
-  public function setupWorkingDir($job) {
-    $arguments = $job->get_buildvars();
+  public function setupWorkingDir(JobInterface $job) {
+    $arguments = $job->getBuildVars();
     // Check if the target working directory has been specified.
     if (empty($arguments['DCI_CheckoutDir'])) {
       // If no explicit working directory provided, we generate one in the system temporary directory.
@@ -69,7 +70,7 @@ class SetupDirectories {
     $job->working_dir = $arguments['DCI_CheckoutDir'];
   }
 
-  protected function create_tempdir($job, $dir=NULL,$prefix=NULL) {
+  protected function create_tempdir(JobInterface $job, $dir=NULL,$prefix=NULL) {
     // PHP seems to have trouble creating temporary unique directories with the appropriate permissions,
     // So we create a temp file to get the unique filename, then mkdir a directory in it's place.
     $prefix = empty($prefix) ? "drupalci-" : $prefix;
@@ -92,8 +93,8 @@ class SetupDirectories {
     }
   }
 
-  protected function create_local_checkout_dir($job) {
-    $arguments = $job->get_buildvars();
+  protected function create_local_checkout_dir(JobInterface $job) {
+    $arguments = $job->getBuildVars();
     $directory = $arguments['DCI_CheckoutDir'];
     $tempdir = sys_get_temp_dir();
 
@@ -136,8 +137,8 @@ class SetupDirectories {
     }
   }
 
-  public function validate_checkout_dir($job) {
-    $arguments = $job->get_buildvars();
+  public function validate_checkout_dir(JobInterface $job) {
+    $arguments = $job->getBuildVars();
     $path = realpath($arguments['DCI_CheckoutDir']);
     $tmpdir = sys_get_temp_dir();
     if (strpos($path, $tmpdir) === 0) {

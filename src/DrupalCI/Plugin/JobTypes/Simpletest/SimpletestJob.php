@@ -5,7 +5,7 @@
  * Job class for SimpleTest jobs on DrupalCI.
  */
 
-namespace DrupalCI\Plugin\JobTypes\Simpletest;
+namespace DrupalCI\Plugin\JobTypes\simpletest;
 
 use DrupalCI\Plugin\JobTypes\Component\EnvironmentValidator;
 use DrupalCI\Plugin\JobTypes\JobBase;

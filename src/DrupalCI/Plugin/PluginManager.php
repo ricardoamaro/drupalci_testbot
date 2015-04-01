@@ -22,7 +22,7 @@ class PluginManager {
    */
   protected $pluginType;
 
-  public function construct($plugin_type) {
+  public function __construct($plugin_type) {
     $this->pluginType = $plugin_type;
   }
 
@@ -30,12 +30,12 @@ class PluginManager {
    * Discovers the list of available plugins.
    */
   protected function discoverPlugins() {
-    $dir = "src/DrupalCI/Plugins/$this->pluginType";
+    $dir = "src/DrupalCI/Plugin/$this->pluginType";
     $plugin_definitions = [];
     foreach (new \DirectoryIterator($dir) as $file) {
       if ($file->isDir() && !$file->isDot()) {
         $plugin_type = $file->getFilename();
-        $plugin_namespaces = ["DrupalCI\\$this->pluginType\\$plugin_type" => ["$dir/$plugin_type"]];
+        $plugin_namespaces = ["DrupalCI\\Plugin\\$this->pluginType\\$plugin_type" => ["$dir/$plugin_type"]];
         $discovery  = new AnnotatedClassDiscovery($plugin_namespaces, 'Drupal\Component\Annotation\PluginID');
         $plugin_definitions[$plugin_type] = $discovery->getDefinitions();
       }

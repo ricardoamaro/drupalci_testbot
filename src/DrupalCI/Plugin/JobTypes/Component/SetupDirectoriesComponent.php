@@ -12,7 +12,7 @@ namespace DrupalCI\Plugin\JobTypes\Component;
 class SetupDirectoriesComponent {
 
   public function setup_codebase($job) {
-    $arguments = $job->get_buildvars();
+    $arguments = $job->getBuildVars();
     // Check if the source codebase directory has been specified
     if (empty($arguments['DCI_CodeBase'])) {
       // If no explicit codebase provided, assume we are using the code in the local directory.
@@ -22,7 +22,7 @@ class SetupDirectoriesComponent {
   }
 
   public function setup_working_dir($job) {
-    $arguments = $job->get_buildvars();
+    $arguments = $job->getBuildVars();
     // Check if the target working directory has been specified.
     if (empty($arguments['DCI_CheckoutDir'])) {
       // If no explicit working directory provided, we generate one in the system temporary directory.
@@ -75,7 +75,7 @@ class SetupDirectoriesComponent {
   }
 
   protected function create_local_checkout_dir($job) {
-    $arguments = $job->get_buildvars();
+    $arguments = $job->getBuildVars();
     $directory = $arguments['DCI_CheckoutDir'];
     $tempdir = sys_get_temp_dir();
 
@@ -119,7 +119,7 @@ class SetupDirectoriesComponent {
   }
 
   public function validate_checkout_dir($job) {
-    $arguments = $job->get_buildvars();
+    $arguments = $job->getBuildVars();
     $path = realpath($arguments['DCI_CheckoutDir']);
     $tmpdir = sys_get_temp_dir();
     if (strpos($path, $tmpdir) === 0) {

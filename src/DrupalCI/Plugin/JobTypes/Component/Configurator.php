@@ -90,11 +90,11 @@ class Configurator {
     $config = $cli_args + $definition_args + $environment_args + $local_args + $default_args + $platform_args;
 
     // Set initial build variables
-    $buildvars = $job->get_buildvars();
-    $job->set_buildvars($buildvars + $config);
+    $buildvars = $job->getBuildVars();
+    $job->setBuildVars($buildvars + $config);
 
     // Map relevant build variables into the job definition array
-    $this->buildvarsToDefinition($job);
+    $this->buildVarsToDefinition($job);
 
 
 
@@ -125,8 +125,8 @@ class Configurator {
 
 
 
-  protected function buildvarsToDefinition($job) {
-    $buildvars = $job->get_buildvars();
+  protected function buildVarsToDefinition($job) {
+    $buildvars = $job->getBuildVars();
     $job_definition = $job->job_definition;
 
     // Process dependencies

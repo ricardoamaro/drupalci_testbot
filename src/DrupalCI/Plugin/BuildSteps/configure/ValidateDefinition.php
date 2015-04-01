@@ -9,6 +9,7 @@
  */
 
 namespace DrupalCI\Plugin\Buildsteps\configure;
+use DrupalCI\Plugin\JobTypes\JobInterface;
 use DrupalCI\Plugin\PluginBase;
 
 /**
@@ -19,12 +20,12 @@ class ValidateDefinition extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function run($job, $data = NULL) {
+  public function run(JobInterface $job, $data = NULL) {
     // TODO: Ensure that all 'required' arguments are defined
     $definition = $job->job_definition;
     $failflag = FALSE;
-    foreach ($job->required_arguments as $env_var => $yaml_loc) {
-      if (!empty($job->build_vars[$env_var])) {
+    foreach ($job->requiredArguments as $env_var => $yaml_loc) {
+      if (!empty($job->buildVars[$env_var])) {
         continue;
       }
       else {

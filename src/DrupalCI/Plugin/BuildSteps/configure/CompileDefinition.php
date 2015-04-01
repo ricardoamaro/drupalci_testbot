@@ -14,6 +14,7 @@
 
 namespace DrupalCI\Plugin\Buildsteps\configure;
 
+use DrupalCI\Plugin\JobTypes\JobInterface;
 use DrupalCI\Plugin\PluginBase;
 use DrupalCI\Console\Helpers\ConfigHelper;
 use DrupalCI\Console\Jobs\Definition\JobDefinition;
@@ -26,7 +27,7 @@ class CompileDefinition extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function run($job, $data = NULL) {
+  public function run(JobInterface $job, $data = NULL) {
     // Get and parse test definitions
     // DrupalCI jobs are controlled via a hierarchy of configuration settings, which define the behaviour of the platform while running DrupalCI jobs.  This hierarchy is defined as follows, which each level overriding the previous:
     // 1. Out-of-the-box DrupalCI defaults
@@ -38,8 +39,8 @@ class CompileDefinition extends PluginBase {
     $confighelper = new ConfigHelper();
 
     // Load job defaults
-    $platform_args = $job->platform_defaults;
-    $default_args = $job->default_arguments;
+    $platform_args = $job->platformDefaults;
+    $default_args = $job->defaultArguments;
     if (!empty($default_args)) {
       $job->output->writeln("<comment>Loading build variables for this job type.</comment>");
     }
@@ -102,8 +103,8 @@ class CompileDefinition extends PluginBase {
     $config = $cli_args + $definition_args + $environment_args + $local_args + $default_args + $platform_args;
 
     // Set initial build variables
-    $buildvars = $job->get_buildvars();
-    $job->set_buildvars($buildvars + $config);
+    $buildvars = $job->getBuildVars();
+    $job->setBuildVars($buildvars + $config);
 
     // Map relevant build variables into the job definition array
     // $this->buildvarsToDefinition($job);
@@ -134,9 +135,9 @@ class CompileDefinition extends PluginBase {
 
 
 
-  protected function buildvarsToDefinition($job) {
-    $buildvars = $job->get_buildvars();
-    $job_definition = $job->job_definition;
+  protected function buildvarsToDefinition(JobInterface $job) {
+    $buildvars = $job->getBuildVars();
+    $job_definition = $job->jobDefinition;
 
     // Process dependencies
     if (!empty($buildvars['DCI_DEPENDENCIES'])) {

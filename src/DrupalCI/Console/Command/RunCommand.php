@@ -97,7 +97,7 @@ class RunCommand extends DrupalCICommandBase {
    */
   protected function jobPluginManager() {
     if (!isset($this->jobPluginManager)) {
-      $this->jobPluginManager = new PluginManager('Jobs');
+      $this->jobPluginManager = new PluginManager('JobTypes');
     }
     return $this->jobPluginManager;
   }
