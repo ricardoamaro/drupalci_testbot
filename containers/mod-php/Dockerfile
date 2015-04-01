@@ -1,4 +1,4 @@
-FROM       drupalci/phpenv
+FROM       drupalci/php-base
 MAINTAINER drupalci
 
 ##
