@@ -1,4 +1,4 @@
-FROM       drupalci/mod-php
+FROM       drupalci/web-base
 MAINTAINER drupalci
 
 ##
