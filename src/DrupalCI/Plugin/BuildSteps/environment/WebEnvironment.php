@@ -26,11 +26,10 @@ class WebEnvironment extends PhpEnvironment {
     // Normalize data to the array format, if necessary
     $data = is_array($data) ? $data : [$data];
     $job->getOutput()->writeln("<comment>Parsing required container image names ...</comment>");
-      $containers = $this->buildImageNames($data, $job);
-    $valid = $this->validateImageNames($containers, $job);
+    $containers = $job->getExecContainers();
+    $containers['web'] = $this->buildImageNames($data, $job);
+    $valid = $this->validateImageNames($containers['web'], $job);
     if (!empty($valid)) {
-      $containers = $job->getExecContainers();
-      $containers['php'] = $containers;
       $job->setExecContainers($containers);
       // Actual creation and configuration of the executable containers will occur in the 'execute' plugin.
     }
