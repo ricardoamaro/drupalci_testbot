@@ -32,7 +32,7 @@ class Checkout extends SetupBase {
     foreach ($data as $key => $details ) {
       // TODO: Ensure $details contains all required parameters
       $protocol = isset($details['protocol']) ? $details['protocol'] : 'git';
-      $func = "setup_checkout_" . $protocol;
+      $func = 'setupCheckout' . ucfirst($protocol);
       $this->$func($job, $details);
       if ($job->getErrorState()) {
         break;
@@ -68,7 +68,7 @@ class Checkout extends SetupBase {
     $job->getOutput()->writeln("<comment>DONE</comment>");
   }
 
-  protected function setup_checkout_git(JobInterface $job, $details) {
+  protected function setupCheckoutGit(JobInterface $job, $details) {
     $job->getOutput()->writeln("<info>Entering setup_checkout_git().</info>");
     $repo = isset($details['repo']) ? $details['repo'] : 'git://drupalcode.org/project/drupal.git';
     $gitbranch = isset($details['branch']) ? $details['branch'] : 'master';
