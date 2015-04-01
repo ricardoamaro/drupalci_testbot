@@ -2,7 +2,7 @@ FROM       drupalci/base
 MAINTAINER drupalci
 
 ##
-# Base.
+# Base
 ##
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -13,7 +13,8 @@ RUN apt-get clean && apt-get update
 
 # Build packages.
 # Make the PHP compiles go faster.
-# Ensure we can sudo.
+# re2c and bison are needed for compiling php7
+# apache2-dev brings apxs2 into the game which is neede to compile php
 RUN apt-get install -y curl htop git unzip ccache sudo \
     libxml2-dev \
     libcurl4-openssl-dev \
