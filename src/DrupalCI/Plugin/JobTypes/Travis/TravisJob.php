@@ -16,6 +16,7 @@ use PrivateTravis\Permutation;
 
 class TravisJob extends JobBase {
 
+  // TODO: Currently legacy leftover code.  TBD whether this class gets carried forward as an independent job type.
 
   protected $namespace = "privatetravis";
 

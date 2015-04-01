@@ -14,5 +14,6 @@ use DrupalCI\Plugin\PluginBase;
  */
 
 class PHPUnitJob extends JobBase {
+  // TODO: Currently just a placeholder.
 
 }

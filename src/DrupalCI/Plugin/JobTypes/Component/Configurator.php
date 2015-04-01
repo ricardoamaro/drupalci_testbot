@@ -13,6 +13,8 @@ use DrupalCI\Console\Jobs\Definition\JobDefinition;
 
 class Configurator {
 
+  // TODO:  This class will go away ... currently only here because some of the BuildVarsToDefinition code may be re-useable elsewhere.
+
   public function configure($job, $source = NULL) {
     // Get and parse test definitions
     // DrupalCI jobs are controlled via a hierarchy of configuration settings, which define the behaviour of the platform while running DrupalCI jobs.  This hierarchy is defined as follows, which each level overriding the previous:

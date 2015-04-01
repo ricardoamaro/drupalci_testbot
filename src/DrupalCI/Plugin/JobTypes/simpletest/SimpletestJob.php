@@ -92,6 +92,8 @@ class SimpletestJob extends JobBase {
   );
 
   public function buildSteps() {
+    // TODO: buildSteps() is now legacy, left over from before the March 2015 refactoring.
+    // To be replaced with a default job definition array.
     return array(
       'validate',
       'environment',
@@ -108,30 +110,10 @@ class SimpletestJob extends JobBase {
 
   protected $variables = array();
 
-  public function environment() {
-    $this->output->write("<comment>Validating environment parameters ...</comment>");
-    // The 'environment' step determines which containers are going to be
-    // required, validates that the appropriate container images exist, and
-    // starts any required service containers.
-    $validator = new EnvironmentValidator();
-    $validator->build_container_names($this);
-
-    $containers = $this->buildVars["DCI_Container_Images"];
-
-    foreach ($containers['php'] as $phpversion => $container) {
-      // TODO: Fix this after moving to the new container stack
-      // $containers['php'][$phpversion] = $container . "-web";
-      $containers['php'][$phpversion] = "drupalci/web-" . $phpversion;
-    }
-    $this->buildVars["DCI_Container_Images"] = $containers;
-    if (!$validator->validate_container_names($this)) {
-      return -1;
-    }
-    $validator->start_service_containers($this);
-    return;
-  }
 
   public function compatibility_bridge() {
+    // TODO: This is legacy, from before the March 2015 refactoring.  Initial purpose was to maintain backwards compatibility with the Proof of Concept implementation scripts.
+
     // Loads items from the job definition file into environment variables in
     // order to remain compatible with the simpletest run.sh script.
     // TODO: At some point, we should deprecate non "drupalci run simpletest"
@@ -179,6 +161,7 @@ class SimpletestJob extends JobBase {
   protected $cmd_prefix = "";
 
   public function execute() {
+    // TODO: This is legacy, from before the March 2015 refactoring.  Leftover from the Proof of Concept implementation.
     $cmd = "sudo " . $this->cmd_prefix . "./containers/web/run.sh";
     // Execute the simpletest testing bash script
     $this->shellCommand($cmd);

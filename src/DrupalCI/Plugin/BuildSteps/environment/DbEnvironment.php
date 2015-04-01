@@ -125,7 +125,7 @@ class DbEnvironment extends EnvironmentBase {
       sleep(10);
     }
   }
-  // TODO: Grab checkout source code from DrupalCI/Console/Job/Component/EnvironmentValidator.php
+
 
   */
 }
