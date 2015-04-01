@@ -81,6 +81,11 @@ ENV PATH /root/.phpenv/shims:/root/.phpenv/bin:$PATH
 
 RUN git clone --depth 1 https://github.com/CHH/php-build.git /root/.phpenv/plugins/php-build
 
+# Small hack for running the php compilation with more than one cpu core
+#RUN mv /usr/bin/make /usr/bin/make-system
+#RUN echo "/usr/bin/make-system -j8 -l8" > /usr/bin/make
+#RUN chmod +x /usr/bin/make
+
 ##
 # Composer.
 ##
