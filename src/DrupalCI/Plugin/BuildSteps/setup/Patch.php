@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\setup\Patch
+ * Contains \DrupalCI\Plugin\BuildSteps\setup\Patch
  *
  * Processes "setup: patch:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\Buildsteps\setup;
+namespace DrupalCI\Plugin\BuildSteps\setup;
 
 use DrupalCI\Plugin\JobTypes\JobInterface;
 

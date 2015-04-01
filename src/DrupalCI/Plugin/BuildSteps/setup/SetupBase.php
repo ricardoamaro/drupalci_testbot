@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\setup\Checkout
+ * Contains \DrupalCI\Plugin\BuildSteps\setup\Checkout
  *
  * Processes "setup: checkout:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\Buildsteps\setup;
+namespace DrupalCI\Plugin\BuildSteps\setup;
 
 use DrupalCI\Plugin\JobTypes\JobInterface;
 use DrupalCI\Plugin\PluginBase;

@@ -6,7 +6,7 @@
  * Time: 10:10 PM
  */
 
-namespace DrupalCI\Plugin\Buildsteps\configure;
+namespace DrupalCI\Plugin\BuildSteps\configure;
 use DrupalCI\Plugin\JobTypes\JobInterface;
 
 /**

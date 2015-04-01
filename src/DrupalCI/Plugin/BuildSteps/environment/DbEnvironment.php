@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\environment\DbEnvironment
+ * Contains \DrupalCI\Plugin\BuildSteps\environment\DbEnvironment
  *
  * Processes "environment: db:" parameters from within a job definition,
  * ensures appropriate Docker container images exist, and launches any new

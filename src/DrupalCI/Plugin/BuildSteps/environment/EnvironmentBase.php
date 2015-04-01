@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\environment\EnvironmentBase
+ * Contains \DrupalCI\Plugin\BuildSteps\environment\EnvironmentBase
  */
 
-namespace DrupalCI\Plugin\Buildsteps\environment;
+namespace DrupalCI\Plugin\BuildSteps\environment;
 
 use Docker\Exception\ImageNotFoundException;
 use DrupalCI\Plugin\JobTypes\JobInterface;

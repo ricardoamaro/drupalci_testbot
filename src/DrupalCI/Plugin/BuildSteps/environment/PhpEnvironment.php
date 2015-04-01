@@ -1,14 +1,14 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\environment\PhpEnvironment
+ * Contains \DrupalCI\Plugin\BuildSteps\environment\PhpEnvironment
  *
  * Processes "environment: php:" parameters from within a job definition,
  * ensures appropriate Docker container images exist, and defines the
  * appropriate execution container for communication back to JobBase.
  */
 
-namespace DrupalCI\Plugin\Buildsteps\environment;
+namespace DrupalCI\Plugin\BuildSteps\environment;
 use DrupalCI\Plugin\JobTypes\JobInterface;
 
 /**

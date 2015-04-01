@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\setup\Fetch
+ * Contains \DrupalCI\Plugin\BuildSteps\setup\Fetch
  *
  * Processes "setup: fetch:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\Buildsteps\setup;
+namespace DrupalCI\Plugin\BuildSteps\setup;
 use DrupalCI\Plugin\JobTypes\JobInterface;
 
 /**

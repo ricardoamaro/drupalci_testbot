@@ -1,14 +1,14 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\publish\PublishToDrupalCIServer
+ * Contains \DrupalCI\Plugin\BuildSteps\publish\PublishToDrupalCIServer
  *
  * Processes "publish: drupalci_server:" instructions from within a job
  * definition. Gathers the resulting job artifacts and pushes them to a
  * DrupalCI Results server.
  */
 
-namespace DrupalCI\Plugin\Buildsteps\publish;
+namespace DrupalCI\Plugin\BuildSteps\publish;
 use DrupalCI\Plugin\PluginBase;
 
 /**

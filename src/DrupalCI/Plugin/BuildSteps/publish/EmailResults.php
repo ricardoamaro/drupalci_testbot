@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\publish\EmailResults
+ * Contains \DrupalCI\Plugin\BuildSteps\publish\EmailResults
  *
  * Processes "publish: email:" instructions from within a job definition.
  * Gathers the resulting job artifacts and pushes them to an email address.
  */
 
-namespace DrupalCI\Plugin\Buildsteps\publish;
+namespace DrupalCI\Plugin\BuildSteps\publish;
 use DrupalCI\Plugin\PluginBase;
 
 /**

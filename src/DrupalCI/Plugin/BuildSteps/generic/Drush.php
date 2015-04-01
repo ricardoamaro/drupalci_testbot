@@ -1,12 +1,12 @@
 <?php
 /**
  * @file
- * Contains \DrupalCI\Plugin\Buildsteps\generic\Drush
+ * Contains \DrupalCI\Plugin\BuildSteps\generic\Drush
  *
  * Processes "[build_step]: drush:" instructions from within a job definition.
  */
 
-namespace DrupalCI\Plugin\Buildsteps\generic;
+namespace DrupalCI\Plugin\BuildSteps\generic;
 use DrupalCI\Plugin\PluginBase;
 
 /**
