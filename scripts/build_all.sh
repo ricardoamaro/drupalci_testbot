@@ -254,16 +254,6 @@ for DB_BUILD in "${dbtypes[@]}";
   cd "${BASEDIR}"
 done
 
-
-echo "Building MOD-PHP container"
-echo "----------------------------------------------------------------------"
-cd "${BASEDIR}"
-cd "./containers/mod-php/"
-./build.sh
-
-cd "${BASEDIR}"
-
-
 IFS="${BASEIFS}"
 for WEBDIR in ${WEBCONTAINERS};
   do
@@ -291,4 +281,3 @@ cd "${BASEDIR}"
 
 echo -e "Container Images: ${dbtypes[@]} and ${WEBCONTAINERS} (re)built.\n"
 echo -e "Try example: sudo DCI_DBTYPE='${DCI_DBTYPE}' DCI_DBVER='${DCI_DBVER}' DCI_PHPVERSION='${DCI_PHPVERSION}' DCI_TESTGROUPS='Bootstrap' DCI_DRUPALBRANCH='${DCI_DRUPALBRANCH}' DCI_PATCH='/path/to/your.patch,.' ./containers/web/run.sh"
-
