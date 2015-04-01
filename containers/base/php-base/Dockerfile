@@ -65,7 +65,8 @@ RUN apt-get install -y \
     sudo \
     unixODBC-dev \
     unzip \
-    supervisor
+    supervisor \
+    sqlite3
 
 RUN apt-get clean && apt-get autoremove -y
 
