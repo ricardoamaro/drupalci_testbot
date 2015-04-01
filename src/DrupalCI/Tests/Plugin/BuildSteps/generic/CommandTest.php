@@ -18,9 +18,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase {
     $cmd = ['test_command', 'test_argument'];
     $instance = new Container([]);
 
-    $body = $this->getMock('Guzzle\Stream\StreamInterface');
-    $body->expects($this->once())
-      ->method('getContents');
+    $methods = array_map(function (\ReflectionMethod $m) { return $m->getName();}, (new \ReflectionClass('Guzzle\Stream\StreamInterface'))->getMethods());
+    $methods[] = 'getContents';
+    $body = $this->getMock('Guzzle\Stream\StreamInterface',  $methods);
 
     $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
     $response->expects($this->once())
