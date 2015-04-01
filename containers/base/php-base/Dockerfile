@@ -64,7 +64,8 @@ RUN apt-get install -y \
     re2c \
     sudo \
     unixODBC-dev \
-    unzip
+    unzip \
+    supervisor
 
 RUN apt-get clean && apt-get autoremove -y
 
@@ -97,10 +98,8 @@ RUN bash -c "wget http://getcomposer.org/composer.phar && chmod 775 composer.pha
 RUN HOME=/ /usr/local/bin/composer global require drush/drush:dev-master
 RUN /.composer/vendor/drush/drush/drush --version
 
-# Supervisord.
-RUN easy_install supervisor
-ADD ./conf/supervisor/supervisord.conf /etc/supervisord.conf
-RUN mkdir /var/log/supervisor/
+# supervisor
+COPY ./conf/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Scripts.
 ADD ./conf/scripts/start.sh /start.sh
