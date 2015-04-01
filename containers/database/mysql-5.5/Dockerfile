@@ -1,4 +1,5 @@
 FROM drupalci/db-base
+MAINTAINER drupalci
 
 # Packages.
 RUN apt-get -y install mysql-server netcat

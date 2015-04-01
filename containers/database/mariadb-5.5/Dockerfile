@@ -1,4 +1,5 @@
 FROM drupalci/db-base
+MAINTAINER drupalci
 
 # Packages.
 RUN apt-get -qq -y install software-properties-common && \
