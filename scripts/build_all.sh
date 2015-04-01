@@ -258,7 +258,7 @@ done
 echo "Building MOD-PHP container"
 echo "----------------------------------------------------------------------"
 cd "${BASEDIR}"
-cd "./containers/mod-php/${WEBDIR}"
+cd "./containers/mod-php/"
 ./build.sh
 
 cd "${BASEDIR}"
