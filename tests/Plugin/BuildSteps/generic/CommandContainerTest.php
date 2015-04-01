@@ -9,10 +9,9 @@
 namespace DrupalCI\Tests\Plugin\BuildSteps\generic;
 
 use Docker\Container;
-use Docker\Docker;
 use DrupalCI\Plugin\BuildSteps\generic\ContainerCommand;
 
-class CommandTest extends \PHPUnit_Framework_TestCase {
+class CommandContainerTest extends \PHPUnit_Framework_TestCase {
 
   function testRun() {
     $cmd = ['test_command', 'test_argument'];

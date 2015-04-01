@@ -10,7 +10,8 @@
     ],
     "autoload": {
         "psr-0": {
-            "": "src"
+            "": "src",
+            "DrupalCI\Tests": "tests",
         }
     },
     "bin" : [
