@@ -36,6 +36,6 @@ EXPOSE 5432
 
 USER postgres
 
-ADD ./conf/startup.sh /opt/startup.sh
+COPY ./conf/startup.sh /opt/startup.sh
 
 CMD ["/bin/bash", "/opt/startup.sh"]

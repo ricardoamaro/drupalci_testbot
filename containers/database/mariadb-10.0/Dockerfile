@@ -16,6 +16,6 @@ RUN rm -rf /var/lib/mysql/*
 USER root
 EXPOSE 3306
 
-ADD ./conf/startup.sh /opt/startup.sh
+COPY ./conf/startup.sh /opt/startup.sh
 
 CMD ["/bin/bash", "/opt/startup.sh"]

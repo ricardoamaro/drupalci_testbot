@@ -102,9 +102,9 @@ RUN /.composer/vendor/drush/drush/drush --version
 COPY ./conf/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Scripts.
-ADD ./conf/scripts/start.sh /start.sh
-ADD ./conf/mongodb.settings.php /mongodb.settings.php
-ADD ./conf/scripts/foreground.sh /etc/apache2/foreground.sh
+COPY ./conf/scripts/start.sh /start.sh
+COPY ./conf/mongodb.settings.php /mongodb.settings.php
+COPY ./conf/scripts/foreground.sh /etc/apache2/foreground.sh
 
 # Make start.sh executable.
 RUN chmod 755 /start.sh
