@@ -10,6 +10,5 @@ RUN sudo chown -R root:root $HOME/.phpenv
 RUN phpenv rehash
 RUN phpenv global 5.6.0
 
-COPY daemon.sh /
-ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["/daemon.sh"]
+EXPOSE 80
+CMD ["/bin/bash", "/start.sh"]

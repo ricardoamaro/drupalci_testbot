@@ -91,3 +91,22 @@ RUN git clone --depth 1 https://github.com/CHH/php-build.git /root/.phpenv/plugi
 ##
 
 RUN bash -c "wget http://getcomposer.org/composer.phar && chmod 775 composer.phar && sudo mv composer.phar /usr/local/bin/composer"
+
+
+# Drush and dependencies.
+RUN HOME=/ /usr/local/bin/composer global require drush/drush:dev-master
+RUN /.composer/vendor/drush/drush/drush --version
+
+# Supervisord.
+RUN easy_install supervisor
+ADD ./conf/supervisor/supervisord.conf /etc/supervisord.conf
+RUN mkdir /var/log/supervisor/
+
+# Scripts.
+ADD ./conf/scripts/start.sh /start.sh
+ADD ./conf/mongodb.settings.php /mongodb.settings.php
+ADD ./conf/scripts/foreground.sh /etc/apache2/foreground.sh
+
+# Make start.sh executable.
+RUN chmod 755 /start.sh
+
