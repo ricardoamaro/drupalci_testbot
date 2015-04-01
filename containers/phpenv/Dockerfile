@@ -25,10 +25,8 @@ RUN apt-get install -y curl htop git unzip ccache sudo \
     libicu-dev \
     libfreetype6-dev \
     libldap2-dev \
-    libxslt-dev
-
-# Tools for phpenv.
-RUN apt-get build-dep -y php5-cli
+    libxslt-dev \
+    php5-dev
 
 RUN apt-get clean && apt-get autoremove -y
 
@@ -50,4 +48,3 @@ RUN git clone --depth 1 https://github.com/CHH/php-build.git /root/.phpenv/plugi
 ##
 
 RUN bash -c "wget http://getcomposer.org/composer.phar && chmod 775 composer.phar && sudo mv composer.phar /usr/local/bin/composer"
-
