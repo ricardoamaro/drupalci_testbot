@@ -27,7 +27,10 @@ RUN apt-get install -y curl htop git unzip ccache sudo \
     libfreetype6-dev \
     libldap2-dev \
     libxslt-dev \
-    php5-dev
+    php5-dev \
+    re2c \
+    bison \
+    apache2-dev
 
 RUN apt-get clean && apt-get autoremove -y
 
