@@ -14,4 +14,4 @@ then
   fi
 fi
 
-docker build --rm=${DCI_REMOVEINTCONTAINERS} -t drupalci/mod-php .
+docker build --rm=${DCI_REMOVEINTCONTAINERS} -t drupalci/web-base .
