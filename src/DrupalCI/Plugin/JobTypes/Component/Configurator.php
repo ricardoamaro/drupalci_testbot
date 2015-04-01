@@ -72,7 +72,7 @@ class Configurator {
       $result = $jobdef->load($definition_file);
       if ($result == -1) {
         // Error loading definition file.
-        $job->error_output("Failed", "Unable to parse build file.");
+        $job->errorOutput("Failed", "Unable to parse build file.");
         // TODO: Robust error handling
         return;
       };

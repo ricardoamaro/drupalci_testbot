@@ -56,13 +56,13 @@ class SetupComponent {
     // Validate target directory.  Must be within workingdir.
     if (!($directory = $this->validate_directory($checkoutdir, $job))) {
       // Invalidate checkout directory
-      $job->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
+      $job->errorOutput("Error", "The checkout directory <info>$directory</info> is invalid.");
       return;
     }
     $job->getOutput()->write("<comment>Copying files from <options=bold>$srcdir</options=bold> to the local checkout directory <options=bold>$directory</options=bold> ... </comment>");
     exec("cp -r $srcdir/* $directory", $cmdoutput, $result);
     if (is_null($result)) {
-      $job->error_output("Failed", "Error encountered while attempting to copy code to the local checkout directory.");
+      $job->errorOutput("Failed", "Error encountered while attempting to copy code to the local checkout directory.");
       return;
     }
     $job->getOutput()->writeln("<comment>DONE</comment>");
@@ -80,7 +80,7 @@ class SetupComponent {
     // Validate target directory.  Must be within workingdir.
     if (!($directory = $this->validate_directory($checkoutdir, $job))) {
       // Invalid checkout directory
-      $job->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
+      $job->errorOutput("Error", "The checkout directory <info>$directory</info> is invalid.");
       return;
     }
     $job->getOutput()->writeln("<comment>Performing git checkout of $repo $gitbranch branch to $directory.</comment>");
@@ -92,7 +92,7 @@ class SetupComponent {
     exec($cmd, $cmdoutput, $result);
     if ($result !==0) {
       // Git threw an error.
-      $job->error_output("Checkout failed", "The git checkout returned an error.");
+      $job->errorOutput("Checkout failed", "The git checkout returned an error.");
       // TODO: Pass on the actual return value for the git checkout
       return;
     }
@@ -127,7 +127,7 @@ class SetupComponent {
     // Validate that resulting directory is still within the working directory path.
     if (!strpos(realpath($directory), realpath($working_dir)) === 0) {
       // Invalid checkout directory
-      $job->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
+      $job->errorOutput("Error", "The checkout directory <info>$directory</info> is invalid.");
       return;
     }
 
@@ -140,7 +140,7 @@ class SetupComponent {
     // URL and target directory
     // TODO: Ensure $details contains all required parameters
     if (empty($details['url'])) {
-      $job->error_output("Error", "No valid target file provided for fetch command.");
+      $job->errorOutput("Error", "No valid target file provided for fetch command.");
       return;
     }
     $url = $details['url'];
@@ -148,18 +148,18 @@ class SetupComponent {
     $fetchdir = (!empty($details['fetch_dir'])) ? $details['fetch_dir'] : $workingdir;
     if (!($directory = $this->validate_directory($fetchdir, $job))) {
       // Invalid checkout directory
-      $job->error_output("Error", "The fetch directory <info>$directory</info> is invalid.");
+      $job->errorOutput("Error", "The fetch directory <info>$directory</info> is invalid.");
       return;
     }
     $info = pathinfo($url);
     $destfile = $directory . "/" . $info['basename'];
     $contents = file_get_contents($url);
     if ($contents === FALSE) {
-      $job->error_output("Error", "An error was encountered while attempting to fetch <info>$url</info>.");
+      $job->errorOutput("Error", "An error was encountered while attempting to fetch <info>$url</info>.");
       return;
     }
     if (file_put_contents($destfile, $contents) === FALSE) {
-      $job->error_output("Error", "An error was encountered while attempting to write <info>$url</info> to <info>$directory</info>");
+      $job->errorOutput("Error", "An error was encountered while attempting to write <info>$url</info> to <info>$directory</info>");
       return FALSE;
     }
     $job->getOutput()->writeln("<comment>Fetch of <options=bold>$url</options=bold> to <options=bold>$destfile</options=bold> complete.</comment>");
@@ -170,7 +170,7 @@ class SetupComponent {
   protected function setup_patch($details, $job) {
     $job->getOutput()->writeln("<info>Entering setup_patch().</info>");
     if (empty($details['patch_file'])) {
-      $job->error_output("Error", "No valid patch file provided for the patch command.");
+      $job->errorOutput("Error", "No valid patch file provided for the patch command.");
       return;
     }
     $workingdir = realpath($this->working_dir);
@@ -179,7 +179,7 @@ class SetupComponent {
     // Validate target directory.
     if (!($directory = $this->validate_directory($patchdir, $job))) {
       // Invalid checkout directory
-      $job->error_output("Error", "The patch directory <info>$directory</info> is invalid.");
+      $job->errorOutput("Error", "The patch directory <info>$directory</info> is invalid.");
       return;
     }
     $cmd = "patch -p1 -i $patchfile -d $directory";
@@ -187,7 +187,7 @@ class SetupComponent {
     exec($cmd, $cmdoutput, $result);
     if ($result !==0) {
       // The command threw an error.
-      $job->error_output("Patch failed", "The patch attempt returned an error.");
+      $job->errorOutput("Patch failed", "The patch attempt returned an error.");
       // TODO: Pass on the actual return value for the patch attempt
       return;
     }

@@ -7,6 +7,7 @@
 namespace DrupalCI\Plugin\Buildsteps\environment;
 
 use Docker\Exception\ImageNotFoundException;
+use DrupalCI\Plugin\JobTypes\JobInterface;
 use DrupalCI\Plugin\PluginBase;
 
 /**
@@ -14,7 +15,7 @@ use DrupalCI\Plugin\PluginBase;
  */
 abstract class EnvironmentBase extends PluginBase {
 
-  public function validateImageNames($containers, $job) {
+  public function validateImageNames($containers, JobInterface $job) {
     // Verify that the appropriate container images exist
     $job->getOutput()->writeln("<comment>Validating container images exist</comment>");
     $docker = $job->getDocker();
@@ -25,7 +26,7 @@ abstract class EnvironmentBase extends PluginBase {
         $image = $manager->find($name);
       }
       catch (ImageNotFoundException $e) {
-        $job->error_output("Failed", "Required container image <options=bold>'$name'</options=bold> not found.");
+        $job->errorOutput("Failed", "Required container image <options=bold>'$name'</options=bold> not found.");
         // TODO: Robust error handling.
         return FALSE;
       }

@@ -8,10 +8,8 @@
  * database service containers as required.
  */
 
-namespace DrupalCI\Plugin\Buildsteps\environment;
-use DrupalCI\Plugin\PluginBase;
-use DrupalCI\Plugin\Buildsteps\environment\EnvironmentBase;
-use Docker\Container;
+namespace DrupalCI\Plugin\BuildSteps\environment;
+use DrupalCI\Plugin\JobTypes\JobInterface;
 
 /**
  * @PluginID("db")
@@ -21,7 +19,7 @@ class DbEnvironment extends EnvironmentBase {
   /**
    * {@inheritdoc}
    */
-  public function run($job, $data) {
+  public function run(JobInterface $job, $data) {
     // Data format: 'mysql-5.5' or array('mysql-5.5', 'pgsql-9.3')
     // $data May be a string if one version required, or array if multiple
     // Normalize data to the array format, if necessary
@@ -30,13 +28,15 @@ class DbEnvironment extends EnvironmentBase {
     $containers = $this->buildImageNames($data, $job);
     $valid = $this->validateImageNames($containers, $job);
     if (!empty($valid)) {
-      $job->service_containers['db'] = $containers;
+      $service_containers = $job->getServiceContainers();
+      $service_containers['db'] = $containers;
+      $job->setServiceContainers($service_containers);
       $job->startServiceContainerDaemons('db');
     }
   }
 
-  public function buildImageNames($data, $job) {
-    $db_containers = array();
+  public function buildImageNames($data, JobInterface $job) {
+    $images = [];
     foreach ($data as $key => $db_version) {
       $images["db-$db_version"]['image'] = "drupalci/db-$db_version";
       $job->getOutput()->writeln("<info>Adding image: <options=bold>drupalci/db-$db_version</options=bold></info>");

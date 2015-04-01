@@ -28,7 +28,7 @@ class Fetch extends SetupBase {
       // URL and target directory
       // TODO: Ensure $details contains all required parameters
       if (empty($details['url'])) {
-        $job->error_output("Error", "No valid target file provided for fetch command.");
+        $job->errorOutput("Error", "No valid target file provided for fetch command.");
         return;
       }
       $url = $details['url'];
@@ -36,18 +36,18 @@ class Fetch extends SetupBase {
       $fetchdir = (!empty($details['fetch_dir'])) ? $details['fetch_dir'] : $workingdir;
       if (!($directory = $this->validate_directory($job, $fetchdir))) {
         // Invalid checkout directory
-        $job->error_output("Error", "The fetch directory <info>$directory</info> is invalid.");
+        $job->errorOutput("Error", "The fetch directory <info>$directory</info> is invalid.");
         return;
       }
       $info = pathinfo($url);
       $destfile = $directory . "/" . $info['basename'];
       $contents = file_get_contents($url);
       if ($contents === FALSE) {
-        $job->error_output("Error", "An error was encountered while attempting to fetch <info>$url</info>.");
+        $job->errorOutput("Error", "An error was encountered while attempting to fetch <info>$url</info>.");
         return;
       }
       if (file_put_contents($destfile, $contents) === FALSE) {
-        $job->error_output("Error", "An error was encountered while attempting to write <info>$url</info> to <info>$directory</info>");
+        $job->errorOutput("Error", "An error was encountered while attempting to write <info>$url</info> to <info>$directory</info>");
         return;
       }
       $job->getOutput()->writeln("<comment>Fetch of <options=bold>$url</options=bold> to <options=bold>$destfile</options=bold> complete.</comment>");

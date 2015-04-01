@@ -46,19 +46,19 @@ class Checkout extends SetupBase {
     // Validate source directory
     $source = realpath($srcdir);
     if (empty($source)) {
-      $job->error_output("Error", "The source directory <info>$srcdir</info> does not exist.");
+      $job->errorOutput("Error", "The source directory <info>$srcdir</info> does not exist.");
       return;
     }
     // Validate target directory.  Must be within workingdir.
     if (!($directory = $this->validate_directory($job, $checkoutdir))) {
       // Invalidate checkout directory
-      $job->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
+      $job->errorOutput("Error", "The checkout directory <info>$directory</info> is invalid.");
       return;
     }
     $job->getOutput()->write("<comment>Copying files from <options=bold>$srcdir</options=bold> to the local checkout directory <options=bold>$directory</options=bold> ... </comment>");
     exec("cp -r $srcdir/* $directory", $cmdoutput, $result);
     if (is_null($result)) {
-      $job->error_output("Failed", "Error encountered while attempting to copy code to the local checkout directory.");
+      $job->errorOutput("Failed", "Error encountered while attempting to copy code to the local checkout directory.");
       return;
     }
     $job->getOutput()->writeln("<comment>DONE</comment>");
@@ -76,7 +76,7 @@ class Checkout extends SetupBase {
     // Validate target directory.  Must be within workingdir.
     if (!($directory = $this->validate_directory($job, $checkoutdir))) {
       // Invalid checkout directory
-      $job->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
+      $job->errorOutput("Error", "The checkout directory <info>$directory</info> is invalid.");
       return;
     }
     $job->getOutput()->writeln("<comment>Performing git checkout of $repo $gitbranch branch to $directory.</comment>");
@@ -88,7 +88,7 @@ class Checkout extends SetupBase {
     exec($cmd, $cmdoutput, $result);
     if ($result !==0) {
       // Git threw an error.
-      $job->error_output("Checkout failed", "The git checkout returned an error.");
+      $job->errorOutput("Checkout failed", "The git checkout returned an error.");
       // TODO: Pass on the actual return value for the git checkout
       return;
     }

@@ -35,6 +35,9 @@ interface JobInterface {
 
   public function shellCommand($cmd);
 
+  /**
+   * @return \Docker\Docker
+   */
   public function getDocker();
 
   public function getExecContainers();
@@ -55,6 +58,8 @@ interface JobInterface {
 
   public function getPlatformDefaults();
 
-  public function output();
+  public function getServiceContainers();
+
+  public function setServiceContainers(array $service_containers);
 
 }

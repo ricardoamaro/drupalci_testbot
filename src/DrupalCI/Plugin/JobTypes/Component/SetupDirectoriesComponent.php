@@ -17,7 +17,7 @@ class SetupDirectoriesComponent {
     if (empty($arguments['DCI_CodeBase'])) {
       // If no explicit codebase provided, assume we are using the code in the local directory.
       $arguments['DCI_CodeBase'] = "./";
-      $job->set_buildvars($arguments);
+      $job->setBuildVars($arguments);
     }
   }
 
@@ -29,12 +29,12 @@ class SetupDirectoriesComponent {
       $tmpdir = $this->create_tempdir($job, sys_get_temp_dir() . '/drupalci/', $job->jobtype . "-");
       if (!$tmpdir) {
         // Error creating checkout directory
-        $job->error_output("Error", "Failure encountered while attempting to create a local checkout directory");
+        $job->errorOutput("Error", "Failure encountered while attempting to create a local checkout directory");
         return;
       }
       $job->getOutput()->writeln("<comment>Checkout directory created at <info>$tmpdir</info></comment>");
       $arguments['DCI_CheckoutDir'] = $tmpdir;
-      $job->set_buildvars($arguments);
+      $job->setBuildVars($arguments);
     }
     elseif ($arguments['DCI_CheckoutDir'] != $arguments['DCI_CodeBase']) {
       // We ensure the checkout directory is within the system temporary directory, to ensure
@@ -59,7 +59,7 @@ class SetupDirectoriesComponent {
     $tempname = tempnam($tmpdir, $prefix);
     if (empty($tempname)) {
       // Unable to create temp filename
-      $job->error_output("Error", "Unable to create temporary directory inside of $tmpdir.");
+      $job->errorOutput("Error", "Unable to create temporary directory inside of $tmpdir.");
       return;
     }
     $tempdir = $tempname;
@@ -69,7 +69,7 @@ class SetupDirectoriesComponent {
     }
     else {
       // Unable to create temp directory
-      $job->error_output("Error", "Error encountered while attempting to create temporary directory $tempdir.");
+      $job->errorOutput("Error", "Error encountered while attempting to create temporary directory $tempdir.");
       return;
     }
   }
@@ -86,7 +86,7 @@ class SetupDirectoriesComponent {
         $directory = "/" . $directory;
       }
       $arguments['DCI_CheckoutDir'] = $tempdir . $directory;
-      $job->set_buildvars($arguments);
+      $job->setBuildVars($arguments);
     }
 
     // Check if the DCI_CheckoutDir exists within the /tmp directory, or create it if not
@@ -95,7 +95,7 @@ class SetupDirectoriesComponent {
       // Directory exists.  Check that we're still in /tmp
       if (!$this->validate_checkout_dir($job)) {
         // Something bad happened.  Attempt to transverse out of the /tmp dir, perhaps?
-        $job->error_output("Error", "Detected an invalid local checkout directory.  The checkout directory must reside somewhere within the system temporary file directory.");
+        $job->errorOutput("Error", "Detected an invalid local checkout directory.  The checkout directory must reside somewhere within the system temporary file directory.");
         return;
       }
       else {
@@ -112,7 +112,7 @@ class SetupDirectoriesComponent {
       // Ensure we are under the system temp dir
       if (!$this->validate_checkout_dir($job)) {
         // Something bad happened.  Attempt to transverse out of the /tmp dir, perhaps?
-        $job->error_output("Error", "DCI_CheckoutDir must reside somewhere within the system temporary file directory. You may wish to manually remove the directory created above.");
+        $job->errorOutput("Error", "DCI_CheckoutDir must reside somewhere within the system temporary file directory. You may wish to manually remove the directory created above.");
         return;
       }
     }

@@ -92,7 +92,7 @@ class EnvironmentValidator {
       foreach ($containers as $key => $image) {
         if (!$helper->containerExists($image)) {
           // Error: No such container image
-          $job->error_output("Failed", "Required container image <options=bold>'$image'</options=bold> does not exist.");
+          $job->errorOutput("Failed", "Required container image <options=bold>'$image'</options=bold> does not exist.");
           // TODO: Robust error handling.
           return;
         }

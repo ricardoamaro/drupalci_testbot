@@ -85,7 +85,7 @@ class CompileDefinition extends PluginBase {
       $result = $jobdef->load($definition_file);
       if ($result == -1) {
         // Error loading definition file.
-        $job->error_output("Failed", "Unable to parse build file.");
+        $job->errorOutput("Failed", "Unable to parse build file.");
         // TODO: Robust error handling
         return;
       };
@@ -96,8 +96,8 @@ class CompileDefinition extends PluginBase {
       }
       else {
         $definition_args = !empty($job_definition['build_vars']) ? $job_definition['build_vars'] : array();
-        $job->setJobDefinition($job_definition);
       }
+      $job->setDefinition($job_definition);
     }
 
     $config = $cli_args + $definition_args + $environment_args + $local_args + $default_args + $platform_args;

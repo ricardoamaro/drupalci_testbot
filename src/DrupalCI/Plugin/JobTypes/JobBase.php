@@ -127,6 +127,14 @@ class JobBase extends ContainerBase implements JobInterface {
     return $this->platformDefaults;
   }
 
+  public function getServiceContainers() {
+    return $this->serviceContainers;
+  }
+
+  public function setServiceContainers(array $service_containers) {
+    $this->serviceContainers = $service_containers;
+  }
+
   // Defines the default build_steps for this job type
   public function buildSteps() {
     return array(
