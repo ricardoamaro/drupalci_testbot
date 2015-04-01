@@ -7,6 +7,8 @@
  */
 
 namespace DrupalCI\Plugin\Buildsteps\generic;
+
+use DrupalCI\Plugin\JobTypes\JobInterface;
 use DrupalCI\Plugin\PluginBase;
 
 /**
@@ -17,7 +19,7 @@ class Command extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function run($job, $data) {
+  public function run(JobInterface $job, $data) {
     // Data format: 'command [arguments]' or array('command [arguments]', 'command [arguments]')
     // $data May be a string if one version required, or array if multiple
     // Normalize data to the array format, if necessary
@@ -32,7 +34,6 @@ class Command extends PluginBase {
         foreach ($containers as $key => $container) {
           $id = $container['id'];
           $instance = $manager->find($id);
-          $type = 1;
           $output = "";
           $short_id = substr($id, 0, 8);
           $job->getOutput()->writeln("<info>Executing on container instance $short_id:</info>");
@@ -47,7 +48,7 @@ class Command extends PluginBase {
             $job->getOutput()->writeln($output);
             //Response stream is never read you need to simulate a wait in order to get output
             $result->getBody()->getContents();
-            $job->getOutput()->writeln($result->__toString());
+            $job->getOutput()->writeln((string) $result);
           }
         }
       }

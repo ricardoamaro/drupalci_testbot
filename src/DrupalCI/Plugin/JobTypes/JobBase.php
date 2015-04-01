@@ -49,7 +49,7 @@ class JobBase extends ContainerBase implements JobInterface {
   public $errorStatus = 0;
 
   // Default working directory
-  public $working_dir = "./";
+  public $workingDir = "./";
 
   /**
    * @var array
@@ -133,6 +133,10 @@ class JobBase extends ContainerBase implements JobInterface {
 
   public function setServiceContainers(array $service_containers) {
     $this->serviceContainers = $service_containers;
+  }
+
+  public function getWorkingDir() {
+    return $this->workingDir;
   }
 
   // Defines the default build_steps for this job type
@@ -229,6 +233,10 @@ class JobBase extends ContainerBase implements JobInterface {
     return $this->executableContainers;
   }
 
+  public function setExecContainers(array $containers) {
+    $this->executableContainers = $containers;
+  }
+
   public function startContainer(&$container) {
     $docker = $this->getDocker();
     $manager = $docker->getContainerManager();
@@ -280,14 +288,14 @@ class JobBase extends ContainerBase implements JobInterface {
   protected function createContainerVolumes() {
     $volumes = array();
     // Map working directory
-    $working = $this->working_dir;
+    $working = $this->workingDir;
     $volumes[$working] = array();
     // TODO: Map results directory
     return $volumes;
   }
 
   public function getContainerConfiguration($image = NULL) {
-    $path = __DIR__ . '/../Containers';
+    $path = __DIR__ . '/../../Containers';
     // RecursiveDirectoryIterator recurses into directories and returns an
     // iterator for each directory. RecursiveIteratorIterator then iterates over
     // each of the directory iterators, which consecutively return the files in

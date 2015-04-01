@@ -9,6 +9,8 @@
 namespace DrupalCI\Plugin\JobTypes\Component;
 
 
+use DrupalCI\Plugin\JobTypes\JobInterface;
+
 class SetupComponent {
 
   protected $working_dir;
@@ -47,8 +49,8 @@ class SetupComponent {
     return $this->$func($details, $job);
   }
 
-  protected function setup_checkout_local($details, $job) {
-    $job->getOutput()->writeln("<info>Entering setup_checkout_local().</info>");
+  protected function setupCheckoutLocal($details, JobInterface $job) {
+    $job->getOutput()->writeln("<info>Entering setupCheckoutLocal().</info>");
     $srcdir = isset($details['srcdir']) ? $details['srcdir'] : './';
     $workingdir = $job->working_dir;
     $checkoutdir = isset($details['checkout_dir']) ? $details['checkout_dir'] : $workingdir;

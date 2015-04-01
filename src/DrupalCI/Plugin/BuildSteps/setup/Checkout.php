@@ -8,6 +8,8 @@
 
 namespace DrupalCI\Plugin\Buildsteps\setup;
 
+use DrupalCI\Plugin\JobTypes\JobInterface;
+
 /**
  * @PluginID("checkout")
  */
@@ -16,7 +18,7 @@ class Checkout extends SetupBase {
   /**
    * {@inheritdoc}
    */
-  public function run($job, $data) {
+  public function run(JobInterface $job, $data) {
     // Data format:
     // i) array('protocol' => 'local', 'srcdir' => '/tmp/drupal', ['checkout_dir' => '/tmp/checkout'])
     // or
@@ -32,15 +34,17 @@ class Checkout extends SetupBase {
       $protocol = isset($details['protocol']) ? $details['protocol'] : 'git';
       $func = "setup_checkout_" . $protocol;
       $this->$func($job, $details);
-      if ($job->error_status != 0) { break; }
+      if ($job->getErrorState()) {
+        break;
+      }
     }
     return;
   }
 
-  protected function setup_checkout_local($job, $details) {
-    $job->getOutput()->writeln("<info>Entering setup_checkout_local().</info>");
+  protected function setupCheckoutLocal(JobInterface $job, $details) {
+    $job->getOutput()->writeln("<info>Entering setupCheckoutLocal().</info>");
     $srcdir = isset($details['srcdir']) ? $details['srcdir'] : './';
-    $workingdir = $job->working_dir;
+    $workingdir = $job->getWorkingDir();
     $checkoutdir = isset($details['checkout_dir']) ? $details['checkout_dir'] : $workingdir;
     // TODO: Ensure we don't end up with double slashes
     // Validate source directory
@@ -64,12 +68,12 @@ class Checkout extends SetupBase {
     $job->getOutput()->writeln("<comment>DONE</comment>");
   }
 
-  protected function setup_checkout_git($job, $details) {
+  protected function setup_checkout_git(JobInterface $job, $details) {
     $job->getOutput()->writeln("<info>Entering setup_checkout_git().</info>");
     $repo = isset($details['repo']) ? $details['repo'] : 'git://drupalcode.org/project/drupal.git';
     $gitbranch = isset($details['branch']) ? $details['branch'] : 'master';
     $gitdepth = isset($details['depth']) ? $details['depth'] : NULL;
-    $workingdir = $job->working_dir;
+    $workingdir = $job->getWorkingDir();
 
     $checkoutdir = isset($details['checkout_dir']) ? $details['checkout_dir'] : $workingdir;
     // TODO: Ensure we don't end up with double slashes

@@ -7,6 +7,7 @@
  */
 
 namespace DrupalCI\Plugin\Buildsteps\setup;
+use DrupalCI\Plugin\JobTypes\JobInterface;
 
 /**
  * @PluginID("fetch")
@@ -16,7 +17,7 @@ class Fetch extends SetupBase {
   /**
    * {@inheritdoc}
    */
-  public function run($job, $data) {
+  public function run(JobInterface $job, $data) {
     // Data format:
     // i) array('url' => '...', 'fetch_dir' => '...')
     // or
@@ -32,7 +33,7 @@ class Fetch extends SetupBase {
         return;
       }
       $url = $details['url'];
-      $workingdir = realpath($job->working_dir);
+      $workingdir = realpath($job->getWorkingDir());
       $fetchdir = (!empty($details['fetch_dir'])) ? $details['fetch_dir'] : $workingdir;
       if (!($directory = $this->validate_directory($job, $fetchdir))) {
         // Invalid checkout directory

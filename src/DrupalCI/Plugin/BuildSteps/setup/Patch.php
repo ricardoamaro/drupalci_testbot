@@ -8,6 +8,8 @@
 
 namespace DrupalCI\Plugin\Buildsteps\setup;
 
+use DrupalCI\Plugin\JobTypes\JobInterface;
+
 /**
  * @PluginID("patch")
  */
@@ -16,7 +18,7 @@ class Patch extends SetupBase {
   /**
    * {@inheritdoc}
    */
-  public function run($job, $data) {
+  public function run(JobInterface $job, $data) {
     // Data format:
     // i) array('patch_file' => '...', 'patch_dir' => '...')
     // or
@@ -29,7 +31,7 @@ class Patch extends SetupBase {
         $job->errorOutput("Error", "No valid patch file provided for the patch command.");
         return;
       }
-      $workingdir = realpath($job->working_dir);
+      $workingdir = realpath($job->getWorkingDir());
       $patchfile = $details['patch_file'];
       $patchdir = (!empty($details['patch_dir'])) ? $details['patch_dir'] : $workingdir;
       // Validate target directory.

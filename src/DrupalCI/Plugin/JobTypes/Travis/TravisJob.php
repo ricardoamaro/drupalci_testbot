@@ -96,7 +96,7 @@ class TravisJob extends JobBase {
     $travis_file = $this->buildVars['DCI_TravisFile'];
     $this->output->writeln("<comment>Loading test build parameters from travis file: </comment><info>$travis_file</info>");
     $build = new JobDefinition();
-    $directory = trim($this->working_dir);
+    $directory = trim($this->workingDir);
     // Ensure directory ends in a /
     if ($directory[strlen($directory) -1] != '/') {
       $directory = $directory . "/";
@@ -153,7 +153,7 @@ class TravisJob extends JobBase {
     $this->output->writeln("<comment>Starting Travis Job execution.</comment>");
     //echo "Script: " . print_r($this->script, TRUE);
     //foreach ($this->script as $cmd) {
-    $dir = trim($this->working_dir);
+    $dir = trim($this->workingDir);
     $cmd = "cd $dir && " . $this->script;
     echo "Script Cmd: " . $cmd;
     $this->shellCommand($cmd);

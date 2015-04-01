@@ -7,13 +7,15 @@
  */
 
 namespace DrupalCI\Plugin\Buildsteps\setup;
+
+use DrupalCI\Plugin\JobTypes\JobInterface;
 use DrupalCI\Plugin\PluginBase;
 
 abstract class SetupBase extends PluginBase {
 
-  protected function validate_directory($job, $dir) {
+  protected function validate_directory(JobInterface $job, $dir) {
     // Validate target directory.  Must be within workingdir.
-    $working_dir = $job->working_dir;
+    $working_dir = $job->getWorkingDir();
     $true_dir = realpath($dir);
     if (!empty($true_dir)) {
       if ($true_dir == realpath($working_dir)) {
@@ -42,7 +44,7 @@ abstract class SetupBase extends PluginBase {
     if (!strpos(realpath($directory), realpath($working_dir)) === 0) {
       // Invalid checkout directory
       $job->errorOutput("Error", "The checkout directory <info>$directory</info> is invalid.");
-      return;
+      return FALSE;
     }
 
     // Return the updated directory value.

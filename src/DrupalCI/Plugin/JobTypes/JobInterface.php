@@ -42,6 +42,8 @@ interface JobInterface {
 
   public function getExecContainers();
 
+  public function setExecContainers(array $containers);
+
   public function startContainer(&$container);
 
   public function getContainerConfiguration($image = NULL);
@@ -62,4 +64,5 @@ interface JobInterface {
 
   public function setServiceContainers(array $service_containers);
 
+  public function getWorkingDir();
 }
