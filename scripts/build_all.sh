@@ -254,6 +254,16 @@ for DB_BUILD in "${dbtypes[@]}";
   cd "${BASEDIR}"
 done
 
+
+echo "Building MOD-PHP container"
+echo "----------------------------------------------------------------------"
+cd "${BASEDIR}"
+cd "./containers/mod-php/${WEBDIR}"
+./build.sh
+
+cd "${BASEDIR}"
+
+
 IFS="${BASEIFS}"
 for WEBDIR in ${WEBCONTAINERS};
   do
