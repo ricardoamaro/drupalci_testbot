@@ -49,7 +49,7 @@ class JobBase extends ContainerBase implements JobInterface {
   public $errorStatus = 0;
 
   // Default working directory
-  public $workingDir = "./";
+  public $workingDirectory = "./";
 
   /**
    * @var array
@@ -136,7 +136,11 @@ class JobBase extends ContainerBase implements JobInterface {
   }
 
   public function getWorkingDir() {
-    return $this->workingDir;
+    return $this->workingDirectory;
+  }
+
+  public function setWorkingDir($working_directory) {
+    $this->workingDirectory = $working_directory;
   }
 
   // Defines the default build_steps for this job type
@@ -288,7 +292,7 @@ class JobBase extends ContainerBase implements JobInterface {
   protected function createContainerVolumes() {
     $volumes = array();
     // Map working directory
-    $working = $this->workingDir;
+    $working = $this->workingDirectory;
     $volumes[$working] = array();
     // TODO: Map results directory
     return $volumes;

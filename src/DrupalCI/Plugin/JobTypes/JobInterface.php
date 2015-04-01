@@ -65,4 +65,6 @@ interface JobInterface {
   public function setServiceContainers(array $service_containers);
 
   public function getWorkingDir();
+
+  public function setWorkingDir($working_directory);
 }

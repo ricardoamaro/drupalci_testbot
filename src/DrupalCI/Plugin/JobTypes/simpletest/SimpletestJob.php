@@ -166,8 +166,8 @@ class SimpletestJob extends JobBase {
     }
 
     // Set working directory
-    if (!empty($this->workingDir)) {
-      $cmd_prefix .= " DCI_WORKSPACE=" . $this->workingDir . " ";
+    if (!empty($this->workingDirectory)) {
+      $cmd_prefix .= " DCI_WORKSPACE=" . $this->workingDirectory . " ";
     }
 
     $this->cmd_prefix = $cmd_prefix;

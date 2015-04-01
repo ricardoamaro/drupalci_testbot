@@ -21,7 +21,7 @@ class SetupDirectories {
   /**
    * {@inheritdoc}
    */
-  public function run($job, $data = NULL) {
+  public function run(JobInterface $job, $data = NULL) {
     // Setup codebase and working directories
     $this->setupCodebase($job);
     $this->setupWorkingDir($job);
@@ -49,7 +49,7 @@ class SetupDirectories {
       if (!$tmpdir) {
         // Error creating checkout directory
         $job->errorOutput("Error", "Failure encountered while attempting to create a local checkout directory");
-        return;
+        return FALSE;
       }
       $job->getOutput()->writeln("<comment>Checkout directory created at <info>$tmpdir</info></comment>");
       $arguments['DCI_CheckoutDir'] = $tmpdir;
@@ -67,7 +67,7 @@ class SetupDirectories {
       }
     }
     // Update the checkout directory in the class object
-    $job->working_dir = $arguments['DCI_CheckoutDir'];
+    $job->setWorkingDir($arguments['DCI_CheckoutDir']);
   }
 
   protected function create_tempdir(JobInterface $job, $dir=NULL,$prefix=NULL) {
