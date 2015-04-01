@@ -1,48 +1,93 @@
-FROM drupalci/base
-MAINTAINER nick_schuch
+FROM       drupalci/base
+MAINTAINER drupalci
+
 ##
-# Base.
+# Base
 ##
+
 ENV DEBIAN_FRONTEND noninteractive
 ENV HOME /root
+
 # Saves us from stale repository issues.
 RUN apt-get clean && apt-get update
-# Some base packages.
-RUN apt-get install -y make re2c bison libxml2-dev libssl-dev libbz2-dev libcurl3-dev libdb5.1-dev libjpeg-dev libpng-dev libXpm-dev libfreetype6-dev libt1-dev libgmp3-dev libc-client-dev libldap2-dev libmcrypt-dev libmhash-dev freetds-dev libz-dev libmysqlclient15-dev ncurses-dev libpcre3-dev unixODBC-dev libsqlite-dev libaspell-dev libreadline6-dev librecode-dev libsnmp-dev libtidy-dev libxslt-dev libt1-dev
-# Install Apache2 and Apache prefork
-RUN apt-get install -y apache2 apache2-mpm-prefork
-# Tools for phpenv.
-RUN apt-get build-dep -y php5-cli
+
+# Build packages.
 # Make the PHP compiles go faster.
-# Ensure we can sudo.
-RUN apt-get install -y ccache sudo
+# re2c and bison are needed for compiling php7
+# apache2-dev brings apxs2 into the game which is neede to compile php
+RUN apt-get install -y \
+    bison \
+    ccache \
+    curl \
+    freetds-dev \
+    git \
+    htop \
+    libaspell-dev \
+    libbz2-dev \
+    libc-client-dev \
+    libcurl3-dev \
+    libcurl4-openssl-dev \
+    libdb5.1-dev \
+    libfreetype6-dev \
+    libfreetype6-dev \
+    libgmp3-dev \
+    libicu-dev \
+    libjpeg-dev \
+    libjpeg-dev \
+    libldap2-dev \
+    libldap2-dev \
+    libmcrypt-dev \
+    libmhash-dev \
+    libmysqlclient-dev \
+    libmysqlclient15-dev \
+    libpcre3-dev \
+    libpng-dev \
+    libpng-dev \
+    libpq-dev \
+    libreadline6-dev \
+    librecode-dev \
+    libsnmp-dev \
+    libsqlite-dev \
+    libt1-dev \
+    libt1-dev \
+    libtidy-dev \
+    libxml2-dev \
+    libxml2-dev libssl-dev \
+    libxpm-dev \
+    libXpm-dev \
+    libxslt-dev \
+    libxslt-dev \
+    libz-dev \
+    make \
+    ncurses-dev \
+    php5-dev \
+    re2c \
+    sudo \
+    unixODBC-dev \
+    unzip
+
 RUN apt-get clean && apt-get autoremove -y
+
 ##
 # PHPENV.
 ##
-RUN git clone https://github.com/CHH/phpenv.git /tmp/phpenv
+
+RUN git clone --depth 1 https://github.com/CHH/phpenv.git /tmp/phpenv
 RUN /tmp/phpenv/bin/phpenv-install.sh
 RUN scp /tmp/phpenv/extensions/* /root/.phpenv/libexec/
+
 RUN echo 'eval "$(phpenv init -)"' >> /root/.bashrc
 ENV PATH /root/.phpenv/shims:/root/.phpenv/bin:$PATH
-RUN git clone git://github.com/CHH/php-build.git /root/.phpenv/plugins/php-build
-RUN echo "--with-apxs2=/usr/bin/apxs2" >> /root/.phpenv/plugins/php-build/share/php-build/default_configure_options
-RUN sudo /root/.phpenv/plugins/php-build/install.sh
+
+RUN git clone --depth 1 https://github.com/CHH/php-build.git /root/.phpenv/plugins/php-build
+
+# Small hack for running the php compilation with more than one cpu core
+#RUN mv /usr/bin/make /usr/bin/make-system
+#RUN echo "/usr/bin/make-system -j8 -l8" > /usr/bin/make
+#RUN chmod +x /usr/bin/make
+
 ##
 # Composer.
 ##
+
 RUN bash -c "wget http://getcomposer.org/composer.phar && chmod 775 composer.phar && sudo mv composer.phar /usr/local/bin/composer"
-##
-# Travis.
-##
-RUN sudo gem install travis --no-rdoc --no-ri
-RUN mkdir ~/.travis
-RUN git clone https://github.com/travis-ci/travis-build.git /root/.travis/travis-build && cd /root/.travis/travis-build && git reset --hard e5553110116f026075d47dfd922c5b7427539dc7
-RUN travis version
-##
-# Run tests.
-##
-ADD Rakefile Rakefile
-COPY spec spec
-RUN rake spec
-WORKDIR /data

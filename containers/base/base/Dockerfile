@@ -1,46 +1,50 @@
-FROM ubuntu:14.04.1
-MAINTAINER nick_schuch
+FROM       ubuntu:trusty
+MAINTAINER drupalci
+
 ##
 # Base.
 ##
+
 ENV DEBIAN_FRONTEND noninteractive
+
 ##
 # Use a local mirror
 ##
-RUN sed -i 's/archive.ubuntu.com/mirror.pnl.gov/g' /etc/apt/sources.list
+
+RUN echo 'deb mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse' > /etc/apt/sources.list; \
+echo 'deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates main restricted universe multiverse' >> /etc/apt/sources.list; \
+echo 'deb mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted universe multiverse' >> /etc/apt/sources.list; \
+echo 'deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty main restricted universe multiverse' >> /etc/apt/sources.list; \
+echo 'deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-updates main restricted universe multiverse' >> /etc/apt/sources.list; \
+echo 'deb-src mirror://mirrors.ubuntu.com/mirrors.txt trusty-security main restricted universe multiverse' >> /etc/apt/sources.list;
+
+##
+# Remove Docs
+##
+
+# we need to keep copyright files for legal reasonsdd
+# lintian stuff is small, but really unnecessary
+RUN echo 'path-exclude /usr/share/doc/*' > /etc/dpkg/dpkg.cfg.d/01_nodoc \
+    echo 'path-include /usr/share/doc/*/copyright' >> /etc/dpkg/dpkg.cfg.d/01_nodoc \
+    echo 'path-exclude /usr/share/man/*' >> /etc/dpkg/dpkg.cfg.d/01_nodoc \
+    echo 'path-exclude /usr/share/groff/*' >> /etc/dpkg/dpkg.cfg.d/01_nodoc \
+    echo 'path-exclude /usr/share/info/*' >> /etc/dpkg/dpkg.cfg.d/01_nodoc \
+    echo 'path-exclude /usr/share/lintian/*' >> /etc/dpkg/dpkg.cfg.d/01_nodoc \
+    echo 'path-exclude /usr/share/linda/*' >> /etc/dpkg/dpkg.cfg.d/01_nodoc
 ##
 # Pull fresh repo list
 ##
+
 RUN apt-get clean && apt-get update
+
 ##
 # install needed packages
 ##
-RUN apt-get install -y build-essential git unzip wget
-##
-# DEBUG packages
-##
-#RUN apt-get install -y htop man vim curl byobu
-##
-# Ruby.
-##
-RUN echo "gem: --no-rdoc --no-ri " > /etc/gemrc
-RUN apt-get install -y ruby ruby-dev make
-##
-# Serverspec.
-##
-RUN gem install bundler -v 1.6.3
-RUN gem install net-ssh -v 2.9.1
-RUN gem install rspec-core -v 2.99.2
-RUN gem install diff-lcs -v 1.2.5
-RUN gem install rspec-expectations -v 2.99.2
-RUN gem install rspec-mocks -v 2.99.2
-RUN gem install rspec -v 2.99.0
-RUN gem install rspec-its -v 1.0.1
-RUN gem install highline -v 1.6.21
-RUN gem install specinfra -v 1.27.3
-RUN gem install serverspec -v 1.16.0
-RUN gem install rake
+
+RUN apt-get install -y unzip vim-tiny wget
+
 ##
 # Remove unecessary packages and clean
 ##
+
 RUN apt-get autoremove -y && apt-get clean
