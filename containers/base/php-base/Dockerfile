@@ -15,23 +15,56 @@ RUN apt-get clean && apt-get update
 # Make the PHP compiles go faster.
 # re2c and bison are needed for compiling php7
 # apache2-dev brings apxs2 into the game which is neede to compile php
-RUN apt-get install -y curl htop git unzip ccache sudo \
-    libxml2-dev \
+RUN apt-get install -y \
+    bison \
+    ccache \
+    curl \
+    freetds-dev \
+    git \
+    htop \
+    libaspell-dev \
+    libbz2-dev \
+    libc-client-dev \
+    libcurl3-dev \
     libcurl4-openssl-dev \
-    libjpeg-dev \
-    libpng-dev \
-    libxpm-dev \
-    libmysqlclient-dev \
-    libpq-dev \
-    libicu-dev \
+    libdb5.1-dev \
     libfreetype6-dev \
+    libfreetype6-dev \
+    libgmp3-dev \
+    libicu-dev \
+    libjpeg-dev \
+    libjpeg-dev \
     libldap2-dev \
+    libldap2-dev \
+    libmcrypt-dev \
+    libmhash-dev \
+    libmysqlclient-dev \
+    libmysqlclient15-dev \
+    libpcre3-dev \
+    libpng-dev \
+    libpng-dev \
+    libpq-dev \
+    libreadline6-dev \
+    librecode-dev \
+    libsnmp-dev \
+    libsqlite-dev \
+    libt1-dev \
+    libt1-dev \
+    libtidy-dev \
+    libxml2-dev \
+    libxml2-dev libssl-dev \
+    libxpm-dev \
+    libXpm-dev \
     libxslt-dev \
+    libxslt-dev \
+    libz-dev \
+    make \
+    ncurses-dev \
     php5-dev \
     re2c \
-    bison
-
-RUN apt-get install -y make  libxml2-dev libssl-dev libbz2-dev libcurl3-dev libdb5.1-dev libjpeg-dev libpng-dev libXpm-dev libfreetype6-dev libt1-dev libgmp3-dev libc-client-dev libldap2-dev libmcrypt-dev libmhash-dev freetds-dev libz-dev libmysqlclient15-dev ncurses-dev libpcre3-dev unixODBC-dev libsqlite-dev libaspell-dev libreadline6-dev librecode-dev libsnmp-dev libtidy-dev libxslt-dev libt1-dev
+    sudo \
+    unixODBC-dev \
+    unzip
 
 RUN apt-get clean && apt-get autoremove -y
 
