@@ -65,7 +65,7 @@ class JobBase extends ContainerBase implements JobInterface {
   public $serviceContainers;
 
   // Holds the name and Docker IDs of our executable containers.
-  public $executableContainers;
+  public $executableContainers = [];
 
   // Holds our Docker container manager
   protected $docker;
