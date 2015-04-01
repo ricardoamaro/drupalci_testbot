@@ -14,9 +14,12 @@ use DrupalCI\Console\Helpers\ContainerHelper;
 
 class ContainerBase {
 
-  protected $helper = NULL;
+  /**
+   * @var \DrupalCI\Console\Helpers\ContainerHelper
+   */
+  protected $helper;
 
-  public function startContainer($container) {
+  public function startContainer(&$container) {
     if (isNull($this->helper)) {
       $this->helper = new ContainerHelper();
     }

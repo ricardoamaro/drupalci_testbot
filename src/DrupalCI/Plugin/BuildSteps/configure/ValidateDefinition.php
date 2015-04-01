@@ -22,10 +22,10 @@ class ValidateDefinition extends PluginBase {
    */
   public function run(JobInterface $job, $data = NULL) {
     // TODO: Ensure that all 'required' arguments are defined
-    $definition = $job->job_definition;
+    $definition = $job->getDefinition();
     $failflag = FALSE;
-    foreach ($job->requiredArguments as $env_var => $yaml_loc) {
-      if (!empty($job->buildVars[$env_var])) {
+    foreach ($job->getRequiredArguments() as $env_var => $yaml_loc) {
+      if (!empty($job->getBuildVars()[$env_var])) {
         continue;
       }
       else {
@@ -56,9 +56,9 @@ class ValidateDefinition extends PluginBase {
         }
       }
       // If processing gets to here, we're missing a required variable
-      $job->error_output("Failed", "Required test parameter <options=bold>'$env_var'</options=bold> not found in environment variables, and <options=bold>'$yaml_loc'</options=bold> not found in job definition file.");
+      $job->errorOutput("Failed", "Required test parameter <options=bold>'$env_var'</options=bold> not found in environment variables, and <options=bold>'$yaml_loc'</options=bold> not found in job definition file.");
       // TODO: Graceful handling of failed exit states
-      return;
+      return FALSE;
     }
     // TODO: Strip out arguments which are not defined in the 'Available' arguments array
     return TRUE;

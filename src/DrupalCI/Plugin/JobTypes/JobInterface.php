@@ -15,6 +15,8 @@ interface JobInterface {
 
   public function setBuildVar($build_var, $value);
 
+  public function getRequiredArguments();
+
   public function setOutput($output);
 
   public function buildSteps();

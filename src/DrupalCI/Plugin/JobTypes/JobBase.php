@@ -98,6 +98,10 @@ class JobBase extends ContainerBase implements JobInterface {
     $this->buildVars[$build_var] = $value;
   }
 
+  public function getRequiredArguments() {
+    return $this->requiredArguments;
+  }
+
   // Sets the output buffer
   public function setOutput($output) {
     $this->output = $output;
