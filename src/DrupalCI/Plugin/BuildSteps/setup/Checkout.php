@@ -26,7 +26,7 @@ class Checkout extends SetupBase {
     // Normalize data to the third format, if necessary
     $data = (count($data) == count($data, COUNT_RECURSIVE)) ? [$data] : $data;
 
-    $job->output->writeln("<info>Entering setup_checkout().</info>");
+    $job->getOutput()->writeln("<info>Entering setup_checkout().</info>");
     foreach ($data as $key => $details ) {
       // TODO: Ensure $details contains all required parameters
       $protocol = isset($details['protocol']) ? $details['protocol'] : 'git';
@@ -38,7 +38,7 @@ class Checkout extends SetupBase {
   }
 
   protected function setup_checkout_local($job, $details) {
-    $job->output->writeln("<info>Entering setup_checkout_local().</info>");
+    $job->getOutput()->writeln("<info>Entering setup_checkout_local().</info>");
     $srcdir = isset($details['srcdir']) ? $details['srcdir'] : './';
     $workingdir = $job->working_dir;
     $checkoutdir = isset($details['checkout_dir']) ? $details['checkout_dir'] : $workingdir;
@@ -55,17 +55,17 @@ class Checkout extends SetupBase {
       $job->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
       return;
     }
-    $job->output->write("<comment>Copying files from <options=bold>$srcdir</options=bold> to the local checkout directory <options=bold>$directory</options=bold> ... </comment>");
+    $job->getOutput()->write("<comment>Copying files from <options=bold>$srcdir</options=bold> to the local checkout directory <options=bold>$directory</options=bold> ... </comment>");
     exec("cp -r $srcdir/* $directory", $cmdoutput, $result);
     if (is_null($result)) {
       $job->error_output("Failed", "Error encountered while attempting to copy code to the local checkout directory.");
       return;
     }
-    $job->output->writeln("<comment>DONE</comment>");
+    $job->getOutput()->writeln("<comment>DONE</comment>");
   }
 
   protected function setup_checkout_git($job, $details) {
-    $job->output->writeln("<info>Entering setup_checkout_git().</info>");
+    $job->getOutput()->writeln("<info>Entering setup_checkout_git().</info>");
     $repo = isset($details['repo']) ? $details['repo'] : 'git://drupalcode.org/project/drupal.git';
     $gitbranch = isset($details['branch']) ? $details['branch'] : 'master';
     $gitdepth = isset($details['depth']) ? $details['depth'] : NULL;
@@ -79,7 +79,7 @@ class Checkout extends SetupBase {
       $job->error_output("Error", "The checkout directory <info>$directory</info> is invalid.");
       return;
     }
-    $job->output->writeln("<comment>Performing git checkout of $repo $gitbranch branch to $directory.</comment>");
+    $job->getOutput()->writeln("<comment>Performing git checkout of $repo $gitbranch branch to $directory.</comment>");
 
     $cmd = "git clone -b $gitbranch $repo $directory";
     if (!is_null($gitdepth)) {
@@ -92,7 +92,7 @@ class Checkout extends SetupBase {
       // TODO: Pass on the actual return value for the git checkout
       return;
     }
-    $job->output->writeln("<comment>Checkout complete.</comment>");
+    $job->getOutput()->writeln("<comment>Checkout complete.</comment>");
   }
 
 }

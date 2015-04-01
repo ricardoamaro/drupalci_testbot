@@ -36,7 +36,7 @@ class SetupDirectories {
       $job->setBuildVars($arguments);
     }
     else {
-      $job->output->writeln("<comment>Using codebase directory defined in DCI_CodeBase: <options=bold>${arguments['DCI_CodeBase']}</options=bold></comment>");
+      $job->getOutput()->writeln("<comment>Using codebase directory defined in DCI_CodeBase: <options=bold>${arguments['DCI_CodeBase']}</options=bold></comment>");
     }
   }
 
@@ -51,7 +51,7 @@ class SetupDirectories {
         $job->error_output("Error", "Failure encountered while attempting to create a local checkout directory");
         return;
       }
-      $job->output->writeln("<comment>Checkout directory created at <info>$tmpdir</info></comment>");
+      $job->getOutput()->writeln("<comment>Checkout directory created at <info>$tmpdir</info></comment>");
       $arguments['DCI_CheckoutDir'] = $tmpdir;
       $job->set_buildvars($arguments);
     }
@@ -119,7 +119,7 @@ class SetupDirectories {
       }
       else {
         // Directory is within the system temp dir.
-        $job->output->writeln("<comment>Found existing local checkout directory <info>$path</info></comment>");
+        $job->getOutput()->writeln("<comment>Found existing local checkout directory <info>$path</info></comment>");
         return;
       }
     }
@@ -127,7 +127,7 @@ class SetupDirectories {
       // Directory doesn't exist, so create it.
       $directory = $arguments['DCI_CheckoutDir'];
       mkdir($directory, 0777, true);
-      $job->output->writeln("<comment>Checkout Directory created at <info>$directory</info>");
+      $job->getOutput()->writeln("<comment>Checkout Directory created at <info>$directory</info>");
       // Ensure we are under the system temp dir
       if (!$this->validate_checkout_dir($job)) {
         // Something bad happened.  Attempt to transverse out of the /tmp dir, perhaps?

@@ -28,19 +28,19 @@ class Configurator {
     $platform_args = $job->platform_defaults;
     $default_args = $job->default_arguments;
     if (!empty($default_args)) {
-      $job->output->writeln("<comment>Loading build variables for this job type.</comment>");
+      $job->getOutput()->writeln("<comment>Loading build variables for this job type.</comment>");
     }
 
     // Load DrupalCI local config overrides
     $local_args = $confighelper->getCurrentConfigSetParsed();
     if (!empty($local_args)) {
-      $job->output->writeln("<comment>Loading build variables from DrupalCI local config overrides.</comment>");
+      $job->getOutput()->writeln("<comment>Loading build variables from DrupalCI local config overrides.</comment>");
     }
 
     // Load "DCI_ namespaced" environment variable overrides
     $environment_args = $confighelper->getCurrentEnvVars();
     if (!empty($environment_args)) {
-      $job->output->writeln("<comment>Loading build variables from namespaced environment variable overrides.</comment>");
+      $job->getOutput()->writeln("<comment>Loading build variables from namespaced environment variable overrides.</comment>");
     }
 
     // Load command line arguments
@@ -49,7 +49,7 @@ class Configurator {
     // $cli_args = $somehelper->loadCLIargs();
     $cli_args = array();
     if (!empty($cli_args)) {
-      $job->output->writeln("<comment>Loading test parameters from command line arguments.</comment>");
+      $job->getOutput()->writeln("<comment>Loading test parameters from command line arguments.</comment>");
     }
 
     // Create temporary config array to use in determining the definition file source
@@ -67,7 +67,7 @@ class Configurator {
 
     // Load test definition file
     if (!empty($definition_file)) {
-      $job->output->writeln("<comment>Loading test parameters from build file: </comment><info>$definition_file</info>");
+      $job->getOutput()->writeln("<comment>Loading test parameters from build file: </comment><info>$definition_file</info>");
       $jobdef = new JobDefinition();
       $result = $jobdef->load($definition_file);
       if ($result == -1) {

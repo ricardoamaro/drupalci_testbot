@@ -8,6 +8,7 @@ namespace DrupalCI\Plugin\JobTypes;
 
 use Drupal\Component\Annotation\Plugin\Discovery\AnnotatedClassDiscovery;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use DrupalCI\Console\Jobs\ContainerBase;
 use Docker\Docker;
@@ -102,13 +103,28 @@ class JobBase extends ContainerBase implements JobInterface {
     return $this->requiredArguments;
   }
 
-  // Sets the output buffer
-  public function setOutput($output) {
+  public function setOutput(OutputInterface $output) {
     $this->output = $output;
+  }
+
+  public function getOutput() {
+    return $this->output;
   }
 
   public function getDefinition() {
     return $this->jobDefinition;
+  }
+
+  public function setDefinition(array $job_definition) {
+    $this->jobDefinition = $job_definition;
+  }
+
+  public function getDefaultArguments() {
+    return $this->defaultArguments;
+  }
+
+  public function getPlatformDefaults() {
+    return $this->platformDefaults;
   }
 
   // Defines the default build_steps for this job type

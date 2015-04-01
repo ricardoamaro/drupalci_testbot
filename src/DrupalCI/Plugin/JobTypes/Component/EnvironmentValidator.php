@@ -28,21 +28,21 @@ class EnvironmentValidator {
 
   protected function env_containers_from_env($job) {
     $containers = array();
-    $job->output->writeln("<comment>Parsing environment variables to determine required containers.</comment>");
+    $job->getOutput()->writeln("<comment>Parsing environment variables to determine required containers.</comment>");
     // Retrieve environment-related variables from the job arguments
     $dbtype = $job->build_vars['DCI_DBTYPE'];
     $dbver = $job->build_vars['DCI_DBVER'];
     $phpversion = $job->build_vars['DCI_PHPVERSION'];
     $containers['php'][$phpversion] = "drupalci/php-$phpversion";
-    $job->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+    $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
     $containers['db'][$dbtype . "-" . $dbver] = "drupalci/$dbtype-$dbver";
-    $job->output->writeln("<info>Adding container: <options=bold>drupalci/$dbtype-$dbver</options=bold></info>");
+    $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/$dbtype-$dbver</options=bold></info>");
     return $containers;
   }
 
   protected function env_containers_from_file($job) {
     $config = $job->job_definition['environment'];
-    $job->output->writeln("<comment>Evaluating container requirements as defined in job definition file ...</comment>");
+    $job->getOutput()->writeln("<comment>Evaluating container requirements as defined in job definition file ...</comment>");
     $containers = array();
 
     // Determine required php containers
@@ -52,13 +52,13 @@ class EnvironmentValidator {
         foreach ($config['php'] as $phpversion) {
           // TODO: Make the drupalci prefix a variable (overrideable to use custom containers)
           $containers['php']["$phpversion"] = "drupalci/php-$phpversion";
-          $job->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+          $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
         }
       }
       else {
         $phpversion = $config['php'];
         $containers['php']["$phpversion"] = "drupalci/php-$phpversion";
-        $job->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+        $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
       }
     }
     else {
@@ -72,13 +72,13 @@ class EnvironmentValidator {
       if (is_array($config['db'])) {
         foreach ($config['db'] as $dbversion) {
           $containers['db']["$dbversion"] = "drupalci/$dbversion";
-          $job->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
+          $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
         }
       }
       else {
         $dbversion = $config['db'];
         $containers['db']["$dbversion"] = "drupalci/$dbversion";
-        $job->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
+        $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
       }
     }
     return $containers;
@@ -86,7 +86,7 @@ class EnvironmentValidator {
 
   public function validate_container_names($job) {
     // Verify that the appropriate container images exist
-    $job->output->writeln("<comment>Ensuring appropriate container images exist.</comment>");
+    $job->getOutput()->writeln("<comment>Ensuring appropriate container images exist.</comment>");
     $helper = new ContainerHelper();
     foreach ($job->build_vars['DCI_Container_Images'] as $type => $containers) {
       foreach ($containers as $key => $image) {

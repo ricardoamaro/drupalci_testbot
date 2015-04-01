@@ -35,19 +35,19 @@ class Command extends PluginBase {
           $type = 1;
           $output = "";
           $short_id = substr($id, 0, 8);
-          $job->output->writeln("<info>Executing on container instance $short_id:</info>");
+          $job->getOutput()->writeln("<info>Executing on container instance $short_id:</info>");
           foreach ($data as $cmd) {
-            $job->output->writeln("<fg=magenta>$cmd</fg=magenta>");
+            $job->getOutput()->writeln("<fg=magenta>$cmd</fg=magenta>");
             $exec = explode(" ", $cmd);
             $exec_id = $manager->exec($instance, $exec, TRUE, TRUE, TRUE, TRUE);
-            $job->output->writeln("<info>Command created as exec id " . substr($exec_id, 0, 8) . "</info>");
+            $job->getOutput()->writeln("<info>Command created as exec id " . substr($exec_id, 0, 8) . "</info>");
             $result=$manager->execstart($exec_id, function($output, $type) {
               fputs($type === 1 ? STDOUT : STDERR, $output);
             });
-            $job->output->writeln($output);
+            $job->getOutput()->writeln($output);
             //Response stream is never read you need to simulate a wait in order to get output
             $result->getBody()->getContents();
-            $job->output->writeln($result->__toString());
+            $job->getOutput()->writeln($result->__toString());
           }
         }
       }

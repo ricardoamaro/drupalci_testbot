@@ -26,7 +26,7 @@ class DbEnvironment extends EnvironmentBase {
     // $data May be a string if one version required, or array if multiple
     // Normalize data to the array format, if necessary
     $data = is_array($data) ? $data : [$data];
-    $job->output->writeln("<comment>Parsing required container image names ...</comment>");
+    $job->getOutput()->writeln("<comment>Parsing required container image names ...</comment>");
     $containers = $this->buildImageNames($data, $job);
     $valid = $this->validateImageNames($containers, $job);
     if (!empty($valid)) {
@@ -39,7 +39,7 @@ class DbEnvironment extends EnvironmentBase {
     $db_containers = array();
     foreach ($data as $key => $db_version) {
       $images["db-$db_version"]['image'] = "drupalci/db-$db_version";
-      $job->output->writeln("<info>Adding image: <options=bold>drupalci/db-$db_version</options=bold></info>");
+      $job->getOutput()->writeln("<info>Adding image: <options=bold>drupalci/db-$db_version</options=bold></info>");
     }
     return $images;
   }
@@ -62,7 +62,7 @@ class DbEnvironment extends EnvironmentBase {
 
   protected function env_containers_from_file($job) {
     $config = $job->job_definition['environment'];
-    $job->output->writeln("<comment>Evaluating container requirements as defined in job definition file ...</comment>");
+    $job->getOutput()->writeln("<comment>Evaluating container requirements as defined in job definition file ...</comment>");
     $containers = array();
 
     // Determine required php containers
@@ -72,13 +72,13 @@ class DbEnvironment extends EnvironmentBase {
         foreach ($config['php'] as $phpversion) {
           // TODO: Make the drupalci prefix a variable (overrideable to use custom containers)
           $containers['php']["$phpversion"] = "drupalci/php-$phpversion";
-          $job->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+          $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
         }
       }
       else {
         $phpversion = $config['php'];
         $containers['php']["$phpversion"] = "drupalci/php-$phpversion";
-        $job->output->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
+        $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/php-$phpversion</options=bold></info>");
       }
     }
     else {
@@ -92,13 +92,13 @@ class DbEnvironment extends EnvironmentBase {
       if (is_array($config['db'])) {
         foreach ($config['db'] as $dbversion) {
           $containers['db']["$dbversion"] = "drupalci/$dbversion";
-          $job->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
+          $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
         }
       }
       else {
         $dbversion = $config['db'];
         $containers['db']["$dbversion"] = "drupalci/$dbversion";
-        $job->output->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
+        $job->getOutput()->writeln("<info>Adding container: <options=bold>drupalci/$dbversion</options=bold></info>");
       }
     }
     return $containers;

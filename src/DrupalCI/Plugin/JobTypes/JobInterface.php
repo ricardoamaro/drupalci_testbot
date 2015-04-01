@@ -5,6 +5,8 @@
  */
 namespace DrupalCI\Plugin\JobTypes;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
 interface JobInterface {
 
   public function getBuildVars();
@@ -17,7 +19,15 @@ interface JobInterface {
 
   public function getRequiredArguments();
 
-  public function setOutput($output);
+  /**
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   */
+  public function setOutput(OutputInterface $output);
+
+  /**
+   * @return \Symfony\Component\Console\Output\OutputInterface
+   */
+  public function getOutput();
 
   public function buildSteps();
 
@@ -38,5 +48,13 @@ interface JobInterface {
   public function getErrorState();
 
   public function getDefinition();
+
+  public function setDefinition(array $job_definition);
+
+  public function getDefaultArguments();
+
+  public function getPlatformDefaults();
+
+  public function output();
 
 }

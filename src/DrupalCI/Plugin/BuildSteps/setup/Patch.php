@@ -23,7 +23,7 @@ class Patch extends SetupBase {
     // iii) array(array(...), array(...))
     // Normalize data to the third format, if necessary
     $data = (count($data) == count($data, COUNT_RECURSIVE)) ? [$data] : $data;
-    $job->output->writeln("<info>Entering setup_patch().</info>");
+    $job->getOutput()->writeln("<info>Entering setup_patch().</info>");
     foreach ($data as $key => $details) {
       if (empty($details['patch_file'])) {
         $job->error_output("Error", "No valid patch file provided for the patch command.");
@@ -44,11 +44,11 @@ class Patch extends SetupBase {
       if ($result !==0) {
         // The command threw an error.
         $job->error_output("Patch failed", "The patch attempt returned an error.");
-        $job->output->writeln($cmdoutput);
+        $job->getOutput()->writeln($cmdoutput);
         // TODO: Pass on the actual return value for the patch attempt
         return;
       }
-      $job->output->writeln("<comment>Patch <options=bold>$patchfile</options=bold> applied to directory <options=bold>$directory</options=bold></comment>");
+      $job->getOutput()->writeln("<comment>Patch <options=bold>$patchfile</options=bold> applied to directory <options=bold>$directory</options=bold></comment>");
     }
   }
 }
