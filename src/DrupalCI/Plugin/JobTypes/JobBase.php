@@ -85,7 +85,7 @@ class JobBase extends ContainerBase implements JobInterface {
   }
 
   // Sets the build variables for this job
-  public function setBuildVars($build_vars) {
+  public function setBuildVars(array $build_vars) {
     $this->buildVars = $build_vars;
   }
 
@@ -141,22 +141,6 @@ class JobBase extends ContainerBase implements JobInterface {
 
   public function setWorkingDir($working_directory) {
     $this->workingDirectory = $working_directory;
-  }
-
-  // Defines the default build_steps for this job type
-  public function buildSteps() {
-    return array(
-      'validate',
-      'checkout',
-      'environment',
-      //'setup',
-      //'install',
-      //'validate_install',
-      //'execute',
-      //'complete',
-      //'success',
-      //'failure'
-    );
   }
 
   public function errorOutput($type = 'Error', $message = 'DrupalCI has encountered an error.') {

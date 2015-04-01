@@ -9,15 +9,57 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface JobInterface {
 
+  /**
+   * An array of build variables.
+   *
+   * - DCI_DEPENDENCIES
+   * - DCI_DEPENDENCIES_GIT
+   * - DCI_TravisFile
+   * - DCI_Privileged
+   *
+   * @return array
+   *
+   * @see SimpletestJob::$availableArguments
+   */
   public function getBuildVars();
 
-  public function setBuildVars($build_vars);
+  /**
+   * @param array $build_vars
+   *
+   * @see JobInterface::getBuildvards
+   */
+  public function setBuildVars(array $build_vars);
 
+  /**
+   * @param string $build_var
+   *
+   * @return mixed
+   *
+   * @see JobInterface::getBuildvards
+   */
   public function getBuildvar($build_var);
 
+  /**
+   * @param $build_var
+   * @param $value
+   */
   public function setBuildVar($build_var, $value);
 
+  /**
+   * Required arguments.
+   *
+   * @TODO: move to annotation
+   *
+   * @return array
+   *
+   * @see SimpletestJob::$requiredArguments
+   */
   public function getRequiredArguments();
+
+  /**
+   * @return \Symfony\Component\Console\Output\OutputInterface
+   */
+  public function getOutput();
 
   /**
    * @param \Symfony\Component\Console\Output\OutputInterface $output
@@ -25,12 +67,12 @@ interface JobInterface {
   public function setOutput(OutputInterface $output);
 
   /**
-   * @return \Symfony\Component\Console\Output\OutputInterface
+   * Sends an error message.
+   *
+   * @param string $type
+   * @param string $message
+   * @return mixed
    */
-  public function getOutput();
-
-  public function buildSteps();
-
   public function errorOutput($type = 'Error', $message = 'DrupalCI has encountered an error.');
 
   public function shellCommand($cmd);
