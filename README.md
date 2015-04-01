@@ -316,9 +316,9 @@ sudo docker ps -a | awk '{print $1}' | xargs -n1 -I {} sudo docker rm {}
 │   │   │   └── conf
 │   │   ├── mysql-5.5
 │   │   │   └── conf
-│   │   ├── pgsql-8.4
+│   │   ├── pgsql-9.1
 │   │   │   └── conf
-│   │   └── pgsql-9.1
+│   │   └── pgsql-9.4
 │   │       └── conf
 │   └── web
 │       ├── web-5.4

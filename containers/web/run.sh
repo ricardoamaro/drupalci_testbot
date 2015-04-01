@@ -146,11 +146,9 @@ case $DCI_DBTYPE in
          DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
        else
          case $DCI_DBVER in
-           8.4)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-8.4"}
-           ;;
            9.1)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
            ;;
-           9.3)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.3"}
+           9.4)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.4"}
            ;;
          esac
      fi

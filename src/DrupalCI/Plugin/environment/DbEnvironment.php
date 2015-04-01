@@ -22,7 +22,7 @@ class DbEnvironment extends EnvironmentBase {
    * {@inheritdoc}
    */
   public function run($job, $data) {
-    // Data format: 'mysql-5.5' or array('mysql-5.5', 'pgsql-9.3')
+    // Data format: 'mysql-5.5' or array('mysql-5.5', 'pgsql-9.4')
     // $data May be a string if one version required, or array if multiple
     // Normalize data to the array format, if necessary
     $data = is_array($data) ? $data : [$data];
