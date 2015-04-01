@@ -12,7 +12,8 @@ ENV HOME /root
 RUN apt-get clean && apt-get update
 
 # Install Apache2 and Apache prefork
-RUN apt-get install -y apache2 apache2-mpm-prefork
+RUN apt-get install -y apache2 apache2-mpm-prefork apache2-dev
+
 
 RUN apt-get clean && apt-get autoremove -y
 
