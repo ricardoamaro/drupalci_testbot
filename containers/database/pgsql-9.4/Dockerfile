@@ -23,13 +23,13 @@ ENV LC_ALL en_US.UTF-8
 # update the apt cache and install our needed packages
 RUN wget -O - http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | apt-key add -
 RUN apt-get -y update && \
-    apt-get -y install postgresql-9.1
+    apt-get -y install postgresql-9.4
 
 RUN apt-get clean && apt-get autoclean && apt-get -y autoremove
 
 # Adjust PostgreSQL configuration so that remote connections to the database are possible.
-RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/9.1/main/pg_hba.conf
-RUN echo "listen_addresses='*'" >> /etc/postgresql/9.1/main/postgresql.conf
+RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/9.4/main/pg_hba.conf
+RUN echo "listen_addresses='*'" >> /etc/postgresql/9.4/main/postgresql.conf
 
 # Expose the PostgreSQL port
 EXPOSE 5432
