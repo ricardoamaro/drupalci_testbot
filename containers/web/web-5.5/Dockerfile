@@ -11,5 +11,8 @@ RUN phpenv rehash
 RUN phpenv global 5.5.15
 RUN echo | pecl install mongo
 
+# Fix date.timezone warning
+RUN find /root/.phpenv/ -iname php.ini -exec sh -c 'echo "date.timezone=UTC" >> {}' \;
+
 EXPOSE 80
 CMD ["/bin/bash", "/start.sh"]
