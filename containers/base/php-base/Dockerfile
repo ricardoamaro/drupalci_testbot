@@ -59,6 +59,7 @@ RUN apt-get install -y \
     libxslt-dev \
     libz-dev \
     make \
+    mysql-client \
     ncurses-dev \
     php5-dev \
     re2c \
