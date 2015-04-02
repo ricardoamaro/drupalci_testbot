@@ -4,7 +4,7 @@
 source /var/www/test.info
 alias php='/root/.phpenv/shims/php'
 
-export PATH=$HOME/bin:$PATH
+export PATH=$HOME/bin:/root/.phpenv/shims:$PATH
 
 # Only need the newest drush version for Drupal 8 and above
 if (( $DCI_DRUPALVERSION >= 8 ));
