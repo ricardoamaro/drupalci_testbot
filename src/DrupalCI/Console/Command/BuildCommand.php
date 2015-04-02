@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Docker\Context\Context;
 
 class BuildCommand extends DrupalCICommandBase {
 
@@ -62,12 +63,27 @@ class BuildCommand extends DrupalCICommandBase {
     $helper = new ContainerHelper();
     $containers = $helper->getAllContainers();
     $container_path = $containers[$name];
-    # Store the current directory to make it trivial to return
-    $currentdir = getcwd();
-    chdir("./$container_path");
+    $docker = $this->getDocker();
+    $context = new Context($container_path);
     $output->writeln("-------------------- Start build script --------------------");
-    passthru("./build.sh", $return_var);
+    $response = $docker->build($context, $name, function($result, $type) {
+      fputs($type === 1 ? STDOUT : STDERR, $result['stream']);
+    });
+
+
+    //$response = $docker->build($context, $name, function ($result) use (&$content) {
+    //  if (isset($result['stream'])) {
+    //    $content .= $result['stream'];
+    //  }
+    //});
+    //$output->writeln($content);
     $output->writeln("--------------------- End build script ---------------------");
+    $response->getBody()->getContents();
+    $output->writeln((string) $response);
+
+    // TODO: Capture return value and determine whether build was successful or not, throwing an error if it isn't.
+    // (This may already automatically throw an exception within docker-php)
+    /* LEGACY CODE - original notification
     if ($return_var === 0) {
       $output->writeln("<comment>Container <options=bold>$name</options=bold> build complete.</comment>");
       $output->writeln("<comment>The $name container image should now be available.</comment>");
@@ -76,7 +92,6 @@ class BuildCommand extends DrupalCICommandBase {
       $output->writeln("<error>Build script exited with a non-zero error code: <options=bold>$return_var</options=bold></error>");
       $output->writeln("<comment>Please review the output above to determine the root cause.</comment>");
     }
-    # Return us to the original working directory
-    chdir($currentdir);
+    */
   }
 }

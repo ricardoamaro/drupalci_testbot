@@ -54,7 +54,7 @@ DCI_DBPASS:        Default is 'drupaltestbotpw'
 DCI_DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
 DCI_PHPVERSION:    Default is '5.4'
 DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
-DCI_RUNSCRIPT:     Default is 'php RUNNER --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
+DCI_RUNSCRIPT:     Default is '/root/.phpenv/shims/php RUNNER --php /root/.phpenv/shims/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
 echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
 echo -e "
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
@@ -146,11 +146,9 @@ case $DCI_DBTYPE in
          DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
        else
          case $DCI_DBVER in
-           8.3)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-8.3"}
-           ;;
            9.1)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.1"}
            ;;
-           9.3)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.3"}
+           9.4)  DCI_DBCONTAINER=${DCI_DBCONTAINER:-"drupaltestbot-db-pgsql-9.4"}
            ;;
          esac
      fi
@@ -184,7 +182,7 @@ case $DCI_VERBOSE in
     ;;
 esac
 
-DCI_RUNSCRIPT=${DCI_RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
+DCI_RUNSCRIPT=${DCI_RUNSCRIPT:-"/root/.phpenv/shims/php ${RUNNER} --php /root/.phpenv/shims/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
 
 # Check if we have root powers
 if [ `whoami` != root ]; then
@@ -290,7 +288,7 @@ if [ -f ${DCI_REPODIR}/vendor/drush/drush/drush ];
 	${DCI_REPODIR}/composer.phar -d="${DCI_REPODIR}" global require drush/drush:dev-master
 fi
 
-# Update Drupal repo 
+# Update Drupal repo
 if [[ $DCI_UPDATEREPO = "true" ]]
   then
     echo "Updating Drupal git..."
@@ -350,24 +348,26 @@ if [[ $DCI_DEPENDENCIES = "" ]]
     echo ""
 fi
 
+
 #DCI_DEPENDENCIES_GIT="gitrepo1,branch;gitrepo2,branch"
 #Get the git dependecies
-if [[ $DCI_DEPENDENCIES_GIT = "" ]]
-  then
-    echo -e "NOTICE: \$DCI_DEPENDENCIES_GIT has nothing declared...\n"
-  else
-     ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
-     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
-     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
-     echo "${ARRAY}"
-     for row in ${ARRAY[@]}
-      do
-      read gurl gbranch <<<$(echo "${row}" | tr "," " ");
-      echo "Git URL: $gurl Branch: $gbranch "
-      git clone --branch $gbranch $gurl
-    done
-    echo ""
-fi
+### REMOVED, as checkout functionality now supported in drupalci console app
+#if [[ $DCI_DEPENDENCIES_GIT = "" ]]
+#  then
+#    echo -e "NOTICE: \$DCI_DEPENDENCIES_GIT has nothing declared...\n"
+#  else
+#     ARRAY=($(echo "${DCI_DEPENDENCIES_GIT}" | tr ";" "\n"))
+#     mkdir -p ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
+#     cd ${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/${DCI_MODULESPATH}
+#     echo "${ARRAY}"
+#     for row in ${ARRAY[@]}
+#      do
+#      read gurl gbranch <<<$(echo "${row}" | tr "," " ");
+#      echo "Git URL: $gurl Branch: $gbranch "
+#      git clone --branch $gbranch $gurl
+#    done
+#    echo ""
+#fi
 
 #DCI_DEPENDENCIES_TGZ="module1_url.tgz,module1_url.tgz,module1_url.tgz"
 #Get the tgz dependecies
@@ -458,9 +458,9 @@ VERBO=\"${VERBO}\"
 echo "------------------------ STARTING DOCKER CONTAINER ---------------------------"
 [ ! -z "$DCI_CMD" ] && echo "-------- Interactive mode activated! Use: /start.sh to run tests -------------"
 DCI_RUNCMD="/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}"
-/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t ${DCI_ENTRYPOINT} drupalci/web-${DCI_PHPVERSION} ${DCI_CMD} 
+/usr/bin/time -p docker run ${DCI_DBLINK} --name=${DCI_IDENTIFIER} -v=${DCI_WORKSPACE}:/var/workspace:rw -v=${DCI_BUILDSDIR}/${DCI_IDENTIFIER}/:/var/www:rw -p 80 ${DCI_INTERACTIVE} -t ${DCI_ENTRYPOINT} drupalci/web-${DCI_PHPVERSION} ${DCI_CMD}
 
-echo 
+echo
 echo "Saving image ${DCI_IDENTIFIER} at $(date -u):"
 docker commit ${DCI_IDENTIFIER} drupal/${DCI_IDENTIFIER}
 # echo "If you need to debug this container run:"

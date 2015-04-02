@@ -8,6 +8,7 @@
 namespace DrupalCI\Console\Helpers;
 
 use DrupalCI\Console\Helpers\DrupalCIHelperBase;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class ContainerHelper extends DrupalCIHelperBase {
@@ -29,7 +30,7 @@ class ContainerHelper extends DrupalCIHelperBase {
    * {@inheritdoc}
    */
   public function getAllContainers() {
-    $options = $this->getDBContainers() + $this->getWebContainers() + $this->getBaseContainers();
+    $options = $this->getDBContainers() + $this->getWebContainers() + $this->getPhpContainers() + $this->getBaseContainers();
     return $options;
   }
 
@@ -45,6 +46,13 @@ class ContainerHelper extends DrupalCIHelperBase {
    */
   public function getWebContainers() {
     return $this->getContainers('web');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPhpContainers() {
+    return $this->getContainers('php');
   }
 
   /**
@@ -75,7 +83,8 @@ class ContainerHelper extends DrupalCIHelperBase {
     try {
       $process->mustRun();
       echo $process->getOutput();
-    } catch (ProcessFailedException $e) {
+    }
+    catch (ProcessFailedException $e) {
       echo $e->getMessage();
     }
     return;

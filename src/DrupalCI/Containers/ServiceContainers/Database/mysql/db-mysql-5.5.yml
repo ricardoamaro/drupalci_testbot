@@ -1,0 +1,4 @@
+Image:            drupalci/db-mysql-5.5
+name:             drupaltestbot-db-mysql-5-5
+exposed_ports:    3306
+tmpfs:            TRUE

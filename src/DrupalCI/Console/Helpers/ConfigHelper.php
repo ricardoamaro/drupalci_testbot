@@ -20,7 +20,8 @@ class ConfigHelper extends DrupalCIHelperBase {
     $configsets = array();
     $options = glob($homedir . '/.drupalci/configs/*');
     foreach ($options as $option) {
-      $filename = array_pop(explode('/', $option));
+      $option_parts = explode('/', $option);
+      $filename = array_pop($option_parts);
       $configsets[$filename] = $option;
     }
     return $configsets;

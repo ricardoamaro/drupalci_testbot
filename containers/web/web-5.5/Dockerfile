@@ -1,16 +1,15 @@
-FROM drupalci/web-base
+FROM       drupalci/web-base
+MAINTAINER drupalci
 
-ENV DEBIAN_FRONTEND noninteractive
+##
+# PHP 5.5.15
+##
 
-# Dotdeb
-RUN echo "deb http://packages.dotdeb.org wheezy-php55 all" > /etc/apt/sources.list.d/Dotdeb.php55.list
-RUN gpg --keyserver keys.gnupg.net --recv-key 89DF5277
-RUN gpg -a --export 89DF5277 | apt-key add -
+RUN sudo php-build -i development --pear 5.5.15 $HOME/.phpenv/versions/5.5.15
+RUN sudo chown -R root:root $HOME/.phpenv
+RUN phpenv rehash
+RUN phpenv global 5.5.15
+RUN echo | pecl install mongo
 
-RUN apt-get update
-RUN apt-get -y install libapache2-mod-php5 php5-curl php5-gd php5-mysql php5-sqlite php5-pgsql php-pear php-codesniffer php5 php5-mongo
-
-RUN apt-get clean
-RUN apt-get -y autoremove
-
+EXPOSE 80
 CMD ["/bin/bash", "/start.sh"]

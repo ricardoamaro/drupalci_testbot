@@ -12,6 +12,7 @@ use DrupalCI\Console\Command\Init\InitDatabaseContainersCommand;
 use DrupalCI\Console\Command\Init\InitDependenciesCommand;
 use DrupalCI\Console\Command\Init\InitDockerCommand;
 use DrupalCI\Console\Command\Init\InitWebContainersCommand;
+use DrupalCI\Console\Command\Init\InitPhpContainersCommand;
 use Symfony\Component\Console\Application;
 use DrupalCI\Console\Command\Init\InitAllCommand;
 use DrupalCI\Console\Command\Init\InitConfigCommand;
@@ -35,6 +36,7 @@ class DrupalCIConsoleApp extends Application {
    *
    * We just add our commands here. We don't do any discovery or a container/
    * service model for simplicity.
+   * TODO: Add a container/service model.
    */
   public function __construct($name = 'UNKNOWN', $version = 'UNKNOWN') {
     parent::__construct($name, $version);
@@ -55,6 +57,7 @@ class DrupalCIConsoleApp extends Application {
       new InitDockerCommand(),
       new InitConfigCommand(),
       new InitWebContainersCommand(),
+      new InitPhpContainersCommand(),
       new RunCommand(),
       new StatusCommand(),
       new PrivateTravisCommand('travis'),

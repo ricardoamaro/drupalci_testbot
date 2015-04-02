@@ -7,12 +7,22 @@
 
 namespace DrupalCI\Console\Command;
 
+use DrupalCI\Plugin\PluginManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Yaml\Yaml;
 
 class RunCommand extends DrupalCICommandBase {
+
+  /**
+   * @var \DrupalCI\Plugin\PluginManagerInterface
+   */
+  protected $buildStepsPluginManager;
+
+  /**
+   * @var \DrupalCI\Plugin\PluginManagerInterface
+   */
+  protected $jobPluginManager;
 
   /**
    * {@inheritdoc}
@@ -39,77 +49,57 @@ class RunCommand extends DrupalCICommandBase {
     // Determine what job type is being run.
     $job_type = $input->getArgument('job');
 
-    // Get the list of job types.
-    $jobs = $this->discoverJobs();
-    // Validate the passed job type.
-    if (!isset($jobs[$job_type])) {
-      $output->writeln("The job type '$job_type' does not exist.");
-      return;
-    }
-
-    $job = $jobs[$job_type];
-
-    // Link the job to our $output variable, so that jobs can display their work.
+    /** @var $job \DrupalCI\Plugin\JobTypes\JobInterface */
+    $job = $this->jobPluginManager()->getPlugin($job_type, $job_type);
+    // Link our $output variable to the job, so that jobs can display their work.
     $job->setOutput($output);
-
+    // TODO: Create hook to allow for jobtype-specific pre-configuration.
+    // We'll need this if we want to (as an example) convert travisci
+    // definitions to drupalci definitions.
     // Load the job definition, environment defaults, and any job-specific configuration steps which need to occur
-    // TODO: If passed a job definition source file as a command argument, pass it in to the configure function
-    $job->configure();
-    if ($job->error_status != 0) {
-      // Step returned an error.  Halt execution.
-      // TODO: Graceful handling of early exit states.
-      $output->writeln("<error>Job halted.</error>");
-      $output->writeln("<comment>Exiting job due to an invalid return code during job build step: <options=bold>'configure'</options=bold></comment>");
+    foreach (['compile_definition', 'validate_definition', 'setup_directories'] as $step) {
+      $this->buildstepsPluginManager()->getPlugin('configure', $step)->run($job, NULL);
+    }
+    if ($job->getErrorState()) {
+      $output->writeln("<error>Job halted due to an error while configuring job.</error>");
       return;
     }
-
-    $build_steps = $job->build_steps();
-
-    foreach ($build_steps as $step) {
-      $job->{$step}();
-      if ($job->error_status != 0) {
-        // Step returned an error.  Halt execution.
-        // TODO: Graceful handling of early exit states.
-        $output->writeln("<error>Job halted.</error>");
-        $output->writeln("<comment>Exiting job due to an invalid return code during job build step: <options=bold>'$step'</options=bold></comment>");
-        break;
+    // The job should now have a fully merged job definition file, including
+    // any local or drupalci defaults not otherwise defined in the passed job
+    // definition, located in $job->job_definition
+    $definition = $job->getDefinition();
+    foreach ($definition as $build_step => $step) {
+      foreach ($step as $plugin => $data) {
+        $this->buildstepsPluginManager()->getPlugin($build_step, $plugin)->run($job, $data);
+        if ($job->getErrorState()) {
+          // Step returned an error.  Halt execution.
+          // TODO: Graceful handling of early exit states.
+          $output->writeln("<error>Job halted.</error>");
+          $output->writeln("<comment>Exiting job due to an invalid return code during job build step: <options=bold>'$build_step=>$plugin'</options=bold></comment>");
+          break 2;
+        }
       }
     }
   }
 
   /**
-   * Discovers the list of available jobs.
-   *
-   * @return \Symfony\Component\Console\Command\Command[]
-   *   An array of job commands.
+   * @return \DrupalCI\Plugin\PluginManagerInterface
    */
-  protected function discoverJobs() {
-    $path = __DIR__ . '/../Jobs';
-    // RecursiveDirectoryIterator recurses into directories and returns an
-    // iterator for each directory. RecursiveIteratorIterator then iterates over
-    // each of the directory iterators, which consecutively return the files in
-    // each directory.
-    $directory = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS));
-
-    $jobs = [];
-    foreach ($directory as $file) {
-      if (!$file->isDir() && $file->isReadable() && $file->getExtension() === 'yml') {
-        $job_type = $file->getBasename('.yml');
-        // Get the job type definition.
-        $job_type_definition = Yaml::parse(file_get_contents($file->getPathname()));
-
-        if (!isset($job_type_definition['class'])) {
-          // This does not mean the caller did something wrong, but there is a
-          // misconfiguration so throwing an exception seems fine?!
-          throw new \Exception("The $job_type definition must specify a class in {$file->getPathname()}");
-        }
-
-        // Instantiate the job type class.
-        // Pass the job definition to the job constructor.
-        $jobs[$job_type] = new $job_type_definition['class']($job_type_definition);
-      }
+  protected function buildstepsPluginManager() {
+    if (!isset($this->buildStepsPluginManager)) {
+      $this->buildStepsPluginManager = new PluginManager('BuildSteps');
     }
-    return $jobs;
+    return $this->buildStepsPluginManager;
+  }
+
+    /**
+   * @return \DrupalCI\Plugin\PluginManagerInterface
+   */
+  protected function jobPluginManager() {
+    if (!isset($this->jobPluginManager)) {
+      $this->jobPluginManager = new PluginManager('JobTypes');
+    }
+    return $this->jobPluginManager;
   }
 
 }
