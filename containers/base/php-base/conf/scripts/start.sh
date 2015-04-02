@@ -2,13 +2,15 @@
 
 #GET ALL INFO FROM /var/www/test.info:
 source /var/www/test.info
+alias php='/root/.phpenv/shims/php'
 
 export PATH=$HOME/bin:$PATH
+
 # Only need the newest drush version for Drupal 8 and above
 if (( $DCI_DRUPALVERSION >= 8 ));
-  then 
+  then
       export DRUSH="/.composer/vendor/drush/drush/drush"
-    else 
+    else
       export DRUSH="$(which drush)"
 fi
 

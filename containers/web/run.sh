@@ -54,7 +54,7 @@ DCI_DBPASS:        Default is 'drupaltestbotpw'
 DCI_DBCONTAINER:   Default is 'drupaltestbot-db-mysql-5.5'
 DCI_PHPVERSION:    Default is '5.4'
 DCI_CONCURRENCY:   Default is '4'  #How many cpus to use per run
-DCI_RUNSCRIPT:     Default is 'php RUNNER --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
+DCI_RUNSCRIPT:     Default is '/usr/bin/php RUNNER --php /usr/bin/php --url 'http://localhost' --color --concurrency  DCI_CONCURRENCY  --verbose --xml '/var/workspace/results'  DCI_TESTGROUPS  | tee /var/www/test.stdout ' "
 echo -e "\n\nExamples:\t\e[38;5;148msudo {VARIABLES} ./run.sh\e[39m "
 echo -e "
 Run Action and Node tests, 2 LOCAL patches, using 4 CPUs, against D8:
@@ -182,7 +182,7 @@ case $DCI_VERBOSE in
     ;;
 esac
 
-DCI_RUNSCRIPT=${DCI_RUNSCRIPT:-"php ${RUNNER} --php /usr/bin/php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
+DCI_RUNSCRIPT=${DCI_RUNSCRIPT:-"php ${RUNNER} --php php --url 'http://localhost' --color --concurrency ${DCI_CONCURRENCY} ${VERBO} --xml '/var/workspace/results'"}
 
 # Check if we have root powers
 if [ `whoami` != root ]; then

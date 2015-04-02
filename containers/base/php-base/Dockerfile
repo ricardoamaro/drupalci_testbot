@@ -59,6 +59,7 @@ RUN apt-get install -y \
     libxslt-dev \
     libz-dev \
     make \
+    mc \
     mysql-client \
     ncurses-dev \
     php5-dev \
@@ -84,6 +85,9 @@ ENV PATH /root/.phpenv/shims:/root/.phpenv/bin:$PATH
 
 RUN git clone --depth 1 https://github.com/CHH/php-build.git /root/.phpenv/plugins/php-build
 
+# TODO: Make sure we can read phpenv in a better way
+RUN chmod 755 /root/
+
 # Small hack for running the php compilation with more than one cpu core
 #RUN mv /usr/bin/make /usr/bin/make-system
 #RUN echo "/usr/bin/make-system -j8 -l8" > /usr/bin/make
@@ -94,7 +98,6 @@ RUN git clone --depth 1 https://github.com/CHH/php-build.git /root/.phpenv/plugi
 ##
 
 RUN bash -c "wget http://getcomposer.org/composer.phar && chmod 775 composer.phar && sudo mv composer.phar /usr/local/bin/composer"
-
 
 # Drush and dependencies.
 RUN HOME=/ /usr/local/bin/composer global require drush/drush:dev-master

@@ -13,7 +13,10 @@ RUN apt-get clean && apt-get update
 
 # Install Apache2 and Apache prefork
 RUN apt-get install -y apache2 apache2-mpm-prefork apache2-dev
+RUN a2dismod mpm_event && a2enmod mpm_prefork
 
+# TODO: Remove the native php version
+RUN apt-get -y remove php5-cli
 
 RUN apt-get clean && apt-get autoremove -y
 
